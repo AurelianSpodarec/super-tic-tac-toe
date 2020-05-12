@@ -1,12 +1,18 @@
-import React from 'react'
+import React from 'react';
 
-// Create Box component
-const Square = ({ onClick: MouseEvent < HTMLButtonElement >, value }) => {
+interface SquareProps {
+    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    value?: number;
+}
+
+const Square = (props: SquareProps) => {
+    const { onClick, value } = props;
+
     return (
-        <button className="board__box" onClick={onClick}>
+        <button className="square" onClick={onClick}>
             {value}
         </button>
-    )
+    );
 }
 
 export default Square;
