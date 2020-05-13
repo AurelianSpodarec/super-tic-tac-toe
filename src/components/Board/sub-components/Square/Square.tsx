@@ -2,7 +2,7 @@ import React from 'react';
 
 interface SquareProps {
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-    value?: number;
+    value?: any;
 }
 
 const Square = (props: SquareProps) => {
