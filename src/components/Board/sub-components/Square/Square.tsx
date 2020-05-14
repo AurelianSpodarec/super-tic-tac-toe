@@ -9,7 +9,7 @@ const Square = (props: SquareProps) => {
     const { onClick, value } = props;
 
     return (
-        <button className="square" onClick={onClick}>
+        <button style={{ "padding": "35px" }} className="square" onClick={onClick}>
             {value}
         </button>
     );
