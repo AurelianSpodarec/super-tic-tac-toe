@@ -42,3 +42,10 @@ After that, choose: Player style
 // }
 
 // // Modes: Tic Tac Toe, Super/Ultimate Tic Tac toe, Tic Tac Ku, Challenges(Fast Cognitive)
+
+
+----
+
+
+
+Menu is on: Board or a House - instead of some flat stuff, dgives depth and makes it look fancy on menu. Tic tac toe is drawn on street but. Or a street in a semi 2D stretched road with kids drawing and jumping or something

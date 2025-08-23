@@ -3,6 +3,60 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
+
+
+
+interface GameState {
+  screen: Screen;                 // "menu" | "submenu" | "lobby" | "game"
+  modeId?: string;                // Which mode is currently active
+  lobbyId?: string;               // If in multiplayer
+  isPaused: boolean;
+  level?: "easy" | "medium" | "hard";                 // optional for future expansion
+  score?: Record<string, number>; // player scores
+}
+
+interface AudioState {
+  bgm: string | null;             // current background track
+  sfxVolume: number;              // global SFX volume
+  musicVolume: number;            // global music volume
+  isMusicPlaying: boolean;        // toggle state
+  ambientMap: Record<string, string>; // map screen -> ambient track
+}
+
+
+interface GlobalState {
+  language: "EN" | "ES" | "PL" | "IT";
+  theme: "classic" | "paper" | "neon";
+  notifications: string[];
+}
+
+const ambientMap: Record<Screen | string, string> = {
+  menu: "/audio/menu-bgm.mp3",
+  submenu: "/audio/menu-bgm.mp3",
+  lobby: "/audio/lobby-bgm.mp3",
+  game: "/audio/game-bgm.mp3",
+  ticTacToe: "/audio/tic-tac-toe.mp3",
+  ultimateTicTacToe: "/audio/ultimate-bgm.mp3",
+};
+
+const sfxMap = {
+  buttonClick: "/audio/click.mp3",
+  menuOpen: "/audio/menu-open.mp3",
+  win: "/audio/win.mp3",
+};
+
+
+audioManager.playSFX(sfxMap.buttonClick);
+
+
+
+
+
+
+
+
+
+
 // ==========================
 // 1. DATA
 // ==========================

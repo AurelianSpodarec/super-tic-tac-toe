@@ -2,3 +2,14 @@
  * # Cheat - Hot fixed and quick code; needs cleaning up before: ___ date
  * ============================================================================ */
 @import "tw-animate-css";
+
+@font-face {
+  font-family: 'DeCapoers';
+  src: url('/fonts/DeCapoers.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: "DeCapoers";
+}
