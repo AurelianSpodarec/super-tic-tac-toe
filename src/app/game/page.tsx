@@ -1,10 +1,26 @@
 import Menu from "./_components/Menu";
 
+interface GameStore {
+  ui: {
+    language: string;
+    theme: string;
+    audio: { master: number; music: number; sfx: number };
+  };
+  player: { name: string; bestScores: Record<string, number> };
+  game: { mode?: string; score: number; level: number };
+  leaderboard: Record<string, { name: string; score: number }[]>;
+  setLanguage: (lang: string) => void;
+  setAudio: (volume: Partial<{ master: number; music: number; sfx: number }>) => void;
+  updateScore: (score: number) => void;
+}
+
+
+
 function Page() {
   return (
-    <>
+    <div className="h-full w-full" style={{ backgroundImage: "url('https://assets.grok.com/users/0edd0c0d-f3a0-494b-9d5d-f366b8b153a6/generated/fad0a09a-5567-4ea0-8728-3f25284245af/image.jpg')"}}>
       <Menu />
-    </>
+    </div>
   );
 }
 
