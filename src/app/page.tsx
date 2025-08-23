@@ -1,103 +1,224 @@
-import Image from "next/image";
+"use client";
 
+import { useState } from "react";
+import { motion, Variants } from "motion/react";
+
+// ----------------------- TYPES -----------------------
+type Player = "X" | "O";
+type CellValue = Player | null;
+type Board = CellValue[][];
+type GameStatus = "ongoing" | "X wins" | "O wins" | "draw";
+
+interface WinnerLine {
+  type: "row" | "col" | "diag-desc" | "diag-asc";
+  index?: number;
+}
+
+// ----------------------- MOTION VARIANTS -----------------------
+const draw: Variants = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: (i: number) => ({
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      pathLength: { delay: i * 0.3, type: "spring", duration: 1.5, bounce: 0 },
+      opacity: { delay: i * 0.1, duration: 0.01 },
+    },
+  }),
+};
+
+// ----------------------- CELL -----------------------
+interface CellProps {
+  value: CellValue;
+  onClick: () => void;
+}
+
+const Cell: React.FC<CellProps> = ({ value, onClick }) => (
+  <div className="w-16 h-16 p-1">
+    <motion.div className="w-full h-full cursor-pointer relative" onClick={onClick}>
+      {value === "O" && (
+        <motion.svg viewBox="0 0 100 100" className="w-full h-full" initial="hidden" animate="visible">
+          <motion.circle
+            cx="50"
+            cy="50"
+            r="40"
+            stroke="#3b82f6"
+            strokeWidth={8}
+            fill="transparent"
+            variants={draw}
+            custom={1}
+            style={{ strokeLinecap: "round" }}
+          />
+        </motion.svg>
+      )}
+      {value === "X" && (
+        <motion.svg viewBox="0 0 100 100" className="w-full h-full" initial="hidden" animate="visible">
+          <motion.line
+            x1="20"
+            y1="20"
+            x2="80"
+            y2="80"
+            stroke="#ef4444"
+            strokeWidth={8}
+            variants={draw}
+            custom={1}
+            style={{ strokeLinecap: "round" }}
+          />
+          <motion.line
+            x1="20"
+            y1="80"
+            x2="80"
+            y2="20"
+            stroke="#ef4444"
+            strokeWidth={8}
+            variants={draw}
+            custom={1.5}
+            style={{ strokeLinecap: "round" }}
+          />
+        </motion.svg>
+      )}
+    </motion.div>
+  </div>
+);
+
+// ----------------------- BOARD -----------------------
+interface BoardProps {
+  board: Board;
+  onCellClick: (row: number, col: number) => void;
+  winnerLine?: WinnerLine;
+}
+
+const BoardComponent: React.FC<BoardProps> = ({ board, onCellClick, winnerLine }) => {
+  const cellSize = 64;
+  const padding = 10;
+  const boardSize = board.length * cellSize;
+
+  // SVG coordinates for winning line
+  const getLineCoords = () => {
+    if (!winnerLine) return null;
+    const startOffset = padding + cellSize / 2;
+    const endOffset = boardSize - padding - cellSize / 2;
+
+    switch (winnerLine.type) {
+      case "row":
+        return { x1: startOffset, y1: winnerLine.index! * cellSize + cellSize / 2, x2: endOffset, y2: winnerLine.index! * cellSize + cellSize / 2 };
+      case "col":
+        return { x1: winnerLine.index! * cellSize + cellSize / 2, y1: startOffset, x2: winnerLine.index! * cellSize + cellSize / 2, y2: endOffset };
+      case "diag-desc":
+        return { x1: startOffset, y1: startOffset, x2: endOffset, y2: endOffset };
+      case "diag-asc":
+        return { x1: startOffset, y1: endOffset, x2: endOffset, y2: startOffset };
+    }
+  };
+
+  const coords = getLineCoords();
+
+  return (
+    <div className="relative inline-block border-4 border-gray-800">
+      {board.map((row, rowIndex) => (
+        <div key={rowIndex} className="flex">
+          {row.map((cell, colIndex) => (
+            <Cell key={colIndex} value={cell} onClick={() => onCellClick(rowIndex, colIndex)} />
+          ))}
+        </div>
+      ))}
+
+      {coords && (
+        <motion.svg className="absolute top-0 left-0 w-full h-full pointer-events-none">
+          <motion.line
+            x1={coords.x1}
+            y1={coords.y1}
+            x2={coords.x2}
+            y2={coords.y2}
+            stroke="red"
+            strokeWidth={6}
+            strokeLinecap="round"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 1.2, type: "spring", bounce: 0 }}
+          />
+        </motion.svg>
+      )}
+    </div>
+  );
+};
+
+// ----------------------- GAME INFO -----------------------
+interface GameInfoProps {
+  currentPlayer: Player;
+  gameStatus: GameStatus;
+  onRestart: () => void;
+}
+
+const GameInfo: React.FC<GameInfoProps> = ({ currentPlayer, gameStatus, onRestart }) => (
+  <div className="mt-6 text-center">
+    {gameStatus === "ongoing" ? <h2 className="text-xl font-bold">Current Player: {currentPlayer}</h2> : <h2 className="text-xl font-bold">{gameStatus}</h2>}
+    <button onClick={onRestart} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+      Restart Game
+    </button>
+  </div>
+);
+
+// ----------------------- GAME -----------------------
+const BOARD_SIZE = 3;
+
+const createEmptyBoard = (): Board =>
+  Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(null));
+
+const Game: React.FC = () => {
+  const [board, setBoard] = useState<Board>(createEmptyBoard());
+  const [currentPlayer, setCurrentPlayer] = useState<Player>("X");
+  const [gameStatus, setGameStatus] = useState<GameStatus>("ongoing");
+  const [winnerLine, setWinnerLine] = useState<WinnerLine | undefined>();
+
+  const checkWinner = (b: Board): { status: GameStatus; line?: WinnerLine } => {
+    for (let i = 0; i < BOARD_SIZE; i++) {
+      if (b[i][0] && b[i].every(c => c === b[i][0])) return { status: `${b[i][0]} wins` as GameStatus, line: { type: "row", index: i } };
+      const col = [b[0][i], b[1][i], b[2][i]];
+      if (col[0] && col.every(c => c === col[0])) return { status: `${col[0]} wins` as GameStatus, line: { type: "col", index: i } };
+    }
+    const diagDesc = [b[0][0], b[1][1], b[2][2]];
+    if (diagDesc[0] && diagDesc.every(c => c === diagDesc[0])) return { status: `${diagDesc[0]} wins` as GameStatus, line: { type: "diag-desc" } };
+    const diagAsc = [b[2][0], b[1][1], b[0][2]];
+    if (diagAsc[0] && diagAsc.every(c => c === diagAsc[0])) return { status: `${diagAsc[0]} wins` as GameStatus, line: { type: "diag-asc" } };
+    if (b.flat().every(c => c !== null)) return { status: "draw" };
+    return { status: "ongoing" };
+  };
+
+  const handleCellClick = (row: number, col: number) => {
+    if (board[row][col] || gameStatus !== "ongoing") return;
+    const newBoard = board.map(r => r.slice());
+    newBoard[row][col] = currentPlayer;
+    setBoard(newBoard);
+
+    const { status, line } = checkWinner(newBoard);
+    setGameStatus(status);
+    setWinnerLine(line);
+
+    if (status === "ongoing") setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
+  };
+
+  const handleRestart = () => {
+    setBoard(createEmptyBoard());
+    setCurrentPlayer("X");
+    setGameStatus("ongoing");
+    setWinnerLine(undefined);
+  };
+
+  return (
+    <div className="text-center mt-12">
+      <BoardComponent board={board} onCellClick={handleCellClick} winnerLine={winnerLine} />
+      <GameInfo currentPlayer={currentPlayer} gameStatus={gameStatus} onRestart={handleRestart} />
+    </div>
+  );
+};
+
+// ----------------------- NEXT.JS PAGE -----------------------
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    <div className="flex flex-col items-center">
+      <h1 className="text-3xl font-bold mt-6">Tic Tac Toe</h1>
+      <Game />
     </div>
   );
 }
