@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion, Variants } from "motion/react";
 
 // ----------------------- TYPES -----------------------
 type Player = "X" | "O";
 type CellValue = Player | null;
 type Board = CellValue[][];
-type GameStatus = "ongoing" | "X wins" | "O wins" | "draw";
+type SmallBoard = Board;
+type SuperBoard = SmallBoard[][];
+type BoardStatus = "ongoing" | Player | "draw";
+type GameMode = "normal" | "super";
 
 interface WinnerLine {
   type: "row" | "col" | "diag-desc" | "diag-asc";
@@ -31,10 +34,11 @@ const draw: Variants = {
 interface CellProps {
   value: CellValue;
   onClick: () => void;
+  size?: number;
 }
 
-const Cell: React.FC<CellProps> = ({ value, onClick }) => (
-  <div className="w-16 h-16 p-1">
+const Cell: React.FC<CellProps> = ({ value, onClick, size = 64 }) => (
+  <div style={{ width: size, height: size, padding: 2 }}>
     <motion.div className="w-full h-full cursor-pointer relative" onClick={onClick}>
       {value === "O" && (
         <motion.svg viewBox="0 0 100 100" className="w-full h-full" initial="hidden" animate="visible">
@@ -86,14 +90,16 @@ interface BoardProps {
   board: Board;
   onCellClick: (row: number, col: number) => void;
   winnerLine?: WinnerLine;
+  overlayWinner?: CellValue;
+  onOverlayFinished?: () => void;
+  size?: number;
 }
 
-const BoardComponent: React.FC<BoardProps> = ({ board, onCellClick, winnerLine }) => {
-  const cellSize = 64;
+const BoardComponent: React.FC<BoardProps> = ({ board, onCellClick, winnerLine, overlayWinner, onOverlayFinished, size = 64 }) => {
+  const cellSize = size;
   const padding = 10;
   const boardSize = board.length * cellSize;
 
-  // SVG coordinates for winning line
   const getLineCoords = () => {
     if (!winnerLine) return null;
     const startOffset = padding + cellSize / 2;
@@ -114,11 +120,11 @@ const BoardComponent: React.FC<BoardProps> = ({ board, onCellClick, winnerLine }
   const coords = getLineCoords();
 
   return (
-    <div className="relative inline-block border-4 border-gray-800">
+    <div className="relative inline-block border-2 border-gray-800" style={{ width: boardSize, height: boardSize }}>
       {board.map((row, rowIndex) => (
         <div key={rowIndex} className="flex">
           {row.map((cell, colIndex) => (
-            <Cell key={colIndex} value={cell} onClick={() => onCellClick(rowIndex, colIndex)} />
+            <Cell key={colIndex} value={cell} onClick={() => onCellClick(rowIndex, colIndex)} size={cellSize} />
           ))}
         </div>
       ))}
@@ -139,6 +145,18 @@ const BoardComponent: React.FC<BoardProps> = ({ board, onCellClick, winnerLine }
           />
         </motion.svg>
       )}
+
+      {overlayWinner && overlayWinner !== "ongoing" && overlayWinner !== "draw" && (
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.3 }}
+          onAnimationComplete={onOverlayFinished}
+        >
+          <Cell value={overlayWinner} onClick={() => {}} size={cellSize} />
+        </motion.div>
+      )}
     </div>
   );
 };
@@ -146,46 +164,63 @@ const BoardComponent: React.FC<BoardProps> = ({ board, onCellClick, winnerLine }
 // ----------------------- GAME INFO -----------------------
 interface GameInfoProps {
   currentPlayer: Player;
-  gameStatus: GameStatus;
+  gameStatus: BoardStatus;
   onRestart: () => void;
 }
 
 const GameInfo: React.FC<GameInfoProps> = ({ currentPlayer, gameStatus, onRestart }) => (
   <div className="mt-6 text-center">
-    {gameStatus === "ongoing" ? <h2 className="text-xl font-bold">Current Player: {currentPlayer}</h2> : <h2 className="text-xl font-bold">{gameStatus}</h2>}
+    {gameStatus === "ongoing" ? <h2 className="text-xl font-bold">Current Player: {currentPlayer}</h2> : <h2 className="text-xl font-bold">{gameStatus}!</h2>}
     <button onClick={onRestart} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
       Restart Game
     </button>
   </div>
 );
 
-// ----------------------- GAME -----------------------
+// ----------------------- HOOK -----------------------
 const BOARD_SIZE = 3;
 
-const createEmptyBoard = (): Board =>
-  Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(null));
+const useTicTacToe = (mode: GameMode = "normal") => {
+  const createEmptyBoard = () => Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(null));
 
-const Game: React.FC = () => {
-  const [board, setBoard] = useState<Board>(createEmptyBoard());
   const [currentPlayer, setCurrentPlayer] = useState<Player>("X");
-  const [gameStatus, setGameStatus] = useState<GameStatus>("ongoing");
+
+  const [board, setBoard] = useState<Board>(createEmptyBoard());
+  const [gameStatus, setGameStatus] = useState<BoardStatus>("ongoing");
   const [winnerLine, setWinnerLine] = useState<WinnerLine | undefined>();
 
-  const checkWinner = (b: Board): { status: GameStatus; line?: WinnerLine } => {
+  const [superBoard, setSuperBoard] = useState<SuperBoard>(
+    Array.from({ length: BOARD_SIZE }, () =>
+      Array.from({ length: BOARD_SIZE }, () => createEmptyBoard())
+    )
+  );
+  const [activeBoard, setActiveBoard] = useState<{ row: number; col: number } | null>(null);
+  const [smallBoardStatus, setSmallBoardStatus] = useState<BoardStatus[][]>(
+    Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill("ongoing"))
+  );
+  const [smallBoardWinnerLine, setSmallBoardWinnerLine] = useState<(WinnerLine | undefined)[][]>(
+    Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(undefined))
+  );
+  const [finishedSmallBoards, setFinishedSmallBoards] = useState<boolean[][]>(
+    Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(false))
+  );
+  const [mainBoardStatus, setMainBoardStatus] = useState<BoardStatus>("ongoing");
+
+  const checkWinner = useCallback((b: (CellValue | BoardStatus)[][]): { status: BoardStatus; line?: WinnerLine } => {
     for (let i = 0; i < BOARD_SIZE; i++) {
-      if (b[i][0] && b[i].every(c => c === b[i][0])) return { status: `${b[i][0]} wins` as GameStatus, line: { type: "row", index: i } };
+      if (b[i][0] && b[i].every(c => c === b[i][0])) return { status: b[i][0] as BoardStatus, line: { type: "row", index: i } };
       const col = [b[0][i], b[1][i], b[2][i]];
-      if (col[0] && col.every(c => c === col[0])) return { status: `${col[0]} wins` as GameStatus, line: { type: "col", index: i } };
+      if (col[0] && col.every(c => c === col[0])) return { status: col[0] as BoardStatus, line: { type: "col", index: i } };
     }
     const diagDesc = [b[0][0], b[1][1], b[2][2]];
-    if (diagDesc[0] && diagDesc.every(c => c === diagDesc[0])) return { status: `${diagDesc[0]} wins` as GameStatus, line: { type: "diag-desc" } };
+    if (diagDesc[0] && diagDesc.every(c => c === diagDesc[0])) return { status: diagDesc[0] as BoardStatus, line: { type: "diag-desc" } };
     const diagAsc = [b[2][0], b[1][1], b[0][2]];
-    if (diagAsc[0] && diagAsc.every(c => c === diagAsc[0])) return { status: `${diagAsc[0]} wins` as GameStatus, line: { type: "diag-asc" } };
+    if (diagAsc[0] && diagAsc.every(c => c === diagAsc[0])) return { status: diagAsc[0] as BoardStatus, line: { type: "diag-asc" } };
     if (b.flat().every(c => c !== null)) return { status: "draw" };
     return { status: "ongoing" };
-  };
+  }, []);
 
-  const handleCellClick = (row: number, col: number) => {
+  const handleNormalCellClick = (row: number, col: number) => {
     if (board[row][col] || gameStatus !== "ongoing") return;
     const newBoard = board.map(r => r.slice());
     newBoard[row][col] = currentPlayer;
@@ -198,22 +233,163 @@ const Game: React.FC = () => {
     if (status === "ongoing") setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
   };
 
+  const handleSuperCellClick = (bigRow: number, bigCol: number, row: number, col: number) => {
+    if (mainBoardStatus !== "ongoing") return;
+    if (activeBoard && !(activeBoard.row === bigRow && activeBoard.col === bigCol)) return;
+    if (superBoard[bigRow][bigCol][row][col]) return;
+
+    const newSuperBoard = superBoard.map((br, i) =>
+      br.map((bc, j) => {
+        if (i === bigRow && j === bigCol) {
+          const newSmall = bc.map(r => r.slice());
+          newSmall[row][col] = currentPlayer;
+          return newSmall;
+        }
+        return bc;
+      })
+    );
+    setSuperBoard(newSuperBoard);
+
+    // Check small board winner
+    const { status: smallWinner, line: smallLine } = checkWinner(newSuperBoard[bigRow][bigCol]);
+    const newSmallStatus = smallBoardStatus.map(r => r.slice());
+    newSmallStatus[bigRow][bigCol] = smallWinner;
+    setSmallBoardStatus(newSmallStatus);
+
+    const newSmallLines = smallBoardWinnerLine.map(r => r.slice());
+    newSmallLines[bigRow][bigCol] = smallLine;
+    setSmallBoardWinnerLine(newSmallLines);
+
+    const newFinished = finishedSmallBoards.map(r => r.slice());
+    if (smallWinner !== "ongoing" && smallWinner !== "draw") {
+      newFinished[bigRow][bigCol] = false; // will become true after animation
+    }
+    setFinishedSmallBoards(newFinished);
+
+    // Check main board winner
+    const { status: mainWinner } = checkWinner(newSmallStatus);
+    setMainBoardStatus(mainWinner);
+
+    // Next active board
+    if (newSmallStatus[row][col] === "ongoing") setActiveBoard({ row, col });
+    else setActiveBoard(null);
+
+    setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
+  };
+
+  const markSmallBoardFinished = (bigRow: number, bigCol: number) => {
+    const newFinished = finishedSmallBoards.map(r => r.slice());
+    newFinished[bigRow][bigCol] = true;
+    setFinishedSmallBoards(newFinished);
+  };
+
   const handleRestart = () => {
     setBoard(createEmptyBoard());
+    setSuperBoard(Array.from({ length: BOARD_SIZE }, () =>
+      Array.from({ length: BOARD_SIZE }, () => createEmptyBoard())
+    ));
     setCurrentPlayer("X");
     setGameStatus("ongoing");
     setWinnerLine(undefined);
+    setSmallBoardStatus(Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill("ongoing")));
+    setSmallBoardWinnerLine(Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(undefined)));
+    setFinishedSmallBoards(Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(false)));
+    setMainBoardStatus("ongoing");
+    setActiveBoard(null);
   };
+
+  return {
+    currentPlayer,
+    mode,
+    board,
+    gameStatus,
+    winnerLine,
+    superBoard,
+    smallBoardStatus,
+    smallBoardWinnerLine,
+    finishedSmallBoards,
+    mainBoardStatus,
+    activeBoard,
+    handleNormalCellClick,
+    handleSuperCellClick,
+    markSmallBoardFinished,
+    handleRestart
+  };
+};
+
+// ----------------------- GAME COMPONENT -----------------------
+const Game: React.FC = () => {
+  const [mode, setMode] = useState<GameMode>("normal");
+  const {
+    currentPlayer,
+    board,
+    gameStatus,
+    winnerLine,
+    superBoard,
+    smallBoardStatus,
+    smallBoardWinnerLine,
+    finishedSmallBoards,
+    mainBoardStatus,
+    activeBoard,
+    handleNormalCellClick,
+    handleSuperCellClick,
+    markSmallBoardFinished,
+    handleRestart
+  } = useTicTacToe(mode);
+
+  const allFinished = finishedSmallBoards.flat().every((f, i) => {
+    const row = Math.floor(i / BOARD_SIZE);
+    const col = i % BOARD_SIZE;
+    return smallBoardStatus[row][col] === "ongoing" || f;
+  });
 
   return (
     <div className="text-center mt-12">
-      <BoardComponent board={board} onCellClick={handleCellClick} winnerLine={winnerLine} />
-      <GameInfo currentPlayer={currentPlayer} gameStatus={gameStatus} onRestart={handleRestart} />
+      <div className="mb-4">
+        <button onClick={() => setMode("normal")} className={`px-4 py-2 mr-2 rounded ${mode === "normal" ? "bg-blue-500 text-white" : "bg-gray-300"}`}>Normal</button>
+        <button onClick={() => setMode("super")} className={`px-4 py-2 rounded ${mode === "super" ? "bg-blue-500 text-white" : "bg-gray-300"}`}>Super</button>
+      </div>
+
+      {mode === "normal" && (
+        <>
+          <BoardComponent board={board} onCellClick={handleNormalCellClick} winnerLine={winnerLine} />
+          <GameInfo currentPlayer={currentPlayer} gameStatus={gameStatus} onRestart={handleRestart} />
+        </>
+      )}
+
+      {mode === "super" && (
+        <>
+          <div className="relative">
+            <div className="grid grid-cols-3 gap-2">
+              {superBoard.map((row, bigRow) =>
+                row.map((small, bigCol) => (
+                  <div key={`${bigRow}-${bigCol}`} className="relative border-2" style={{ borderColor: activeBoard?.row === bigRow && activeBoard?.col === bigCol ? '#3b82f6' : '#9ca3af' }}>
+                    <BoardComponent
+                      board={small}
+                      onCellClick={(r,c) => handleSuperCellClick(bigRow,bigCol,r,c)}
+                      winnerLine={smallBoardWinnerLine[bigRow][bigCol]}
+                      overlayWinner={smallBoardStatus[bigRow][bigCol] !== "ongoing" && smallBoardStatus[bigRow][bigCol] !== "draw" ? smallBoardStatus[bigRow][bigCol] : undefined}
+                      onOverlayFinished={() => markSmallBoardFinished(bigRow,bigCol)}
+                    />
+                  </div>
+                ))
+              )}
+            </div>
+
+            {mainBoardStatus !== "ongoing" && mainBoardStatus !== "draw" && allFinished && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                <Cell value={mainBoardStatus} onClick={() => {}} size={64*BOARD_SIZE*3} />
+              </div>
+            )}
+          </div>
+          <GameInfo currentPlayer={currentPlayer} gameStatus={mainBoardStatus} onRestart={handleRestart} />
+        </>
+      )}
     </div>
   );
 };
 
-// ----------------------- NEXT.JS PAGE -----------------------
+// ----------------------- PAGE -----------------------
 export default function Home() {
   return (
     <div className="flex flex-col items-center">
