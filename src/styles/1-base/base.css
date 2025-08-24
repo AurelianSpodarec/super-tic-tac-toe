@@ -6,4 +6,22 @@ html,
 body {
   height: 100%;
   width: 100%;
+  font-family: "Orbitron";
+  color: white;
+}
+
+@theme {
+  /* ============================================================================ 
+   * Primitives 
+   * ============================================================================ */
+  --font-orbitron: "Orbitron", sans-serif;
+  --font-monoton: "Monoton", sans-serif;
+}
+
+@theme {
+  /* ============================================================================ 
+   * Semantics 
+   * ============================================================================ */
+  --font-primary: var(--font-orbitron);
+  --font-secondary: var(--font-monoton);
 }

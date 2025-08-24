@@ -49,3 +49,38 @@ After that, choose: Player style
 
 
 Menu is on: Board or a House - instead of some flat stuff, dgives depth and makes it look fancy on menu. Tic tac toe is drawn on street but. Or a street in a semi 2D stretched road with kids drawing and jumping or something
+
+
+---
+
+Single Player
+- Tic Tac Toe
+- Super Tic Tac Toe
+- Tic Tac Ku
+- Challenge
+
+Local Co-Op
+- Tic Tac Toe
+- Super Tic Tac Toe
+- Tic Tac Ku
+- Challenge
+
+Multiplayer (Lobby)
+
+Leaderboard (Local Only)
+- Wins
+- Losses
+- Time Spent
+- Moves
+
+Settings
+- Audio
+- Sound
+
+Language
+- English
+- Español
+- Polski
+- Italiano
+
+Quit
