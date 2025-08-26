@@ -1,7 +1,8 @@
 "use client";
 
-import { ReactNode, useRef, useEffect } from "react";
-import { SceneManagerProvider, Scene } from "./SceneManagerProvider";
+import { ReactNode } from "react";
+import { SceneManagerProvider, useSceneManager, Scene } from "./SceneManagerProvider";
+import { SceneTransitionManager } from "./SceneTransitionManager";
 
 interface Props {
   initialScene: string;
@@ -9,27 +10,52 @@ interface Props {
   children?: ReactNode;
 }
 
-export function GameProvider({ initialScene = "start", scenes, children }: Props) {
-  const audioRef = useRef<HTMLAudioElement>(null);
+export function GameProvider({ initialScene, scenes, children }: Props) {
+  const audioAssets = {
+    menu: "/audio/jazz-cafe-crowd.mp3",
+    tictactoe: "/audio/flickering-neon.mp3",
+    gameMenu: "/audio/jazz-cafe-crowd.mp3",
+  };
 
-  useEffect(() => {
-    const handleUserInteraction = () => {
-      if (audioRef.current) audioRef.current.play().catch(() => {});
-      window.removeEventListener("click", handleUserInteraction);
-      window.removeEventListener("touchstart", handleUserInteraction);
-    };
-    window.addEventListener("click", handleUserInteraction);
-    window.addEventListener("touchstart", handleUserInteraction);
-    return () => {
-      window.removeEventListener("click", handleUserInteraction);
-      window.removeEventListener("touchstart", handleUserInteraction);
-    };
-  }, []);
+  const backgroundAssets = {
+    menu: "/images/brick.svg",
+    tictactoe: "/images/bollywood.jpg",
+    gameMenu: "/images/brick.svg",
+  };
 
   return (
     <SceneManagerProvider initialScene={initialScene} scenes={scenes}>
-      <audio ref={audioRef} src="/audio/jazz-cafe-crowd.mp3" autoPlay preload="auto" loop />
-      {children}
+      <InnerGameProvider
+        audioAssets={audioAssets}
+        backgroundAssets={backgroundAssets}
+      >
+        {children}
+      </InnerGameProvider>
     </SceneManagerProvider>
+  );
+}
+
+function InnerGameProvider({
+  audioAssets,
+  backgroundAssets,
+  children,
+}: {
+  audioAssets: Record<string, string>;
+  backgroundAssets: Record<string, string>;
+  children: ReactNode;
+}) {
+  const { currentScene, getScene } = useSceneManager();
+  if (!currentScene) return null;
+
+  return (
+    <>
+      <SceneTransitionManager
+        currentSceneKey={currentScene}
+        getScene={getScene}
+        audioAssets={audioAssets}
+        backgroundAssets={backgroundAssets}
+      />
+      {children}
+    </>
   );
 }

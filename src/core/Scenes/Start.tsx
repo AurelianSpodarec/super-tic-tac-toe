@@ -44,7 +44,7 @@ export function Menu() {
 
   return (
     <nav className="flex flex-col space-y-6">
-      <MenuButton label="Single Player" onClick={() => pushScene("gameplay")} />
+      <MenuButton label="Single Player" onClick={() => pushScene("gameModes")} />
       <MenuButton label="Local Co-Op" onClick={() => pushScene("gameplay")} />
       <MenuButton label="Multiplayer" onClick={() => pushScene("gameplay")} />
       <MenuButton label="Leaderboard" onClick={() => pushScene("leaderboard")} />

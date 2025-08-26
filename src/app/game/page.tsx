@@ -1,6 +1,5 @@
 'use client'
 
-import { SceneManager, useSceneManager } from "@/core/SceneManager";
 import SceneSettings from "@/core/Scenes/Settings";
 import SceneStart from "@/core/Scenes/Start";
 import { useEffect, useRef } from "react";
@@ -8,6 +7,8 @@ import ActionBar from "./_components/ActionBar";
 import { GameProvider } from "@/core/SceneManager/GameProvider";
 import { SceneRenderer } from "@/core/SceneManager/SceneRenderer";
 import Overlay from "./_components/Overlay";
+import SceneGameModes from "@/core/Scenes/GameModes";
+import SceneModeTicTacToe from "@/core/Scenes/ModeTicTacToe";
 
 // import { useEffect, useRef, useState, useCallback } from "react";
 
@@ -130,40 +131,6 @@ import Overlay from "./_components/Overlay";
 // }
 
 
-// const gameModes = [
-//   {
-//     name: "TicTacToe",
-//     image: "https://i.imgur.com/36LVn1E.png",
-//   },
-//   {
-//     name: "Super TicTacToe",
-//     image: "https://i.imgur.com/DlWB4Ua.png"
-//   }
-// ]
-
-// function ScreenGameModes() {
-//   return (
-//     <div>
-//       <h2 className="text-center text-4xl mb-6">Choose Game Mode</h2>
-//       <div className="container max-w-[700px]">
-//         <div className="grid grid-cols-2">
-//           {gameModes.map((item) => {
-//             return (
-//               <div className="border border-gray-700 bg-black/80 rounded-md p-4 cursor-pointer">
-//                 <img src={item.image} className="object-fit w-full h-full" />
-//                 <div className=" text-center">
-//                   <span className="text-2xl">{item.name}</span>
-//                   {/* <span>Game Rules</span> */}
-//                 </div>
-//               </div>
-//             )
-//           })}
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
-
 function MenuScene({ children }) {
   return (
     <div className="h-full w-full theme-4 overflow-auto">
@@ -184,9 +151,37 @@ function GameScene() {
 
 
 
-const scenes = [
-  { key: "start", component: <SceneStart /> },
-  { key: "settings", component: <SceneSettings /> }
+// const scenes = [
+//   { key: "start", component: <SceneStart /> },
+//   { key: "settings", component: <SceneSettings /> },
+//   { key: "gameModes", component: <SceneGameModes /> },
+//   { key: "modeTicTacToe", component: <SceneModeTicTacToe /> }
+// ];
+
+const scenes: Scene[] = [
+  {
+    key: "start",
+    component: <SceneStart />,
+    audioKey: "menu",
+    backgroundKey: "menu",
+    transitionDuration: 1000,
+    onEnter: () => console.log("Entered Start"),
+    onExit: () => console.log("Exiting Start"),
+  },
+  {
+    key: "gameModes",
+    component: <SceneGameModes />,
+    audioKey: "gameMenu",
+    backgroundKey: "gameMenu",
+    transitionDuration: 800,
+  },
+  {
+    key: "modeTicTacToe",
+    component: <SceneModeTicTacToe />,
+    audioKey: "tictactoe",
+    backgroundKey: "tictactoe",
+    transitionDuration: 1200,
+  },
 ];
 
 

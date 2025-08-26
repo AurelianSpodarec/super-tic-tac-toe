@@ -5,7 +5,9 @@ import { createContext, useContext, useState, ReactNode } from "react";
 export interface Scene {
   key: string;
   component: ReactNode;
-  transition?: "fade" | "slideLeft" | "slideRight" | "scale";
+  transitionDuration?: number;       // new: duration of crossfade in ms
+  audioKey?: string;
+  backgroundKey?: string;
   onEnter?: () => void;
   onExit?: () => void;
 }
@@ -59,7 +61,6 @@ export function SceneManagerProvider({ initialScene, scenes, children }: Props) 
   };
 
   const back = (overrideKey?: string) => {
-    console.log("back")
     if (overrideKey) {
       const oldKey = stack[stack.length - 1];
       getScene(oldKey)?.onExit?.();
@@ -73,9 +74,7 @@ export function SceneManagerProvider({ initialScene, scenes, children }: Props) 
   const currentScene = stack[stack.length - 1] || null;
 
   return (
-    <SceneManagerContext.Provider
-      value={{ stack, getScene, switchScene, pushScene, popScene, back, currentScene }}
-    >
+    <SceneManagerContext.Provider value={{ stack, getScene, switchScene, pushScene, popScene, back, currentScene }}>
       <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
         {children}
       </div>
