@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { Scene } from "./SceneManagerProvider";
 
 interface Props {
@@ -19,14 +20,12 @@ export function SceneTransitionManager({ currentSceneKey, getScene, audioAssets,
 
   // Background
   const [activeBg, setActiveBg] = useState<"A" | "B">("A");
-  const bgARef = useRef<HTMLDivElement>(null);
-  const bgBRef = useRef<HTMLDivElement>(null);
 
   // Handle first interaction to allow autoplay
   useEffect(() => {
     const handleInteraction = () => {
-      audioA.current.play().catch(() => {});
-      audioB.current.play().catch(() => {});
+      audioA.current.play().catch(() => { });
+      audioB.current.play().catch(() => { });
       window.removeEventListener("click", handleInteraction);
       window.removeEventListener("touchstart", handleInteraction);
     };
@@ -56,7 +55,7 @@ export function SceneTransitionManager({ currentSceneKey, getScene, audioAssets,
     fadeInAudio.src = audioAssets[scene.audioKey];
     fadeInAudio.volume = 0;
     fadeInAudio.loop = true;
-    fadeInAudio.play().catch(() => {});
+    fadeInAudio.play().catch(() => { });
 
     const start = performance.now();
     const fade = (time: number) => {
@@ -74,55 +73,54 @@ export function SceneTransitionManager({ currentSceneKey, getScene, audioAssets,
     setCurrentAudioKey(scene.audioKey);
   }, [currentSceneKey, scene, currentAudioKey, activeAudio, audioAssets, audioDuration, getScene]);
 
-  useEffect(() => {
-    if (!scene || !scene.backgroundKey) return;
-
-    const fadeInBg = activeBg === "A" ? bgBRef.current : bgARef.current;
-    const fadeOutBg = activeBg === "A" ? bgARef.current : bgBRef.current;
-
-    if (!fadeInBg || !fadeOutBg) return;
-
-    fadeInBg.style.backgroundImage = `url(${backgroundAssets[scene.backgroundKey]})`;
-    fadeInBg.style.opacity = "0";
-    fadeInBg.style.transition = `opacity ${bgDuration}ms ease`;
-    fadeOutBg.style.transition = `opacity ${bgDuration}ms ease`;
-
-    requestAnimationFrame(() => {
-      fadeInBg.style.opacity = "1";
-      fadeOutBg.style.opacity = "0";
-    });
-
-    setTimeout(() => setActiveBg(activeBg === "A" ? "B" : "A"), bgDuration);
-  }, [currentSceneKey, scene, activeBg, backgroundAssets, bgDuration]);
-
   return (
     <div style={{ position: "absolute", width: "100%", height: "100%", overflow: "hidden" }}>
-      <div
-        ref={bgARef}
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          top: 0,
-          left: 0,
-          backgroundPosition: "center",
-          opacity: activeBg === "A" ? 1 : 0,
-          transition: `opacity ${bgDuration}ms ease`,
-        }}
-      />
-      <div
-        ref={bgBRef}
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          top: 0,
-          left: 0,
-          backgroundPosition: "center",
-          opacity: activeBg === "B" ? 1 : 0,
-          transition: `opacity ${bgDuration}ms ease`,
-        }}
-      />
+      <AnimatePresence mode="wait">
+        {scene?.backgroundKey && (
+          <>
+            {activeBg === "A" && (
+              <motion.div
+                key="bgA"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: bgDuration / 1000, ease: "easeInOut" }}
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  top: 0,
+                  left: 0,
+                  backgroundImage: `url(${backgroundAssets[scene.backgroundKey]})`,
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
+                }}
+                onAnimationComplete={() => setActiveBg("B")}
+              />
+            )}
+            {activeBg === "B" && (
+              <motion.div
+                key="bgB"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: bgDuration / 1000, ease: "easeInOut" }}
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  top: 0,
+                  left: 0,
+                  backgroundImage: `url(${backgroundAssets[scene.backgroundKey]})`,
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
+                }}
+                onAnimationComplete={() => setActiveBg("A")}
+              />
+            )}
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

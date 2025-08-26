@@ -114,6 +114,10 @@ body {
   animation: fadeOut 0.2s ease forwards;
 }
 
+body {
+  color: black;
+}
+
 @keyframes fadeOut {
   from {
     opacity: 1;
