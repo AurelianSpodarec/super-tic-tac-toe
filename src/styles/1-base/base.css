@@ -6,8 +6,21 @@ html,
 body {
   height: 100%;
   width: 100%;
-  font-family: "Orbitron";
+  /* font-family: "Orbitron"; */
+  font-family: "Neontubes";
   color: white;
+
+
+}
+
+.body-game {
+  /* -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #000
+    url(https://idgrafica.com/wp-content/uploads/2022/09/black-vintage-background-hd-vintage-7553234-1.jpg)
+    center no-repeat;
+  background-color: black;
+  margin: 0; */
 }
 
 @theme {
@@ -16,6 +29,8 @@ body {
    * ============================================================================ */
   --font-orbitron: "Orbitron", sans-serif;
   --font-monoton: "Monoton", sans-serif;
+  --font-neontubes: "Neontubes", sans-serif;
+  --font-sacramento: "Sacramento", sans-serif;
 }
 
 @theme {
@@ -24,4 +39,62 @@ body {
    * ============================================================================ */
   --font-primary: var(--font-orbitron);
   --font-secondary: var(--font-monoton);
+  /* --font- */
 }
+
+
+/* BACKGROUND THEME 1 */
+/* background-color: #222222;
+  background: repeating-linear-gradient(
+      45deg,
+      #2b2b2b 0%,
+      #2b2b2b 10%,
+      #222222 0%,
+      #222222 50%
+    )
+    0 / 15px 15px; */
+
+
+/* BG THEME 2 */
+/* background: #112 url(//images.weserv.nl/?url=i.imgur.com/6QJjYMe.jpg)  center no-repeat;
+  background-size:cover;
+  margin:0 */
+
+/* BG THEME 3 */
+/* background: #222;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 7px,
+    rgba(0, 0, 0, 0.8) 9px,
+    rgba(0, 0, 0, 0.8) 13px,
+    transparent 13px
+  ); */
+
+.theme-4 {
+  background: #222;
+  /* background-image: repeating-linear-gradient(to bottom,
+      transparent 7px,
+      rgba(0, 0, 0, 0.8) 9px,
+      rgba(0, 0, 0, 0.8) 13px,
+      transparent 13px); */
+  /* background-image: url("https://imgs.search.brave.com/1Lj0IJ_5o7xH0ljM_bgPaEtFRZloPtCor22Yp-VuT4I/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudW5zcGxhc2gu/Y29tL3Bob3RvLTE2/NDUxNDM0NTIwOTMt/YzdlMzE4MTE2YmVh/P2ZtPWpwZyZxPTYw/Jnc9MzAwMCZpeGxp/Yj1yYi00LjEuMCZp/eGlkPU0zd3hNakEz/ZkRCOE1IeHpaV0Z5/WTJoOE9IeDhZbkpw/WTJzbE1qQmlZV05y/WjNKdmRXNWtmR1Z1/ZkRCOGZEQjhmSHd3") */
+  background-image: url('data:image/svg+xml,%3Csvg width="42" height="44" viewBox="0 0 42 44" xmlns="http://www.w3.org/2000/svg"%3E%3Cg id="Page-1" fill="none" fill-rule="evenodd"%3E%3Cg id="brick-wall" fill="%239C92AC" fill-opacity="0.4"%3E%3Cpath d="M0 0h42v44H0V0zm1 1h40v20H1V1zM0 23h20v20H0V23zm22 0h20v20H22V23z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+}
+
+
+/* Theme 4 */
+/* style={{ backgroundImage: "url('https://idgrafica.com/wp-content/uploads/2022/09/black-vintage-background-hd-vintage-7553234-1.jpg')" }} */
+
+
+.circular-fade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.75) 60%);
+}
+
+
+
+/*  */

@@ -4,30 +4,26 @@
 @import "tw-animate-css";
 
 /* @import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap'); */
-
-/* Neon color palette */
+/* 
 :root {
-  --neon-core: #bffcff; /* Bright center color of the neon tube */
-  --neon-glow: #00eaff; /* Mid glow halo */
-  --neon-outer: #007788; /* Outer halo tint */
-  --off: #0f0f10; /* Tube color when completely off */
-  --off-glow: rgba(0, 200, 255, 0.08); /* Faint glow when off */
-  --broken-dim: #555; /* Dim grey for faulty/broken letters */
+  --neon-core: #bffcff;
+  --neon-glow: #00eaff;
+  --neon-outer: #007788;
+  --off: #0f0f10;
+  --off-glow: rgba(0, 200, 255, 0.08);
+  --broken-dim: #555;
 }
 
-/* Reset margins & padding */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* Make the sign take full viewport height */
 html, body {
   height: 100%;
 }
 
-/* Center the sign in the viewport */
 body {
   display: flex;
   align-items: center;
@@ -37,18 +33,16 @@ body {
     rgba(43, 39, 39, 1) 0%,
     rgba(0, 0, 0, 1) 100%
   );
-  font-family: "Monoton", cursive; /* Retro neon-style font */
+  font-family: "Monoton", cursive; 
 }
 
-/* Main container for letters */
 .sign {
   font-size: clamp(3rem, 10vw, 8rem);
   padding: 0.5rem 2rem;
   text-align: center;
-  user-select: none; /* Prevent text selection */
+  user-select: none;
 }
 
-/* Base style for each letter */
 .letter {
   display: inline-block;
   padding: 0 0.12rem;
@@ -59,7 +53,6 @@ body {
   cursor: default;
 }
 
-/* Letter in the "off" state (faint glow remains) */
 .letter.off {
   color: var(--off);
   text-shadow:
@@ -68,13 +61,11 @@ body {
     0 0 12px rgba(0, 200, 255, 0.03);
 }
 
-/* Letter in "dim" broken state */
 .letter.dim {
   color: var(--broken-dim) !important;
   text-shadow: none;
 }
 
-/* Letter fully "on" with neon glow layers */
 .letter.on {
   color: var(--neon-core);
   text-shadow:
@@ -86,23 +77,225 @@ body {
   filter: brightness(1.05);
 }
 
-/* Debugging helper styles */
 .letter.broken { outline: none; }
 .container { width: 100%; padding: 2vh 0; }
 
 
+:root {
+    --tile3d: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="98" height="38"><path fill="hsl(32,45%,13%)" d="M0 0h23v15H0zM26 0h46v15H26zM75 0h23v15H75zM3 19h46v15H3zM52 19h46v15H52z"/><path fill="hsl(32,45%,11%)" d="M0 14h23v1H0zM26 14h46v1H26zM75 14h23v1H75zM3 33h46v1H3zM52 33h46v1H52zM22 0h1v15h-1zM71 0h1v15h-1zM48 19h1v15h-1zM97 19h1v15h-1z"/><path fill="hsl(32,45%,18%)" d="M0 0h23v1H0zM26 0h46v1H26zM75 0h23v1H75zM3 19h46v1H3zM52 19h46v1H52zM26 0h1v15h-1zM75 0h1v15h-1zM3 19h1v15H3zM52 19h1v15h-1z"/></svg>');
+}
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+body {
+	background-color: #4f493d;
+	background-image: var(--tile3d);
+	background-position: -15px 15px;
+}
+.wrapper{
+	align-items: flex-top;
+	display: flex;
+	justify-content: center;
+	margin: 0 auto;
+	max-width: 800px;
+}
+
+svg{
+	fill: none;
+	height: auto;
+	width: 100%;
+}
+.logo,
+.unicorn {
+	height: 400px;
+	width: 400px;
+}
+
+.unicorn{
+	flex: 2 0 auto;
+	svg {
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke-width: 8px;
+
+		.mane_tube{ stroke: hsl(180deg 70% 80%) }
+		.mane_glow{ 
+			animation: flicker 2s linear infinite;
+			stroke: hsl(180deg 100% 85%) }
+
+		.head_tube{ stroke: hsl(312deg 70% 70%) }
+		.head_glow{ 
+			animation: flicker 3s linear infinite;
+			stroke: hsl(312deg 100% 85%) }
+
+		.horn_tube { stroke: hsl(0deg 0% 100% / .8) }
+		.horn_glow {
+			animation: glitch 1.52s linear infinite;
+			stroke: hsl(0deg 0% 90%)
+		}
+	}
+}
+
+.logo{
+	height: auto;
+	margin-top: 2rem;
+	width: 75px;
+	svg{
+		stroke: hsl(0deg 100% 100%);
+		stroke-width: 30px;
+		
+		.csl-logo{ stroke: hsl(160deg 100% 100%) }
+		.csl-logo_glow{ 
+			animation: glitch 1.5s linear infinite;
+			stroke: hsl(160deg 100% 85%) }
+	}
+}
+
+@keyframes glitch {
+  from {
+    opacity: 1;
+  }
+  5% {
+    opacity: 0.2;
+  }
+  8% {
+    opacity: 0.2;
+  }
+  12% {
+    opacity: 0.8;
+  }
+  55% {
+    opacity: 0.8;
+  }
+  58% {
+    opacity: 0.2;
+  }
+  61% {
+    opacity: 0.2;
+  }
+  65% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  83% {
+    opacity: 0.2;
+  }
+  95% {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes flicker {
+  from {
+    opacity: 1;
+  }
+  4% {
+    opacity: 0.9;
+  }
+  6% {
+    opacity: 0.85;
+  }
+  8% {
+    opacity: 0.95;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  11% {
+    opacity: 0.922;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  14% {
+    opacity: 0.95;
+  }
+  16% {
+    opacity: 0.98;
+  }
+  17% {
+    opacity: 0.9;
+  }
+  19% {
+    opacity: 0.93;
+  }
+  20% {
+    opacity: 0.99;
+  }
+  24% {
+    opacity: 1;
+  }
+  26% {
+    opacity: 0.94;
+  }
+  28% {
+    opacity: 0.98;
+  }
+  37% {
+    opacity: 0.93;
+  }
+  38% {
+    opacity: 0.85;
+  }
+  39% {
+    opacity: 0.96;
+  }
+  42% {
+    opacity: 1;
+  }
+  44% {
+    opacity: 0.97;
+  }
+  46% {
+    opacity: 0.94;
+  }
+  56% {
+    opacity: 0.9;
+  }
+  58% {
+    opacity: 0.9;
+  }
+  60% {
+    opacity: 0.99;
+  }
+  68% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.9;
+  }
+  72% {
+    opacity: 0.95;
+  }
+  93% {
+    opacity: 0.93;
+  }
+  95% {
+    opacity: 0.95;
+  }
+  97% {
+    opacity: 0.93;
+  }
+  to {
+    opacity: 1;
+  }
+} */
 
 
-/* ================================================== */
-
-
+/* 
 .neon-btn {
   padding: 1rem 2rem;
-  border: 2px solid #00eaff; /* neon core */
+  border: 2px solid #00eaff; 
   border-radius: 0.5rem;
   background: transparent;
   color: #00eaff;
-  font-family: 'Monoton', cursive;
   font-size: 1.5rem;
   cursor: pointer;
   text-transform: uppercase;
@@ -113,7 +306,6 @@ body {
   transition: all 0.2s ease-in-out;
 }
 
-/* Flicker animation */
 @keyframes flicker {
   0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
     opacity: 1;
@@ -128,7 +320,6 @@ body {
   }
 }
 
-/* Hover “electrified” effect */
 .neon-btn:hover {
   box-shadow:
     0 0 12px #bffcff,
@@ -148,7 +339,6 @@ body {
           drop-shadow(0 0 48px rgba(0, 230, 255, 0.35));
 }
 
-/* subtle flicker animation */
 @keyframes subtleFlicker {
   0%, 20%, 40%, 60%, 80%, 100% { opacity: 1; }
   10%, 30%, 50%, 70%, 90% { opacity: 0.85; }
@@ -158,7 +348,6 @@ body {
   animation: subtleFlicker 1.5s infinite alternate;
 }
 
-/* electrified hover */
 .neon-arrow:hover {
   filter: drop-shadow(0 0 12px #bffcff)
           drop-shadow(0 0 24px #00eaff)
@@ -171,19 +360,14 @@ body {
 
 .neon-btn {
   position: relative;
-  padding: 1rem 2.5rem;
-  font-family: 'Monoton', cursive;
-  font-size: 1.5rem;
-  color: #bffcff; /* neon core color */
+  color: #bffcff;
   background: transparent;
   border: 4px solid #00eaff;
-  border-radius: 0.75rem;
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   transition: all 0.3s ease;
   
-  /* Neon glow for text */
   text-shadow:
     0 0 6px #bffcff,
     0 0 12px #00eaff,
@@ -197,7 +381,6 @@ body {
     0 0 48px rgba(0, 230, 255, 0.35);
 }
 
-/* Subtle flicker for both text and border */
 @keyframes subtleFlicker {
   0%, 20%, 40%, 60%, 80%, 100% { opacity: 1; }
   10%, 30%, 50%, 70%, 90% { opacity: 0.85; }
@@ -207,7 +390,6 @@ body {
   animation: subtleFlicker 1.5s infinite alternate;
 }
 
-/* Hover / electrified effect */
 .neon-btn:hover {
   text-shadow:
     0 0 12px #bffcff,
@@ -231,7 +413,7 @@ body {
   font-size: 1.5rem;
   color: #bffcff;
   background: transparent;
-  border: none; /* remove sharp CSS border */
+  border: none; 
   padding: 1rem 2.5rem;
   border-radius: 0.75rem;
   cursor: pointer;
@@ -240,7 +422,725 @@ body {
   transition: transform 0.2s ease;
 }
 
-/* Hover electrified pulse */
 .neon-btn-js:hover {
   transform: scale(1.05);
+}
+
+
+@font-face {
+  font-family: "neontubes";
+  src: url("https://bitbucket.org/kennethjensen/webfonts/raw/fc13c1cb430a0e9462da56fe3f421ff7af72db71/neontubes/neontubes-webfont.eot");
+  src: url("https://bitbucket.org/kennethjensen/webfonts/raw/fc13c1cb430a0e9462da56fe3f421ff7af72db71/neontubes/neontubes-webfont.eot?#iefix")
+      format("embedded-opentype"),
+    url("https://bitbucket.org/kennethjensen/webfonts/raw/fc13c1cb430a0e9462da56fe3f421ff7af72db71/neontubes/neontubes-webfont.woff2")
+      format("woff2"),
+    url("https://bitbucket.org/kennethjensen/webfonts/raw/fc13c1cb430a0e9462da56fe3f421ff7af72db71/neontubes/neontubes-webfont.woff")
+      format("woff"),
+    url("https://bitbucket.org/kennethjensen/webfonts/raw/fc13c1cb430a0e9462da56fe3f421ff7af72db71/neontubes/neontubes-webfont.ttf")
+      format("truetype");
+  font-weight: normal;
+  font-style: normal;
+} */
+
+/* nice stroke: ff005d */
+
+
+
+.cog-svg path {
+  fill: transparent;
+  stroke: #ff005d;
+  stroke-width: 3px;
+  filter: url(#glow);
+  stroke-dasharray: 1200; /* approximate path length, will animate */
+  stroke-dashoffset: 1200;
+}
+
+.power-on {
+  animation: drawLine 2s ease-in-out forwards, flicker 3s linear infinite;
+  opacity: 1;
+}
+
+.off {
+  opacity: 0;
+}
+
+@keyframes drawLine {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes flicker {
+  0%, 100% { stroke: #ff005d; }
+  10%, 30%, 50% { stroke: transparent; }
+}
+
+.path-powered {
+  animation: drawLine1 2.5s ease-in-out forwards, flicker1 4s linear 4s infinite;
+}
+
+/* Add drawLine1, drawLine2, drawLine3 and flicker1, flicker2, flicker3 from your example */
+@keyframes drawLine {
+  to { stroke-dashoffset: 0; }
+}
+
+/* @keyframes flicker {
+  0%, 100% { stroke: #ff005d; }
+  10%, 30%, 50% { stroke: transparent; }
+}
+ */
+
+
+
+
+
+
+
+
+
+ /* @import url("https://fonts.googleapis.com/css?family=Monoton"); */
+/* ----------------------------------------------
+ * Generated by Animista on 2017-3-23 18:48:41
+ * http://animista.net
+ * T: @cssanimista
+ * ---------------------------------------------- */
+
+@-webkit-keyframes text-flicker-in-glow {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  10.1% {
+    opacity: 1;
+    text-shadow: none;
+  }
+  10.2% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  20% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  20.1% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.25);
+  }
+  20.6% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  30% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  30.1% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.45),
+      0 0 60px rgba(255, 255, 255, 0.25);
+  }
+  30.5% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.45),
+      0 0 60px rgba(255, 255, 255, 0.25);
+  }
+  30.6% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  45% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  45.1% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.45),
+      0 0 60px rgba(255, 255, 255, 0.25);
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.45),
+      0 0 60px rgba(255, 255, 255, 0.25);
+  }
+  55% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.45),
+      0 0 60px rgba(255, 255, 255, 0.25);
+  }
+  55.1% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  57% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  57.1% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.55),
+      0 0 60px rgba(255, 255, 255, 0.35);
+  }
+  60% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.55),
+      0 0 60px rgba(255, 255, 255, 0.35);
+  }
+  60.1% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  65% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  65.1% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.55),
+      0 0 60px rgba(255, 255, 255, 0.35), 0 0 100px rgba(255, 255, 255, 0.1);
+  }
+  75% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.55),
+      0 0 60px rgba(255, 255, 255, 0.35), 0 0 100px rgba(255, 255, 255, 0.1);
+  }
+  75.1% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  77% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  77.1% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.55),
+      0 0 60px rgba(255, 255, 255, 0.4), 0 0 110px rgba(255, 255, 255, 0.2),
+      0 0 100px rgba(255, 255, 255, 0.1);
+  }
+  85% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.55),
+      0 0 60px rgba(255, 255, 255, 0.4), 0 0 110px rgba(255, 255, 255, 0.2),
+      0 0 100px rgba(255, 255, 255, 0.1);
+  }
+  85.1% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  86% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  86.1% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.6),
+      0 0 60px rgba(255, 255, 255, 0.45), 0 0 110px rgba(255, 255, 255, 0.25),
+      0 0 100px rgba(255, 255, 255, 0.1);
+  }
+  100% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.6),
+      0 0 60px rgba(255, 255, 255, 0.45), 0 0 110px rgba(255, 255, 255, 0.25),
+      0 0 100px rgba(255, 255, 255, 0.1);
+  }
+}
+
+@keyframes text-flicker-in-glow {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  10.1% {
+    opacity: 1;
+    text-shadow: none;
+  }
+  10.2% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  20% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  20.1% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.25);
+  }
+  20.6% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  30% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  30.1% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.45),
+      0 0 60px rgba(255, 255, 255, 0.25);
+  }
+  30.5% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.45),
+      0 0 60px rgba(255, 255, 255, 0.25);
+  }
+  30.6% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  45% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  45.1% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.45),
+      0 0 60px rgba(255, 255, 255, 0.25);
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.45),
+      0 0 60px rgba(255, 255, 255, 0.25);
+  }
+  55% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.45),
+      0 0 60px rgba(255, 255, 255, 0.25);
+  }
+  55.1% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  57% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  57.1% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.55),
+      0 0 60px rgba(255, 255, 255, 0.35);
+  }
+  60% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.55),
+      0 0 60px rgba(255, 255, 255, 0.35);
+  }
+  60.1% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  65% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  65.1% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.55),
+      0 0 60px rgba(255, 255, 255, 0.35), 0 0 100px rgba(255, 255, 255, 0.1);
+  }
+  75% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.55),
+      0 0 60px rgba(255, 255, 255, 0.35), 0 0 100px rgba(255, 255, 255, 0.1);
+  }
+  75.1% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  77% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  77.1% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.55),
+      0 0 60px rgba(255, 255, 255, 0.4), 0 0 110px rgba(255, 255, 255, 0.2),
+      0 0 100px rgba(255, 255, 255, 0.1);
+  }
+  85% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.55),
+      0 0 60px rgba(255, 255, 255, 0.4), 0 0 110px rgba(255, 255, 255, 0.2),
+      0 0 100px rgba(255, 255, 255, 0.1);
+  }
+  85.1% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  86% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  86.1% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.6),
+      0 0 60px rgba(255, 255, 255, 0.45), 0 0 110px rgba(255, 255, 255, 0.25),
+      0 0 100px rgba(255, 255, 255, 0.1);
+  }
+  100% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.6),
+      0 0 60px rgba(255, 255, 255, 0.45), 0 0 110px rgba(255, 255, 255, 0.25),
+      0 0 100px rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* html,
+body {
+  background-color: black;
+  font-family: "Monoton", cursive;
+} */
+
+
+
+
+
+.dotted {
+  padding: calc(6vw / 5);
+  border-radius: calc(6vw / 4);
+  border: calc(6vw / 10) dotted #fff;
+  box-shadow: inset 0 0 calc(6vw / 10) gold,
+    inset 0 0 calc(6vw / 10) gold, 0 0 calc(6vw / 10) gold,
+    0 0 calc(6vw / 10) gold, 0 0 0 gold, 0 0 0 gold;
+}
+
+.neon {
+  /* width: 100%; */
+  /* height: auto; */
+  animation: flicker 2s linear infinite;
+}
+
+.neon2 {
+  width: 100%;
+  height: auto;
+  animation: flickerAlt 2s linear infinite;
+}
+
+@keyframes flicker {
+  from {
+    opacity: 1;
+  }
+
+  4% {
+    opacity: .9;
+  }
+
+  6% {
+    opacity: .85;
+  }
+
+  8% {
+    opacity: .95;
+  }
+
+  10% {
+    opacity: .90;
+  }
+
+  11% {
+    opacity: .922;
+  }
+
+  12% {
+    opacity: .9;
+  }
+
+  14% {
+    opacity: .95;
+  }
+
+  16% {
+    opacity: .98;
+  }
+
+  17% {
+    opacity: .9;
+  }
+
+  19% {
+    opacity: .93;
+  }
+
+  20% {
+    opacity: .99;
+  }
+
+  24% {
+    opacity: 1;
+  }
+
+  26% {
+    opacity: .94;
+  }
+
+  28% {
+    opacity: .98;
+  }
+
+  37% {
+    opacity: .93;
+  }
+
+  38% {
+    opacity: .5;
+  }
+
+  39% {
+    opacity: .96;
+  }
+
+  42% {
+    opacity: 1;
+  }
+
+  44% {
+    opacity: .97;
+  }
+
+  46% {
+    opacity: .94;
+  }
+
+  56% {
+    opacity: .9;
+  }
+
+  58% {
+    opacity: .9;
+  }
+
+  60% {
+    opacity: .99;
+  }
+
+  68% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: .9;
+  }
+
+  72% {
+    opacity: .95;
+  }
+
+  93% {
+    opacity: .93;
+  }
+
+  95% {
+    opacity: .95;
+  }
+
+  97% {
+    opacity: .93;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes flickerAlt {
+  from {
+    opacity: 1;
+  }
+
+  3% {
+    opacity: .95;
+  }
+
+  5% {
+    opacity: .9;
+  }
+
+  7% {
+    opacity: .98;
+  }
+
+  9% {
+    opacity: .92;
+  }
+
+  12% {
+    opacity: .85;
+  }
+
+  15% {
+    opacity: .9;
+  }
+
+  18% {
+    opacity: .95;
+  }
+
+  21% {
+    opacity: .98;
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  27% {
+    opacity: .94;
+  }
+
+  30% {
+    opacity: .99;
+  }
+
+  35% {
+    opacity: .93;
+  }
+
+  40% {
+    opacity: .5;
+  }
+
+  43% {
+    opacity: .96;
+  }
+
+  46% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .97;
+  }
+
+  53% {
+    opacity: .94;
+  }
+
+  60% {
+    opacity: .9;
+  }
+
+  64% {
+    opacity: .99;
+  }
+
+  68% {
+    opacity: 1;
+  }
+
+  72% {
+    opacity: .9;
+  }
+
+  76% {
+    opacity: .95;
+  }
+
+  85% {
+    opacity: .93;
+  }
+
+  90% {
+    opacity: .95;
+  }
+
+  94% {
+    opacity: .93;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+@keyframes flicker1 {
+  from { opacity: 1; }
+  4% { opacity: .9; }
+  7% { opacity: .85; }
+  10% { opacity: .95; }
+  13% { opacity: .9; }
+  17% { opacity: .92; }
+  20% { opacity: .95; }
+  25% { opacity: 1; }
+  30% { opacity: .94; }
+  35% { opacity: .98; }
+  40% { opacity: .93; }
+  45% { opacity: .99; }
+  50% { opacity: 1; }
+  55% { opacity: .9; }
+  60% { opacity: .95; }
+  70% { opacity: .92; }
+  80% { opacity: .97; }
+  90% { opacity: .95; }
+  to { opacity: 1; }
+}
+
+@keyframes flicker2 {
+  from { opacity: 1; }
+  5% { opacity: .97; }
+  12% { opacity: .95; }
+  18% { opacity: .96; }
+  25% { opacity: .98; }
+  32% { opacity: .99; }
+  40% { opacity: 1; }
+  50% { opacity: .97; }
+  60% { opacity: .96; }
+  70% { opacity: .98; }
+  85% { opacity: .95; }
+  90% { opacity: .97; }
+  to { opacity: 1; }
+}
+
+@keyframes flicker3 {
+  from { opacity: 1; }
+  3% { opacity: .9; }
+  8% { opacity: .5; }
+  12% { opacity: .95; }
+  20% { opacity: .92; }
+  27% { opacity: .99; }
+  33% { opacity: 1; }
+  40% { opacity: .93; }
+  50% { opacity: .97; }
+  60% { opacity: .9; }
+  70% { opacity: .95; }
+  85% { opacity: .92; }
+  to { opacity: 1; }
+}
+
+
+@keyframes flicker4 {
+  from { opacity: 1; }
+  10% { opacity: .95; }
+  20% { opacity: .98; }
+  30% { opacity: .96; }
+  40% { opacity: .99; }
+  50% { opacity: 1; }
+  60% { opacity: .97; }
+  70% { opacity: .95; }
+  80% { opacity: .98; }
+  90% { opacity: .99; }
+  to { opacity: 1; }
+}
+
+
+@keyframes flicker5 {
+  from { opacity: 1; }
+  2% { opacity: .92; }
+  6% { opacity: .96; }
+  11% { opacity: .5; }
+  16% { opacity: .97; }
+  22% { opacity: .93; }
+  28% { opacity: .98; }
+  35% { opacity: .9; }
+  45% { opacity: .95; }
+  55% { opacity: .92; }
+  65% { opacity: .99; }
+  75% { opacity: .94; }
+  85% { opacity: .97; }
+  92% { opacity: .93; }
+  to { opacity: 1; }
 }

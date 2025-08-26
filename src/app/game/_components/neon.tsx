@@ -163,7 +163,7 @@ const NeonSign = () => {
   };
 
   return (
-    <div className="container flex mx-auto font-primary text-4xl">
+    <div className="mx-auto text-center flex mx-auto font-neontubes text-4xl">
       {words.map((word, i) => (
         <div className="sign" key={i} aria-label={word.join('')}>
           {word.map((letter, j) => (

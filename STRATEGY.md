@@ -84,3 +84,10 @@ Language
 - Italiano
 
 Quit
+
+
+Loading game screen
+
+Tic Tac Toe logo will load up first, then the menu and buttons
+
+then at the end a cool graphic that will stay unpowered, nd highlight only once a while

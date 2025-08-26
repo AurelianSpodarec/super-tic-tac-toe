@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { Orbitron, Monoton } from "next/font/google";
+import { Orbitron, Monoton, Sacramento } from "next/font/google";
 
 import "./../styles/globals.css";
 
@@ -16,6 +16,15 @@ export const orbitron = Orbitron({
   variable: '--font-orbitron'
 })
 
+
+export const sacramento = Sacramento({
+  weight: ['400'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-sacramento'
+})
+
+
 export const monoton = Monoton({
   weight: ['400'],
   subsets: ['latin'],
@@ -23,10 +32,25 @@ export const monoton = Monoton({
   variable: '--font-monoton'
 })
 
+import localFont from "next/font/local"
+
+export const neontubes = localFont({
+  src: [
+    {
+      path: "./../../public/fonts/neontubes/neontubes-webfont.ttf",
+      weight: "400",
+      style: "normal",
+    },
+  ],
+  variable: "--font-neontubes",
+  display: "swap"
+})
+
+
 function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`antialiased ${orbitron.variable} ${monoton.variable}`}>
+      <body className={`antialiased ${orbitron.variable} ${monoton.variable} ${neontubes.variable} ${sacramento.variable}`}>
         {children}
       </body>
     </html>
