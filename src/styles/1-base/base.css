@@ -85,7 +85,18 @@ body {
 /* Theme 4 */
 /* style={{ backgroundImage: "url('https://idgrafica.com/wp-content/uploads/2022/09/black-vintage-background-hd-vintage-7553234-1.jpg')" }} */
 
+/* 
+.circular-fade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
 
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.75) 60%);
+} */
+
+
+/* Can be also used for Animations to go from Menu to GAME */
 .circular-fade {
   position: absolute;
   inset: 0;
@@ -95,6 +106,20 @@ body {
   background: radial-gradient(circle, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.75) 60%);
 }
 
+.circular-fade::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: black;
+  animation: fadeOut 0.2s ease forwards;
+}
 
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
 
-/*  */
+  to {
+    opacity: 0;
+  }
+}
