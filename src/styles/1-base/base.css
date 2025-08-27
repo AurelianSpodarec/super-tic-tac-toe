@@ -127,3 +127,27 @@ body {
     opacity: 0;
   }
 }
+
+/* NEW */
+/* CURTAIN */
+
+.theme-scene-menu {
+  background: #222;
+}
+
+.theme-bg-curtain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.75) 60%);
+}
+
+.theme-bg-curtain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: black;
+  animation: fadeOut 1.3s ease forwards;
+}

@@ -93,7 +93,7 @@ export function SceneTransitionManager({ currentSceneKey, getScene, audioAssets,
                   left: 0,
                   backgroundImage: `url(${backgroundAssets[scene.backgroundKey]})`,
                   backgroundPosition: "center",
-                  backgroundSize: "cover",
+               
                 }}
                 onAnimationComplete={() => setActiveBg("B")}
               />
@@ -113,7 +113,7 @@ export function SceneTransitionManager({ currentSceneKey, getScene, audioAssets,
                   left: 0,
                   backgroundImage: `url(${backgroundAssets[scene.backgroundKey]})`,
                   backgroundPosition: "center",
-                  backgroundSize: "cover",
+         
                 }}
                 onAnimationComplete={() => setActiveBg("A")}
               />
