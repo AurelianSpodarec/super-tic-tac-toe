@@ -14,25 +14,27 @@ const variants = {
 
 export function SceneTransitionManager() {
   const nextScene = useScene();
+  const [currentScene, setCurrentScene] = useState(nextScene);
   const [prevScene, setPrevScene] = useState<null | typeof nextScene>(null);
-  const [displayScene, setDisplayScene] = useState(nextScene);
   const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
-    if (!nextScene || nextScene.key === displayScene?.key) return;
+    if (!nextScene || nextScene.key === currentScene?.key) return;
 
-    setPrevScene(displayScene);
+    // set previous scene for exit animation
+    setPrevScene(currentScene);
     setExiting(true);
 
-    const duration = nextScene.transitionDuration ?? 300;
+    // use prevScene's duration so forward/back feel the same
+    const duration = currentScene?.transitionDuration ?? 300;
     const timer = setTimeout(() => {
-      setDisplayScene(nextScene);
+      setCurrentScene(nextScene);
       setPrevScene(null);
       setExiting(false);
     }, duration);
 
     return () => clearTimeout(timer);
-  }, [nextScene]);
+  }, [nextScene, currentScene]);
 
   return (
     <AnimatePresence mode="wait">
@@ -51,17 +53,17 @@ export function SceneTransitionManager() {
           </motion.div>
         )}
 
-        {displayScene && (
+        {currentScene && (
           <motion.div
-            key={`${displayScene.key}-display`}
+            key={`${currentScene.key}-current`}
             initial="initial"
             animate="animate"
             exit="exit"
-            variants={variants[displayScene.transitionType ?? "fade"]}
-            transition={{ duration: ((displayScene.transitionDuration ?? 300) / 1000) }}
+            variants={variants[currentScene.transitionType ?? "fade"]}
+            transition={{ duration: ((currentScene.transitionDuration ?? 300) / 1000) }}
             style={{ position: "absolute", width: "100%", height: "100%", top: 0, left: 0 }}
           >
-            <displayScene.component />
+            <currentScene.component />
           </motion.div>
         )}
       </SceneContext.Provider>

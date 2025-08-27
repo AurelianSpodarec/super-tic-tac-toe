@@ -30,7 +30,6 @@ export class SceneManager extends EventEmitter {
 
   back() {
     if (this.stack.length <= 1) return;
-    console.log("back")
     this.stack.pop();
     this.emit("sceneChange", this.getCurrentScene());
   }
