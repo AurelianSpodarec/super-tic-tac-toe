@@ -141,7 +141,7 @@ body {
   pointer-events: none;
   z-index: 0;
 
-  background: radial-gradient(circle, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.75) 60%);
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.85) 60%);
 }
 
 .theme-bg-curtain::before {
@@ -150,4 +150,22 @@ body {
   inset: 0;
   background: black;
   animation: fadeOut 1.3s ease forwards;
+}
+
+
+body {
+  cursor: url('https://cdn.custom-cursor.com/db/10402/32/starter-fairy-lights-cursor.png'), auto;
+}
+
+a, button, .custom-cursor {
+  cursor: url('https://cdn.custom-cursor.com/db/10401/32/starter-fairy-lights-pointer.png') 16 16, pointer!important;
+}
+.custom-cursor, 
+.custom-cursor * {
+  cursor: url('https://cdn.custom-cursor.com/db/10402/32/starter-fairy-lights-cursor.png') 16 16, auto;
+}
+
+.custom-cursor:hover, 
+.custom-cursor:hover * {
+  cursor: url('https://cdn.custom-cursor.com/db/10401/32/starter-fairy-lights-pointer.png') 16 16, pointer;
 }

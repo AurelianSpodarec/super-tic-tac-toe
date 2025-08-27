@@ -1,5 +1,6 @@
-// "use client"
+"use client"
 
+import ActionBar from "./_components/ActionBar"
 import Logo from "./_components/Logo"
 import { MenuButton } from "./_components/MenuButton"
 import Overlay from "./_components/Overlay"
@@ -315,30 +316,297 @@ import Overlay from "./_components/Overlay"
 //   )
 // }
 
-function SceneMenu() {
-  return (
-    <div className="h-full w-full theme-scene-menu" style={{ backgroundImage: "url('/images/brick.svg')" }}>
 
-      <div className="relative h-full w-full z-10 flex flex-col items-center pt-24">
-        <Logo />
-        <nav className="flex flex-col space-y-6 mb-10">
-          <MenuButton label="Single Player" />
-          <MenuButton label="Local Co-Op" />
-          <MenuButton label="Multiplayer" />
-          <MenuButton label="Leaderboard" />
-          <MenuButton label="Settings" />
-        </nav>
-        <span className="text-gray-200 text-xs">Made by Aurelian Spodarec 🎷🎵</span>
-      </div>
-      <Overlay />
-    </div>
-  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+
+// ------------------------
+// Scene Manager Types
+// ------------------------
+export interface Scene {
+  key: string;
+  component: ReactNode;
+  backgroundKey?: string;
+  onEnter?: () => void;
+  onExit?: () => void;
 }
 
+interface SceneManagerContextType {
+  stack: string[];
+  currentScene: string | null;
+  getScene: (key: string) => Scene | undefined;
+  switchScene: (key: string) => void;
+  pushScene: (key: string) => void;
+  popScene: () => void;
+  back: (overrideKey?: string) => void;
+}
+
+const SceneManagerContext = createContext<SceneManagerContextType | null>(null);
+export const useSceneManager = () => {
+  const ctx = useContext(SceneManagerContext);
+  if (!ctx) throw new Error("useSceneManager must be used inside SceneManagerProvider");
+  return ctx;
+};
+
+// ------------------------
+// Scene Manager Provider
+// ------------------------
+interface Props {
+  initialScene: string;
+  scenes: Scene[];
+  children: ReactNode;
+}
+
+export function SceneManagerProvider({ initialScene, scenes, children }: Props) {
+  const [stack, setStack] = useState<string[]>([initialScene]);
+
+  const getScene = (key: string) => scenes.find((s) => s.key === key);
+
+  const switchScene = (key: string) => {
+    const oldKey = stack[stack.length - 1];
+    getScene(oldKey)?.onExit?.();
+    getScene(key)?.onEnter?.();
+    setStack([key]);
+  };
+
+  const pushScene = (key: string) => {
+    getScene(key)?.onEnter?.();
+    setStack((prev) => [...prev, key]);
+  };
+
+  const popScene = () => {
+    if (stack.length <= 1) return;
+    const oldKey = stack[stack.length - 1];
+    getScene(oldKey)?.onExit?.();
+    setStack((prev) => prev.slice(0, -1));
+  };
+
+  const back = (overrideKey?: string) => {
+    if (overrideKey) {
+      const oldKey = stack[stack.length - 1];
+      getScene(oldKey)?.onExit?.();
+      getScene(overrideKey)?.onEnter?.();
+      setStack([overrideKey]);
+    } else {
+      popScene();
+    }
+  };
+
+  const currentScene = stack[stack.length - 1] || null;
+
+  return (
+    <SceneManagerContext.Provider
+      value={{ stack, getScene, switchScene, pushScene, popScene, back, currentScene }}
+    >
+      {children}
+    </SceneManagerContext.Provider>
+  );
+}
+
+// ------------------------
+// Original Background Components
+// ------------------------
+function BackgroundVariantOne({ children }: any) {
+  return (
+    <div
+      className="h-full w-full theme-scene-menu"
+      style={{ backgroundImage: "url('/images/brick.svg')" }}
+    >
+      <audio />
+      <div className="relative h-full w-full z-10 flex flex-col items-center">{children}</div>
+      <Overlay />
+    </div>
+  );
+}
+
+function BackgroundVariantTwo({ children }: any) {
+  return (
+    <div
+      className="h-full w-full bg-cover bg-no-repeat"
+      style={{ backgroundImage: "url('/images/bollywood.jpg')" }}
+    >
+      <audio />
+      <div className="relative h-full w-full z-10 flex flex-col items-center">{children}</div>
+      <Overlay />
+    </div>
+  );
+}
+
+
+// ------------------------
+// Background Renderer with Fade
+// ------------------------
+const backgroundMap: Record<string, React.ComponentType<{ children: ReactNode }>> = {
+  variantOne: BackgroundVariantOne,
+  variantTwo: BackgroundVariantTwo
+};
+
+function BackgroundRenderer({ backgroundKey, children }: { backgroundKey?: string; children?: ReactNode }) {
+  const [prevKey, setPrevKey] = useState<string | null>(null);
+  const [currentKey, setCurrentKey] = useState(backgroundKey);
+  const [fade, setFade] = useState(false);
+
+  useEffect(() => {
+    if (backgroundKey && backgroundKey !== currentKey) {
+      setPrevKey(currentKey);
+      setCurrentKey(backgroundKey);
+      setFade(true);
+
+      const timer = setTimeout(() => {
+        setPrevKey(null);
+        setFade(false);
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [backgroundKey]);
+
+  const PrevBackground = prevKey ? backgroundMap[prevKey] : null;
+  const CurrentBackground = currentKey ? backgroundMap[currentKey] : null;
+
+  return (
+    <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
+      {PrevBackground && (
+        <div className="absolute top-0 left-0 w-full h-full transition-opacity duration-500" style={{ opacity: fade ? 0 : 1 }}>
+          <PrevBackground>{children}</PrevBackground>
+        </div>
+      )}
+      {CurrentBackground && (
+        <div className="absolute top-0 left-0 w-full h-full transition-opacity duration-500" style={{ opacity: fade ? 1 : 1 }}>
+          <CurrentBackground>{children}</CurrentBackground>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ------------------------
+// Scene Renderer
+// ------------------------
+function SceneRenderer() {
+  const { currentScene, getScene } = useSceneManager();
+  if (!currentScene) return null;
+
+  const scene = getScene(currentScene);
+  return (
+    <div className="relative h-full w-full">
+      <BackgroundRenderer backgroundKey={scene?.backgroundKey}>{scene?.component}</BackgroundRenderer>
+    </div>
+  );
+}
+
+// ------------------------
+// Scenes
+// ------------------------
+function SceneMenu() {
+  const { pushScene } = useSceneManager();
+  return (
+    <div className="flex flex-col items-center pt-24">
+      <Logo />
+      <nav className="flex flex-col mb-10">
+        <MenuButton label="Single Player" isActive={true} onClick={() => pushScene("gameModes")} />
+        <MenuButton label="Local Co-Op" />
+        <MenuButton label="Multiplayer" />
+        <MenuButton label="Leaderboard" onClick={() => pushScene("leaderboard")} />
+        <MenuButton label="Settings" />
+      </nav>
+    </div>
+  );
+}
+
+
+const dataGameModes = [
+  {
+    name: "TicTacToe",
+    image: "/images/tic-tac-toe.svg",
+    modeId: "modeTicTacToe"
+  },
+  // {
+  //   name: "Super TicTacToe",
+  //   image: "https://i.imgur.com/DlWB4Ua.png",
+  //   modeId: "modeSuperTicTacToe"
+  // }
+]
+
+function SceneGameModes() {
+  const { pushScene } = useSceneManager();
+  return (
+    <div className="flex flex-col items-center justify-center h-full w-full text-white gap-4">
+
+      <h1 className="text-5xl">Game Modes</h1>
+      <div className="max-w-[700px] flex">
+        {dataGameModes.map((item) => {
+          return (
+            <button type="button" onClick={() => pushScene(item.modeId)} className="flex flex-col w-[300px] rounded bg-[#ffac99] p-4">
+              <img src={item.image} className="w-full h-full" />
+              <span className="text-black">{item.name}</span>
+            </button>
+          )
+        })}
+      </div>
+
+    </div>
+  );
+}
+
+function SceneLeaderboard() {
+  return (
+    <div className="flex items-center justify-center h-full w-full text-white text-2xl pt-24">
+      Leaderboard Scene
+    </div>
+  );
+}
+
+function SceneModeTicTacToe() {
+  return (
+    <div className="flex items-center justify-center h-full w-full text-white text-2xl pt-24">
+      Tic Tac Toe Scene
+    </div>
+  );
+}
+
+function SceneModeSuperTicTacToe() {
+  return (
+    <div className="flex items-center justify-center h-full w-full text-white text-2xl pt-24">
+      Super Tic Tac Toe Scene
+    </div>
+  );
+}
+
+// ------------------------
+// Scene Config
+// ------------------------
+const scenes: Scene[] = [
+  { key: "menu", component: <SceneMenu />, backgroundKey: "variantOne" },
+  { key: "gameModes", component: <SceneGameModes />, backgroundKey: "variantOne" },
+  { key: "leaderboard", component: <SceneLeaderboard />, backgroundKey: "variantTwo" },
+  { key: "modeTicTacToe", component: <SceneModeTicTacToe />, backgroundKey: "variantTwo" },
+  { key: "modeSuperTicTacToe", component: <SceneModeSuperTicTacToe />, backgroundKey: "variantTwo" }
+];
+
+// ------------------------
+// App
+// ------------------------
 export default function App() {
   return (
-    <div className="h-full w-full">
-      <SceneMenu />
-    </div>
-  )
+    <SceneManagerProvider initialScene="menu" scenes={scenes}>
+      <div className="relative h-screen w-screen">
+        <SceneRenderer />
+      </div>
+    </SceneManagerProvider>
+  );
 }

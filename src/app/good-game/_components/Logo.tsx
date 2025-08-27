@@ -4,7 +4,7 @@ import NeonText from "./NeonText";
 
 function Logo() {
   return (
-    <div className="text-center text-8xl  mb-14 font-monoton font-neontubes ">
+    <div className=" animate-fade-in text-center text-8xl  mb-14  font-neontubess font-monoton">
       <NeonText text={`JazzTacToe`} />
     </div>
   );
