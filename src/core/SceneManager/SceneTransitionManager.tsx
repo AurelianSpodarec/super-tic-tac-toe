@@ -124,3 +124,4 @@ export function SceneTransitionManager({ currentSceneKey, getScene, audioAssets,
     </div>
   );
 }
+

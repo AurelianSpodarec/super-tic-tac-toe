@@ -11,8 +11,8 @@ function SceneMenu() {
           <Logo />
           <nav className="flex flex-col space-y-6">
             <MenuButton label="Single Player" onClick={() => sceneManager.push("game")} />
-            <MenuButton label="Local Co-Op" onClick={() => sceneManager.push("gameplay")} />
-            <MenuButton label="Multiplayer" onClick={() => sceneManager.push("gameplay")} />
+            <MenuButton label="Local Co-Op" onClick={() => sceneManager.push("test")} />
+            <MenuButton label="Multiplayer" onClick={() => sceneManager.push("game")} />
             <MenuButton label="Leaderboard" onClick={() => sceneManager.push("leaderboard")} />
             <MenuButton label="Settings" onClick={() => sceneManager.push("settings")} />
           </nav>

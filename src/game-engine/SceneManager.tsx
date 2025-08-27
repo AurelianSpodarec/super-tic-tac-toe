@@ -6,6 +6,9 @@ export interface SceneConfig {
   component: React.ComponentType<any>;
   transitionType?: "fade" | "slideLeft" | "slideRight" | "scale";
   transitionDuration?: number; // ms
+  preload?: () => Promise<void>; // optional preload
+  backgroundKey?: string; // identifies shared background
+  backgroundImage?: string; // optional direct image url
 }
 
 export class SceneManager extends EventEmitter {
@@ -16,15 +19,26 @@ export class SceneManager extends EventEmitter {
     this.scenes[scene.key] = scene;
   }
 
-  start(key: string) {
+  async start(key: string) {
     if (!this.scenes[key]) throw new Error(`Scene "${key}" not registered`);
+
+    const scene = this.scenes[key];
     this.stack = [key];
+
+    // preload scene if defined
+    if (scene.preload) await scene.preload();
+
     this.emit("sceneChange", this.getCurrentScene());
   }
 
-  push(key: string) {
+  async push(key: string) {
     if (!this.scenes[key]) throw new Error(`Scene "${key}" not registered`);
+
+    const scene = this.scenes[key];
     this.stack.push(key);
+
+    if (scene.preload) await scene.preload();
+
     this.emit("sceneChange", this.getCurrentScene());
   }
 

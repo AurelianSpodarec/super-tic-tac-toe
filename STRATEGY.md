@@ -90,4 +90,18 @@ Loading game screen
 
 Tic Tac Toe logo will load up first, then the menu and buttons
 
-then at the end a cool graphic that will stay unpowered, nd highlight only once a while
+then at the end a cool graphic that will stay unpowered, nd highlight only once a 
+
+---
+Way overcomplicating wtf was I doing at night
+
+// Define the theme
+// Have some global management 
+
+// Define some sort of 'exist'
+// On exist, do XYZ
+
+// No scene managemenet and loading, that seems overcomplicated for a React game
+// If you define everything in one scene, that will be easy'
+// Then just create a navigation management, instead of scene loading and unloading (although that needs a transition, but can do granual level 
+// and with a hook say what needs to happen when transition happens to start or exist)
