@@ -31,6 +31,7 @@ body {
   --font-monoton: "Monoton", sans-serif;
   --font-neontubes: "Neontubes", sans-serif;
   --font-sacramento: "Sacramento", sans-serif;
+  --font-quickdand: "Quicksand";
 }
 
 @theme {
@@ -152,24 +153,26 @@ body {
   animation: fadeOut 1.3s ease forwards;
 }
 
-
-body {
+/* https://sweezy-cursors.com/cursor/retro-signboard-lights/ */
+*, body {
   /* cursor: url('https://cdn.custom-cursor.com/db/10402/32/starter-fairy-lights-cursor.png'), auto; */
-  cursor: url('/images/cursor/neo-cursor.png'), auto;
+  /* cursor: url('/images/cursor/neo-cursor.png'), auto; */
+  /* cursor: url('https://sweezy-cursors.com/wp-content/uploads/cursor/auto-draft/retro-signboard-lights-cursor-32x32.png'), auto; */
+  cursor: url('https://cdn.custom-cursor.com/db/6716/32/rapper-j-cole-and-crown-logo-cursor.png'), auto;
 }
 
-a, button, .custom-cursor {
-  cursor: url('/images/cursor/neo-pointer.png') 16 16, pointer!important;
+/* a, button, .custom-cursor {
+  cursor: url('https://cdn.custom-cursor.com/db/6715/32/rapper-j-cole-and-crown-logo-pointer.png') 16 16, pointer!important;
 }
 .custom-cursor, 
 .custom-cursor * {
-  cursor: url('/images/cursor/neo-pointer.png') 16 16, auto;
+  cursor: url('https://cdn.custom-cursor.com/db/6715/32/rapper-j-cole-and-crown-logo-pointer.png') 16 16, auto;
 }
 
 .custom-cursor:hover, 
 .custom-cursor:hover * {
-  cursor: url('/images/cursor/neo-pointer.png') 16 16, pointer;
-}
+  cursor: url('https://cdn.custom-cursor.com/db/6715/32/rapper-j-cole-and-crown-logo-pointer.png') 16 16, pointer;
+} */
 
 .neon-line {
   stroke: #444; /* off gray */
