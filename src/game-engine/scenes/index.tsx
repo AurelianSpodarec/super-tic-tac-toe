@@ -9,11 +9,6 @@ import SceneTest from "./Test";
 sceneManager.register({
   key: "menu",
   component: SceneMenu,
-  transitionType: "fade",
-  backgroundKey: "menuGroup",
-  preload: async () => {
-    // await new Promise(res => setTimeout(res, 500)); // simulate asset loading
-  },
 });
 
 sceneManager.register({ key: "test", backgroundKey: "menuGroup",component: SceneTest, transitionType: "fade", transitionDuration: 300 });

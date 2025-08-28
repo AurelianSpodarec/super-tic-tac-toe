@@ -1,14 +1,22 @@
 "use client";
 
+import { useSceneManager } from "../../_engine/SceneManager";
+
+;
 interface Props {
-  overrideScene?: string;   // optional scene key to go back to
+  overrideScene?: string;
   children?: React.ReactNode;
 }
 
 function BackButton({ overrideScene, children }: Props) {
+  const { back, getScene, isMenuScene } = useSceneManager();
 
+  console.log("mmm", isMenuScene)
+  if(isMenuScene) {
+    return <></>
+  }
   return (
-    <button>
+    <button onClick={() => back()}>
       <span className="sr-only">Go Back To Previous Scene</span>
       {children || (
         <div>

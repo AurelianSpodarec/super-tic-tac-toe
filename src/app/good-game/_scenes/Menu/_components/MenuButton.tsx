@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from "react";
-import NeonText from "./NeonText";
+import NeonText from "../../../_components/NeonText";
 
 interface Props {
   label: string;
@@ -28,10 +28,13 @@ export function MenuButton({ label, children, onClick, isActive }: Props) {
       <button
         type="button"
         onClick={onClick}
-        // onMouseEnter={playSound}
-        // onMouseDown={() => { playSound(); onClick?.(); }}
-        className="flex items-center justify-center text-3xl px-14 custom-cursor py-4
-        animate-fade-in-delay opacity-0
+        className="
+          flex items-center justify-center
+          text-[clamp(1.5rem,2.5vw,2rem)]
+          px-[clamp(1.5rem,4vw,3rem)]
+          py-[clamp(0.75rem,2vw,1.5rem)]
+          custom-cursor
+          animate-fade-in-delay opacity-0
         ">
         <span className={`absolute mx-auto flex border pointer-none ${isActive ? "blur-xl pure-glow" : "opacity-0"}  bg-gradient-to-r from-[#b699ff] via-[#ff99e4] to-[#ff99c9] bg-clip-text box-content font-extrabold text-transparent select-none`}>
           {children || label}
@@ -39,8 +42,8 @@ export function MenuButton({ label, children, onClick, isActive }: Props) {
         <span
           className="custom-cursor top-0 h-auto justify-center flex bg-gradient-to-r items-center from-[#b699ff] via-[#ff99e4] to-[#ff99c9] bg-clip-text font-extrabold text-transparent select-none pointer-none">
           {/* <NeonText text={ */}
-            {children || label}
-            {/* }/> */}
+          {children || label}
+          {/* }/> */}
         </span>
       </button>
     </>

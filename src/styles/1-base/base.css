@@ -154,18 +154,42 @@ body {
 
 
 body {
-  cursor: url('https://cdn.custom-cursor.com/db/10402/32/starter-fairy-lights-cursor.png'), auto;
+  /* cursor: url('https://cdn.custom-cursor.com/db/10402/32/starter-fairy-lights-cursor.png'), auto; */
+  cursor: url('/images/cursor/neo-cursor.png'), auto;
 }
 
 a, button, .custom-cursor {
-  cursor: url('https://cdn.custom-cursor.com/db/10401/32/starter-fairy-lights-pointer.png') 16 16, pointer!important;
+  cursor: url('/images/cursor/neo-pointer.png') 16 16, pointer!important;
 }
 .custom-cursor, 
 .custom-cursor * {
-  cursor: url('https://cdn.custom-cursor.com/db/10402/32/starter-fairy-lights-cursor.png') 16 16, auto;
+  cursor: url('/images/cursor/neo-pointer.png') 16 16, auto;
 }
 
 .custom-cursor:hover, 
 .custom-cursor:hover * {
-  cursor: url('https://cdn.custom-cursor.com/db/10401/32/starter-fairy-lights-pointer.png') 16 16, pointer;
+  cursor: url('/images/cursor/neo-pointer.png') 16 16, pointer;
+}
+
+.neon-line {
+  stroke: #444; /* off gray */
+  stroke-width: 6;
+  stroke-linecap: round;
+  opacity: 0.15;
+}
+
+.neon-line.on {
+  stroke: #aaa;
+  opacity: 1;
+  animation: neon-flicker 0.8s ease forwards;
+}
+
+@keyframes neon-flicker {
+  0% { opacity: 0.2; filter: drop-shadow(0 0 0px #0ff); }
+  20% { opacity: 1; filter: drop-shadow(0 0 4px #0ff); }
+  35% { opacity: 0.3; }
+  50% { opacity: 1; filter: drop-shadow(0 0 6px #0ff); }
+  65% { opacity: 0.6; }
+  80% { opacity: 1; filter: drop-shadow(0 0 10px #0ff); }
+  100% { opacity: 1; stroke: #ccc; filter: drop-shadow(0 0 12px #0ff); }
 }

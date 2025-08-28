@@ -1,6 +1,7 @@
 import BackButton from "./BackButton"
 
 function ActionBar() {
+
   return (
     <header className="absolute top-0 left-0 right-0 w-full py-3 px-4 z-20">
       <div className="flex justify-between">
