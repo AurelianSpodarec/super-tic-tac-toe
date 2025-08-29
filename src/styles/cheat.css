@@ -101,7 +101,7 @@
   position: absolute;
   inset: 0;
   background: black;
-  animation: fadeOut 1.3s ease forwards;
+  animation: fadeOut 2s ease forwards;
 }
 
 
