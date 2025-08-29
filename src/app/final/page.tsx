@@ -8,10 +8,50 @@ function SceneGame() {
   )
 }
 
+
+const dataGameModes = [
+  {
+    name: "TicTacToe",
+    image: "/images/tic-tac-toe.svg",
+    modeId: "modeTicTacToe"
+  },
+  {
+    name: "Super TicTacToe",
+    image: "https://i.imgur.com/DlWB4Ua.png",
+    modeId: "modeSuperTicTacToe"
+  }
+]
+
+function GameModeItem({ item }: any) {
+  return (
+    <div className="box rounded-lg h-[300px] w-[300px] neon2 hover:scale-105 transition duration-75 ease-in-out">
+      <div className="box-container h-[300px] w-[300px] bg-white rounded-lg">
+        <img src={item.image} className="w-full h-full rounded-lg" />
+        <span>{item.name}</span>
+        <span>Game Ruless</span>
+      </div>
+    </div>
+  )
+}
+
 function SceneGameModes() {
   return (
     <div>
-
+      <div className="text-center -mt-32">
+        
+        {/* <span className="neon relative font-bold font-sacramento text-yellow-400 neon-logo text-[clamp(0.5rem,2vw,4rem)]">By Aurelian Spodarec</span> */}
+        <h1 className="neon relative font-bold text-yellow-400 neon-logo text-[clamp(1rem,3.5vw,3rem)]">
+          Choose your game Mode
+        </h1>
+        
+      </div>
+      <div className="flex space-x-4 max-w-[900px] mt-10">
+        {dataGameModes.map((item) => {
+          return (
+            <GameModeItem item={item} />
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -54,7 +94,7 @@ function MenuButton({ text, isActive, onMouseEnter, onSelect }) {
   return (
     <button
       type="button"
-      className={`text-[#ef476f] text-[clamp(1.5rem,2.5vw,2rem)] ${isActive ? "active-item neon2 scale-105" : ""}`}
+      className={`text-[#ef476f] text-[clamp(1.5rem,2.5vw,2rem)] outline-none ${isActive ? "active-item neon2 scale-105" : ""}`}
       onMouseEnter={onMouseEnter}
       onClick={onSelect}
       aria-current={isActive ? "true" : undefined}
@@ -67,7 +107,7 @@ function MenuButton({ text, isActive, onMouseEnter, onSelect }) {
 
 
 function SceneStart() {
-  const menuItems = ["Singleplayer", "Local Co-Op", "Multiplayer", "Leaderboard"];
+  const menuItems = ["Singleplayer", "Local Co-Op", "Multiplayer", "Leaderboard", "Credits"];
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -98,48 +138,51 @@ function SceneStart() {
   };
 
   return (
-    <div className="relative h-screen w-full bg-[#1a1a1b] flex flex-col items-center justify-center overflow-hidden">
+    <div className="relative h-full min-h-screen w-full bg-[#1a1a1b] flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto" >
+
       <div
-        className="absolute inset-0 opacity-20 pointer-events-none select-none"
+        className="fixed top-0 bottom-0 h-full inset-0 opacity-30 pointer-events-none select-none"
         style={{ backgroundImage: "url('/images/brick.svg')" }}
-      ></div>
+      />
+      <div className="theme-bg-curtain relative h-full -z-10 pointer-events-none select-none" />
 
-      <audio src="/audio/relaxing-jazz-saxophone.mp3" autoPlay />
-
-      <div className="text-center -mt-32">
-        <span className="neon relative font-bold font-sacramento text-yellow-400 neon-logo text-[clamp(0.5rem,2vw,3rem)]">By Aurelian Spodarec</span>
-        <h1 className="neon relative font-bold text-yellow-400 neon-logo text-[clamp(2rem,5vw,5rem)]">
-          JazzTacToe
-        </h1>
+      <div>
+        <audio src="/audio/relaxing-jazz-saxophone.mp3" loop autoPlay controls aria-hidden="true" aria-label="Background jazz music." className="sr-only">
+          <p className="sr-only">Background jazz saxophone instrumental, no lyrics.</p>
+        </audio>
       </div>
 
+      <div className="relative">
+        <div className="text-center -mt-32 opacity-90">
+          <span className="neon relative font-bold font-sacramento neon-logo-2 text-yellow-400 neon-logo text-[clamp(0.5rem,2vw,4rem)]">By Aurelian Spodarec</span>
+          <h1 className="neon relative font-bold text-yellow-400 neon-logo-2 text-[clamp(2rem,5vw,5rem)]">
+            JazzTacToe
+          </h1>
+        </div>
+        <nav className="flex flex-col mt-10">
+          {menuItems.map((text, index) => (
+            <MenuButton
+              key={text}
+              text={text}
+              isActive={index === activeIndex}
+              onMouseEnter={() => setActiveIndex(index)}
+              onSelect={() => handleSelect(index)}
+            />
+          ))}
+        </nav>
+        {/* <SceneGameModes /> */}
+      </div>
 
-      <nav className="flex flex-col mt-10">
-        {menuItems.map((text, index) => (
-          <MenuButton
-            key={text}
-            text={text}
-            isActive={index === activeIndex}
-            onMouseEnter={() => setActiveIndex(index)}
-            onSelect={() => handleSelect(index)}
-          />
-        ))}
-      </nav>
-
-      <div className="theme-bg-curtain relative -z-10 pointer-events-none select-none" />
     </div>
   );
 }
 
-
 function Page() {
   return (
-    <div className="h-full w-full overflow-hidden">
-      <SceneStart />
-    </div>
+    // <div className="h-full w-full">
+    <SceneStart />
+    // </div>
   );
 }
 
 export default Page
-
-// background: radial-gradient(circle at center, rgba(26, 26, 46, 0.1) 40%, rgba(10, 10, 15, 1) 80%);

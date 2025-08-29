@@ -11,6 +11,49 @@
 /* Glow Background */
 
 
+.glow-icon {
+  font-size: 3.5rem;
+  color: #FFDD1B;
+  margin: 1rem;
+
+  :hover {
+    cursor: pointer;
+    color: #FFFFFF;
+    animation: animation-glow-icon 1.5s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes animation-glow-icon {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #FFDD1B, 0 0 70px #FFDD1B, 0 0 80px #FFDD1B, 0 0 100px #FFDD1B, 0 0 150px #FFDD1B;
+  }
+
+  to {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #FFDD1B, 0 0 35px #FFDD1B, 0 0 40px #FFDD1B, 0 0 50px #FFDD1B, 0 0 75px #FFDD1B;
+  }
+}
+
+.box {
+  position: relative;
+}
+
+/* Glow border layer */
+.box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #ef476f;
+  /* border glow color */
+  filter: blur(10px);
+  z-index: 0;
+}
+
+/* Inner background */
+.box .box-container {
+  position: absolute;
+}
+
 /*  */
 
 .text-glow {
@@ -38,6 +81,11 @@
   mix-blend-mode: screen;
 }
 
+.neon-logo-2 {
+  text-shadow: 0 0 5px #ffa500, 0 0 15px #ffa500, 0 0 20px #ffa500, 0 0 40px #ffa500, 0 0 60px #ff0000, 0 0 10px #ff8d00, 0 0 98px #ff0000;
+  color: #fff6a9;
+  mix-blend-mode: screen;
+}
 
 .theme-bg-curtain {
   position: absolute;

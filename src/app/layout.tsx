@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { Orbitron, Monoton, Sacramento, Quicksand } from "next/font/google";
+import { Orbitron, Monoton, Sacramento, Quicksand, Comfortaa } from "next/font/google";
 
 import "./../styles/globals.css";
 
@@ -40,6 +40,14 @@ export const quicksand = Quicksand({
   variable: '--font-monoton'
 })
 
+export const comfortaa = Comfortaa({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-comfortaa'
+})
+
+
 import localFont from "next/font/local"
 
 export const neontubes = localFont({
@@ -58,7 +66,7 @@ export const neontubes = localFont({
 function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`antialiased ${orbitron.variable} ${monoton.variable} ${neontubes.variable} ${quicksand.variable} ${sacramento.variable}`}>
+      <body className={`antialiased ${orbitron.variable} ${comfortaa.variable} ${monoton.variable} ${neontubes.variable} ${quicksand.variable} ${sacramento.variable}`}>
         {children}
       </body>
     </html>
