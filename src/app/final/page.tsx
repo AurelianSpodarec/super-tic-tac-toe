@@ -153,7 +153,7 @@ function SceneStart() {
       </div>
 
       <div className="relative">
-        <div className="text-center -mt-32 opacity-90">
+        <div className="text-center -mt-12 opacity-90">
           <span className="neon relative font-bold font-sacramento neon-logo-2 text-yellow-400 neon-logo text-[clamp(0.5rem,2vw,4rem)]">By Aurelian Spodarec</span>
           <h1 className="neon relative font-bold text-yellow-400 neon-logo-2 text-[clamp(2rem,5vw,5rem)]">
             JazzTacToe
@@ -170,6 +170,10 @@ function SceneStart() {
             />
           ))}
         </nav>
+        <div className="text-gray-200 mt-20 text-center">
+          {/* Anyone said Jazz? TicTaCToe made fun ;)  */}
+          Anyone say jazz? TicTacToe just got funky ;)
+        </div>
         {/* <SceneGameModes /> */}
       </div>
 
