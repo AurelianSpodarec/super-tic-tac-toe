@@ -16,7 +16,6 @@ export const orbitron = Orbitron({
   variable: '--font-orbitron'
 })
 
-
 export const sacramento = Sacramento({
   weight: ['400'],
   subsets: ['latin'],
@@ -24,14 +23,12 @@ export const sacramento = Sacramento({
   variable: '--font-sacramento'
 })
 
-
 export const monoton = Monoton({
   weight: ['400'],
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-monoton'
 })
-
 
 export const quicksand = Quicksand({
   weight: ['400', '500', '600', '700'],
@@ -46,7 +43,6 @@ export const comfortaa = Comfortaa({
   display: 'swap',
   variable: '--font-comfortaa'
 })
-
 
 import localFont from "next/font/local"
 

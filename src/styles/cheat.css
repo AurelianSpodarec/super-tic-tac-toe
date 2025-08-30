@@ -104,6 +104,122 @@
   animation: fadeOut 2s ease forwards;
 }
 
+.neon-glow {
+  filter: drop-shadow(0 0 2px currentColor)
+          drop-shadow(0 0 4px currentColor);
+}
+
+
+/* @import url("https://fonts.googleapis.com/css2?family=Turret+Road&display=swap"); */
+
+
+/* Glow for text */
+.glow-text {
+  display: flex;
+}
+
+.glow-text__letter {
+  position: relative;
+  display: inline-block;
+  width: 1ch;
+}
+
+.glow-text__layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Glow for arbitrary elements (SVG) */
+.glow-wrapper {
+  display: inline-block;
+}
+
+.glow-layer {
+  mix-blend-mode: screen; /* optional: makes glow brighter */
+}
+
+
+
+
+
+
+:root {
+  --black: #222332;
+  --white: #fff;
+  --light-blue: #d6787fs;
+}
+
+body {
+  background: var(--black);
+  font-family: "Turret Road", system-ui;
+}
+
+.text {
+  display: flex;
+  font-size: 10rem;
+  color: var(--white);
+  position: relative;
+}
+
+.text__letter {
+  position: relative;
+}
+
+.text__letter--behind-1 {
+  position: absolute;
+  top: 0;
+  font-weight: 800;
+  color: var(--light-blue);
+  filter: blur(24px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.text__letter--behind-2 {
+  position: absolute;
+  top: 0;
+  font-weight: 800;
+  color: var(--light-blue);
+  filter: blur(10px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.text__letter--core {
+  position: absolute;
+  top: 0;
+  font-weight: 600;
+  color: var(--light-blue);
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.text__letter--over-1 {
+  position: absolute;
+  top: 0;
+  font-weight: 100;
+  color: var(--white);
+  opacity: 0.8;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
+.text__letter--over-2 {
+  position: absolute;
+  top: 0;
+  font-weight: 100;
+  color: var(--white);
+  filter: blur(2px);
+  opacity: 0.9;
+  pointer-events: none;
+  user-select: none;
+  z-index: 2;
+}
 
 
 
