@@ -2,25 +2,19 @@
  * # Base
  * ============================================================================ */
 
+/* https://sweezy-cursors.com/cursor/retro-signboard-lights/ */
+*,
+body {
+  cursor: url('https://cdn.custom-cursor.com/db/6716/32/rapper-j-cole-and-crown-logo-cursor.png'), auto;
+}
+
 html,
 body {
   height: 100%;
   width: 100%;
-  /* font-family: "Orbitron"; */
   font-family: "Neontubes";
   color: white;
-
-
-}
-
-.body-game {
-  /* -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: #000
-    url(https://idgrafica.com/wp-content/uploads/2022/09/black-vintage-background-hd-vintage-7553234-1.jpg)
-    center no-repeat;
-  background-color: black;
-  margin: 0; */
+  body: black;
 }
 
 @theme {
@@ -44,33 +38,68 @@ body {
   /* --font- */
 }
 
+.theme-bg-curtain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.85) 60%);
+}
+
+.theme-bg-curtain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: black;
+  animation: fadeOut 2s ease forwards;
+}
+
+
+/* THEMES */
+.theme-bg-menu-curtain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) -40%, rgba(0, 0, 0, .85) 50%);
+}
+
+.theme-bg-menu-curtain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: black;
+  animation: fadeOut 3.2s ease forwards;
+}
+
 
 /* BACKGROUND THEME 1 */
-/* background-color: #222222;
-  background: repeating-linear-gradient(
-      45deg,
+.bg-theme-1 {
+  background-color: #222222;
+  background: repeating-linear-gradient(45deg,
       #2b2b2b 0%,
       #2b2b2b 10%,
       #222222 0%,
-      #222222 50%
-    )
-    0 / 15px 15px; */
+      #222222 50%) 0 / 15px 15px;
+}
 
+.bg-theme-2 {
+  background: #112 url(//images.weserv.nl/?url=i.imgur.com/6QJjYMe.jpg) center no-repeat;
+  background-size: cover;
+  margin: 0
+}
 
-/* BG THEME 2 */
-/* background: #112 url(//images.weserv.nl/?url=i.imgur.com/6QJjYMe.jpg)  center no-repeat;
-  background-size:cover;
-  margin:0 */
+.bg-theme-3 {
+  background: #222;
+  background-image: repeating-linear-gradient(to bottom,
+      transparent 7px,
+      rgba(0, 0, 0, 0.8) 9px,
+      rgba(0, 0, 0, 0.8) 13px,
+      transparent 13px);
+}
 
-/* BG THEME 3 */
-/* background: #222;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 7px,
-    rgba(0, 0, 0, 0.8) 9px,
-    rgba(0, 0, 0, 0.8) 13px,
-    transparent 13px
-  ); */
 
 .theme-4 {
   background: #222;
@@ -79,26 +108,13 @@ body {
       rgba(0, 0, 0, 0.8) 9px,
       rgba(0, 0, 0, 0.8) 13px,
       transparent 13px); */
-  /* background-image: url("https://imgs.search.brave.com/1Lj0IJ_5o7xH0ljM_bgPaEtFRZloPtCor22Yp-VuT4I/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudW5zcGxhc2gu/Y29tL3Bob3RvLTE2/NDUxNDM0NTIwOTMt/YzdlMzE4MTE2YmVh/P2ZtPWpwZyZxPTYw/Jnc9MzAwMCZpeGxp/Yj1yYi00LjEuMCZp/eGlkPU0zd3hNakEz/ZkRCOE1IeHpaV0Z5/WTJoOE9IeDhZbkpw/WTJzbE1qQmlZV05y/WjNKdmRXNWtmR1Z1/ZkRCOGZEQjhmSHd3") */
-  /* background-image: url('data:image/svg+xml,%3Csvg width="42" height="44" viewBox="0 0 42 44" xmlns="http://www.w3.org/2000/svg"%3E%3Cg id="Page-1" fill="none" fill-rule="evenodd"%3E%3Cg id="brick-wall" fill="%239C92AC" fill-opacity="0.4"%3E%3Cpath d="M0 0h42v44H0V0zm1 1h40v20H1V1zM0 23h20v20H0V23zm22 0h20v20H22V23z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E'); */
+  background-image: url("https://imgs.search.brave.com/1Lj0IJ_5o7xH0ljM_bgPaEtFRZloPtCor22Yp-VuT4I/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudW5zcGxhc2gu/Y29tL3Bob3RvLTE2/NDUxNDM0NTIwOTMt/YzdlMzE4MTE2YmVh/P2ZtPWpwZyZxPTYw/Jnc9MzAwMCZpeGxp/Yj1yYi00LjEuMCZp/eGlkPU0zd3hNakEz/ZkRCOE1IeHpaV0Z5/WTJoOE9IeDhZbkpw/WTJzbE1qQmlZV05y/WjNKdmRXNWtmR1Z1/ZkRCOGZEQjhmSHd3")
+
 }
 
 
-/* Theme 4 */
-/* style={{ backgroundImage: "url('https://idgrafica.com/wp-content/uploads/2022/09/black-vintage-background-hd-vintage-7553234-1.jpg')" }} */
-
-/* 
-.circular-fade {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-
-  background: radial-gradient(circle, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.75) 60%);
-} */
-
-
 /* Can be also used for Animations to go from Menu to GAME */
+
 .circular-fade {
   position: absolute;
   inset: 0;
@@ -116,9 +132,7 @@ body {
   animation: fadeOut 0.2s ease forwards;
 }
 
-body {
-  color: black;
-}
+
 
 @keyframes fadeOut {
   from {
@@ -137,46 +151,12 @@ body {
   background: #222;
 }
 
-.theme-bg-curtain {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
 
-  background: radial-gradient(circle, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.85) 60%);
-}
-
-.theme-bg-curtain::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: black;
-  animation: fadeOut 1.3s ease forwards;
-}
-
-/* https://sweezy-cursors.com/cursor/retro-signboard-lights/ */
-*, body {
-  /* cursor: url('https://cdn.custom-cursor.com/db/10402/32/starter-fairy-lights-cursor.png'), auto; */
-  /* cursor: url('/images/cursor/neo-cursor.png'), auto; */
-  /* cursor: url('https://sweezy-cursors.com/wp-content/uploads/cursor/auto-draft/retro-signboard-lights-cursor-32x32.png'), auto; */
-  cursor: url('https://cdn.custom-cursor.com/db/6716/32/rapper-j-cole-and-crown-logo-cursor.png'), auto;
-}
-
-/* a, button, .custom-cursor {
-  cursor: url('https://cdn.custom-cursor.com/db/6715/32/rapper-j-cole-and-crown-logo-pointer.png') 16 16, pointer!important;
-}
-.custom-cursor, 
-.custom-cursor * {
-  cursor: url('https://cdn.custom-cursor.com/db/6715/32/rapper-j-cole-and-crown-logo-pointer.png') 16 16, auto;
-}
-
-.custom-cursor:hover, 
-.custom-cursor:hover * {
-  cursor: url('https://cdn.custom-cursor.com/db/6715/32/rapper-j-cole-and-crown-logo-pointer.png') 16 16, pointer;
-} */
+/* NEON LINE */
 
 .neon-line {
-  stroke: #444; /* off gray */
+  stroke: #444;
+  /* off gray */
   stroke-width: 6;
   stroke-linecap: round;
   opacity: 0.15;
@@ -189,11 +169,37 @@ body {
 }
 
 @keyframes neon-flicker {
-  0% { opacity: 0.2; filter: drop-shadow(0 0 0px #0ff); }
-  20% { opacity: 1; filter: drop-shadow(0 0 4px #0ff); }
-  35% { opacity: 0.3; }
-  50% { opacity: 1; filter: drop-shadow(0 0 6px #0ff); }
-  65% { opacity: 0.6; }
-  80% { opacity: 1; filter: drop-shadow(0 0 10px #0ff); }
-  100% { opacity: 1; stroke: #ccc; filter: drop-shadow(0 0 12px #0ff); }
+  0% {
+    opacity: 0.2;
+    filter: drop-shadow(0 0 0px #0ff);
+  }
+
+  20% {
+    opacity: 1;
+    filter: drop-shadow(0 0 4px #0ff);
+  }
+
+  35% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 6px #0ff);
+  }
+
+  65% {
+    opacity: 0.6;
+  }
+
+  80% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px #0ff);
+  }
+
+  100% {
+    opacity: 1;
+    stroke: #ccc;
+    filter: drop-shadow(0 0 12px #0ff);
+  }
 }

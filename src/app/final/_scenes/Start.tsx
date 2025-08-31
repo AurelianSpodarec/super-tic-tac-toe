@@ -1,62 +1,22 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+
 import NeonLogo from "../_components/NeonLogo";
 import MenuButton from "../_components/MenuButton";
 
+const menuItems = [
+  { text: "Singleplayer", scene: "GameModes" },
+  { text: "Local Co-Op", scene: "Game" },
+  { text: "Multiplayer", scene: "GameModes" },
+  { text: "Leaderboard", scene: "Home" },
+  { text: "Credits", scene: "Home" }
+];
+
 function SceneStart() {
-  const menuItems = [
-    { text: "Singleplayer", scene: "GameModes" },
-    { text: "Local Co-Op", scene: "Game" },
-    { text: "Multiplayer", scene: "GameModes" },
-    { text: "Leaderboard", scene: "Home" },
-    { text: "Credits", scene: "Home" }
-  ];
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [logoVisible, setLogoVisible] = useState(false);
   const [turnedOnItems, setTurnedOnItems] = useState([]);
 
-  const ambientAudioRef = useRef(null);
-
-  useEffect(() => {
-    const handleClick = () => {
-      if (ambientAudioRef.current) {
-        ambientAudioRef.current.play().catch((err) => {
-          console.error("Failed to play audio:", err);
-        });
-      }
-      // Optional: remove listener after first click so it only plays once automatically
-      window.removeEventListener("click", handleClick);
-    };
-
-    window.addEventListener("click", handleClick);
-
-    return () => {
-      window.removeEventListener("click", handleClick);
-    };
-  }, []);
-
-  const ambientAudioReff = useRef(null);
-
-  useEffect(() => {
-    const handleClick = () => {
-      if (ambientAudioReff.current) {
-        ambientAudioReff.current.play().catch((err) => {
-          console.error("Failed to play audio:", err);
-        });
-      }
-      // Optional: remove listener after first click so it only plays once automatically
-      window.removeEventListener("click", handleClick);
-    };
-
-    window.addEventListener("click", handleClick);
-
-    return () => {
-      window.removeEventListener("click", handleClick);
-    };
-  }, []);
-
-
-  // Sequential reveal (byline → logo → menu items)
   useEffect(() => {
     const timers = [];
 
@@ -94,12 +54,6 @@ function SceneStart() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeIndex, menuItems.length]);
 
-  const handleSelect = (index: number) => {
-    const selectSound = new Audio("/audio/jazzsnap.mp3");
-    selectSound.play();
-    console.log("Clicked:", menuItems[index]);
-  };
-
   return (
     <div>
       <div className="relative h-full w-full flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto pt-22" >
@@ -136,12 +90,9 @@ function SceneStart() {
                 turnedOn={turnedOnItems.includes(index)}
                 isActive={index === activeIndex}
                 onMouseEnter={() => setActiveIndex(index)}
-                targetScene={item.scene as "Home" | "Game" | "GameModes"}
+                targetScene={item.scene}
                 onSelect={() => {
-                  const selectSound = new Audio("/audio/jazzsnap.mp3");
-                  selectSound.play();
-                  // navigate to the correct scene
-                  if (item.scene) push(item.scene as "Home" | "Game" | "GameModes");
+                  if (item.scene) push(item.scene);
                 }}
               />
             ))}
@@ -158,31 +109,3 @@ function SceneStart() {
 }
 
 export default SceneStart
-
-
-
-{/* <div>
-          <audio
-            src="/audio/relaxing-jazz-saxophone.mp3"
-            loop
-            ref={ambientAudioRef}
-            autoPlay
-            controls
-            aria-hidden="true"
-            aria-label="Background jazz music."
-            className="sr-only"
-          >
-            <p className="sr-only">Background jazz saxophone instrumental, no lyrics.</p>
-          </audio>
-          <audio
-            src="/audio/electric-zap.mp3"
-            ref={ambientAudioReff}
-            autoPlay
-            controls
-            aria-hidden="true"
-            aria-label="Background jazz music."
-            className="sr-only"
-          >
-            <p className="sr-only">Background jazz saxophone instrumental, no lyrics.</p>
-          </audio>
-        </div> */}

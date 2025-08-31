@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigation } from "../page";
+import { useNavigation } from "../_engine/SceneManager";
 
 type MenuButtonProps = {
   text: string;

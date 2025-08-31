@@ -6,7 +6,6 @@ function SceneGameModes() {
     <div className="h-full w-full flex flex-col items-center justify-center">
 
       <div className="text-center">
-        <span className="neon relative font-bold font-sacramento text-yellow-400 neon-logo text-[clamp(0.5rem,2vw,4rem)]">By Aurelian Spodarec</span>
         <h1 className="neon relative font-bold text-yellow-400 neon-logo text-[clamp(1rem,3.5vw,3rem)]">
           Choose your game Mode
         </h1>

@@ -3,100 +3,8 @@
  * ============================================================================ */
 @import "tw-animate-css";
 
-
-
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.menu-item {
-  opacity: 0;
-  animation: fadeInUp 0.5s forwards;
-}
-
-.menu-item:nth-child(1) { animation-delay: 1.0s; }
-.menu-item:nth-child(2) { animation-delay: 1.2s; }
-.menu-item:nth-child(3) { animation-delay: 1.4s; }
-.menu-item:nth-child(4) { animation-delay: 1.6s; }
-.menu-item:nth-child(5) { animation-delay: 1.8s; }
-
-
-/* FINAL */
-
-/* GLOW Border */
-
-/* Glow Background */
-
-
-.glow-icon {
-  font-size: 3.5rem;
-  color: #FFDD1B;
-  margin: 1rem;
-
-  :hover {
-    cursor: pointer;
-    color: #FFFFFF;
-    animation: animation-glow-icon 1.5s ease-in-out infinite alternate;
-  }
-}
-
-@keyframes animation-glow-icon {
-  from {
-    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #FFDD1B, 0 0 70px #FFDD1B, 0 0 80px #FFDD1B, 0 0 100px #FFDD1B, 0 0 150px #FFDD1B;
-  }
-
-  to {
-    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #FFDD1B, 0 0 35px #FFDD1B, 0 0 40px #FFDD1B, 0 0 50px #FFDD1B, 0 0 75px #FFDD1B;
-  }
-}
-
-.box {
-  position: relative;
-}
-
-/* Glow border layer */
-.box::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: #ef476f;
-  /* border glow color */
-  filter: blur(10px);
-  z-index: 0;
-}
-
-/* Inner background */
-.box .box-container {
-  position: absolute;
-}
-
-/*  */
-
-.text-glow {
+.white-glow {
   text-shadow: rgba(255, 255, 255, 0.6) 0px 0px 30px, rgba(255, 255, 255, 0.45) 0px 0px 60px, rgba(255, 255, 255, 0.25) 0px 0px 110px, rgba(255, 255, 255, 0.1) 0px 0px 100px;
-}
-
-.neon-glow {
-  color: #ffd700;
-  text-shadow:
-    0 0 5px #ffd700,
-    0 0 10px #ffd700,
-    0 0 20px #ffd700,
-    0 0 40px #ffea00,
-    0 0 80px #ffea00;
-  mix-blend-mode: screen;
-}
-
-.active-item {
-  text-shadow: 0 0 5px #FF80BF, 0 0 10px #FF80BF, 0 0 20px #FF80BF, 0 0 40px #FF80BF, 0 0 80px #FF80BF;
 }
 
 .neon-logo {
@@ -111,165 +19,23 @@
   mix-blend-mode: screen;
 }
 
-.theme-bg-curtain {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
+/* =================== */
 
-  background: radial-gradient(circle, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.85) 60%);
-}
-
-.theme-bg-curtain::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: black;
-  animation: fadeOut 2s ease forwards;
+.active-item {
+  text-shadow: 0 0 5px #FF80BF, 0 0 10px #FF80BF, 0 0 20px #FF80BF, 0 0 40px #FF80BF, 0 0 80px #FF80BF;
 }
 
 .neon-glow {
-  filter: drop-shadow(0 0 2px currentColor)
-          drop-shadow(0 0 4px currentColor);
+  color: #ffd700;
+  text-shadow:
+    0 0 5px #ffd700,
+    0 0 10px #ffd700,
+    0 0 20px #ffd700,
+    0 0 40px #ffea00,
+    0 0 80px #ffea00;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 2px currentColor) drop-shadow(0 0 4px currentColor);
 }
-
-
-/* @import url("https://fonts.googleapis.com/css2?family=Turret+Road&display=swap"); */
-
-
-/* Glow for text */
-.glow-text {
-  display: flex;
-}
-
-.glow-text__letter {
-  position: relative;
-  display: inline-block;
-  width: 1ch;
-}
-
-.glow-text__layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  user-select: none;
-}
-
-/* Glow for arbitrary elements (SVG) */
-.glow-wrapper {
-  display: inline-block;
-}
-
-.glow-layer {
-  mix-blend-mode: screen; /* optional: makes glow brighter */
-}
-
-
-
-
-
-
-:root {
-  --black: #222332;
-  --white: #fff;
-  --light-blue: #d6787fs;
-}
-
-body {
-  background: var(--black);
-  font-family: "Turret Road", system-ui;
-}
-
-.text {
-  display: flex;
-  font-size: 10rem;
-  color: var(--white);
-  position: relative;
-}
-
-.text__letter {
-  position: relative;
-}
-
-.text__letter--behind-1 {
-  position: absolute;
-  top: 0;
-  font-weight: 800;
-  color: var(--light-blue);
-  filter: blur(24px);
-  pointer-events: none;
-  user-select: none;
-}
-
-.text__letter--behind-2 {
-  position: absolute;
-  top: 0;
-  font-weight: 800;
-  color: var(--light-blue);
-  filter: blur(10px);
-  pointer-events: none;
-  user-select: none;
-}
-
-.text__letter--core {
-  position: absolute;
-  top: 0;
-  font-weight: 600;
-  color: var(--light-blue);
-  filter: blur(4px);
-  pointer-events: none;
-  user-select: none;
-}
-
-.text__letter--over-1 {
-  position: absolute;
-  top: 0;
-  font-weight: 100;
-  color: var(--white);
-  opacity: 0.8;
-  pointer-events: none;
-  user-select: none;
-  z-index: 1;
-}
-
-.text__letter--over-2 {
-  position: absolute;
-  top: 0;
-  font-weight: 100;
-  color: var(--white);
-  filter: blur(2px);
-  opacity: 0.9;
-  pointer-events: none;
-  user-select: none;
-  z-index: 2;
-}
-
-
-
-
-
-
-
-
-
-/* @font-face {
-  font-family: "neontubes";
-  src: url("https://bitbucket.org/kennethjensen/webfonts/raw/fc13c1cb430a0e9462da56fe3f421ff7af72db71/neontubes/neontubes-webfont.eot");
-  src: url("https://bitbucket.org/kennethjensen/webfonts/raw/fc13c1cb430a0e9462da56fe3f421ff7af72db71/neontubes/neontubes-webfont.eot?#iefix")
-      format("embedded-opentype"),
-    url("https://bitbucket.org/kennethjensen/webfonts/raw/fc13c1cb430a0e9462da56fe3f421ff7af72db71/neontubes/neontubes-webfont.woff2")
-      format("woff2"),
-    url("https://bitbucket.org/kennethjensen/webfonts/raw/fc13c1cb430a0e9462da56fe3f421ff7af72db71/neontubes/neontubes-webfont.woff")
-      format("woff"),
-    url("https://bitbucket.org/kennethjensen/webfonts/raw/fc13c1cb430a0e9462da56fe3f421ff7af72db71/neontubes/neontubes-webfont.ttf")
-      format("truetype");
-  font-weight: normal;
-  font-style: normal; */
-
-/* nice stroke: ff005d */
-
-
 
 .cog-svg path {
   fill: transparent;
@@ -320,18 +86,6 @@ body {
     stroke-dashoffset: 0;
   }
 }
-
-/* @keyframes flicker {
-  0%, 100% { stroke: #ff005d; }
-  10%, 30%, 50% { stroke: transparent; }
-}
- */
-
-
-
-
-
-
 
 
 
