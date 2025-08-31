@@ -3,7 +3,7 @@
 interface IUserItem {
   avatar: string
   name: string
-  labelPosition: "left" | "right"
+  labelPosition?: "left" | "right"
 }
 
 function UserItem({ avatar, name, labelPosition = "left" }: IUserItem) {

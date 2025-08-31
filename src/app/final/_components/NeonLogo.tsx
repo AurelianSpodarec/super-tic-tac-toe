@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-function NeonLogo({ text, className, stagger = 150 }) {
+function NeonLogo({ text, className, stagger = 150 }: any) {
   const [turnedOnLetters, setTurnedOnLetters] = useState([]);
 
   useEffect(() => {
