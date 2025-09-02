@@ -1,28 +1,19 @@
-import { SceneEntry } from "../SceneManager";
+import "./registry"
 import { sceneRegistry } from "../settings";
-import BackgroundImage from "./_components/BackgroundImage";
-import { OverlayCurtain } from "./_components/OverlayCurtain";
+import { Background, getBackgroundRenderer } from "./core";
+import type { SceneEntry } from "../SceneManager";
 
 function BackgroundManager({ scene }: { scene: SceneEntry }) {
-  const backgrounds = sceneRegistry[scene.name].background || [];
-
-  const images = backgrounds.filter(bg => bg.type === "image");
-  const overlays = backgrounds.filter(bg => bg.type === "overlay");
-  const menuOverlays = backgrounds.filter(bg => bg.type === "menuOverlay");
+  const backgrounds: Background[] = sceneRegistry[scene.name]?.background || [];
 
   return (
     <>
-      {images.map((bg, index) => (
-        <BackgroundImage key={`background-image-${scene.name}-${index}`} src={(bg as any).src} backgroundSize={(bg as any).backgroundSize} />
-      ))}
-
-      {overlays.map((_, index) => (
-        <OverlayCurtain key={`overlay-${scene.name}-${index}`} variant="secondary" />
-      ))}
-
-      {menuOverlays.map((_, index) => (
-        <OverlayCurtain key={`menuOverlay-${scene.name}-${index}`} variant="primary" />
-      ))}
+      {backgrounds.map((bg, index) => {
+        const key = `${bg.type}-${scene.name}-${index}`;
+        const renderer = getBackgroundRenderer(bg.type);
+        if (!renderer) return null;
+        return renderer(bg, key);
+      })}
     </>
   );
 }
