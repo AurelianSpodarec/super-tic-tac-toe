@@ -13,14 +13,10 @@ export type BackgroundRenderer<T extends Background = Background> = (
 
 const backgroundRenderers: Record<string, BackgroundRenderer> = {};
 
-export function registerBackgroundRenderer<T extends Background["type"]>(
-  type: T,
-  renderer: BackgroundRenderer<Extract<Background, { type: T }>>
-) {
+export function registerBackgroundRenderer<T extends Background["type"]>(type: T, renderer: BackgroundRenderer<Extract<Background, { type: T }>>) {
   backgroundRenderers[type] = renderer as BackgroundRenderer;
 }
 
 export function getBackgroundRenderer(type: string) {
-  console.log(backgroundRenderers)
   return backgroundRenderers[type];
 }

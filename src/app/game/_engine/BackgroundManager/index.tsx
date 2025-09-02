@@ -1,7 +1,8 @@
 import "./registry"
+
+import type { SceneEntry } from "../SceneManager";
 import { sceneRegistry } from "../settings";
 import { Background, getBackgroundRenderer } from "./core";
-import type { SceneEntry } from "../SceneManager";
 
 function BackgroundManager({ scene }: { scene: SceneEntry }) {
   const backgrounds: Background[] = sceneRegistry[scene.name]?.background || [];
