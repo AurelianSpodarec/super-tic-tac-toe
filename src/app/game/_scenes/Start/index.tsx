@@ -1,7 +1,7 @@
 'use client'
 
 import React from "react";
-import { useMenuController, MenuItem } from "../../_engine/useMenuController";
+import { MenuItem } from "../../_engine/useMenuController";
 import MenuList from "../../_components/Menu";
 
 import NeonText from "./_components/NeonText";
@@ -17,11 +17,10 @@ const dataMenu: MenuItem[] = [
 ];
 
 function SceneStart() {
-  const { items, setActive, select } = useMenuController(dataMenu, undefined, "vertical");
 
   return (
-    <div className="relative h-full w-full flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto">
-      <div className="relative text-center opacity-90">
+    <div className="relative h-full w-full flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto pt-22">
+      <div className="relative text-center opacity-90 h-full">
 
         <div className="transition-opacity duration-700 font-bold">
           <span className={`font-sacramento text-[clamp(0.5rem,2vw,4rem)] ${true ? "neon" : "text-[#4a4a4a]"}`}>
@@ -33,13 +32,16 @@ function SceneStart() {
         </div>
 
         <MenuList
-          items={items}
+          data={dataMenu}
           direction="vertical"
-          renderItem={(item, index) => (
+          className="mt-5"
+          onSelect={(item) => console.log("Selected:", item.text)}
+          renderItem={(item, index, state) => (
             <MenuButton
               item={item}
-              onClick={() => select(index)}
-              onHover={() => setActive(index)}
+              state={item}
+              onClick={state.onClick}
+              onHover={state.onHover}
             />
           )}
         />

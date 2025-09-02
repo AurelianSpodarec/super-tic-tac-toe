@@ -1,16 +1,16 @@
 'use client'
 
-import { MenuItemState } from "@/app/final/_engine/useMenuController";
-
 interface MenuButtonProps {
   item: MenuItemState;
   onClick: () => void;
   onHover?: () => void;
+  state: any;
 }
 
-function MenuButton({ item, onClick, onHover }: MenuButtonProps) {
-  const isActive = item.active
-  const isTurnedOn = item.turnedOn
+function MenuButton({ item, state, onClick, onHover }: MenuButtonProps) {
+  const isActive = state.active
+  const isTurnedOn = true
+  const text = item.text
 
   return (
     <button
@@ -25,9 +25,9 @@ function MenuButton({ item, onClick, onHover }: MenuButtonProps) {
       onClick={onClick}
       onMouseEnter={onHover}
       aria-current={isActive ? "true" : undefined}
-      aria-label={`${item.text}${isActive ? " (active)" : ""}`}
+      aria-label={`${text}${isActive ? " (active)" : ""}`}
     >
-      {item.text}
+      {text}
     </button>
   );
 }
