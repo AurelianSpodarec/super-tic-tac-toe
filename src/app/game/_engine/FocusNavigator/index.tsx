@@ -1,13 +1,14 @@
 'use client'
 
-// ToDo: Make this like video game/play statoin grid, where the user can navigate a grid naturally and on mobile its alays stacked as one
-
 import React from "react";
 import useFocusNavigator, { MenuItemState, MenuItem } from "./useFocusNavigator";
 
 interface FocusNavigatorProps {
   data: MenuItem[];
-  direction?: "vertical" | "horizontal";
+  columns?: number;
+  columnsMobile?: number;
+  rows?: number;
+  direction?: "horizontal" | "vertical";
   className?: string;
   onSelect?: (item: MenuItem, index: number) => void;
   renderItem: (
@@ -22,36 +23,47 @@ interface FocusNavigatorProps {
   ) => React.ReactNode;
 }
 
-function FocusNavigator({
+export default function FocusNavigator({
   data,
-  direction = "vertical",
+  columns = 3,
+  columnsMobile = 1,
+  rows,
+  direction = "horizontal",
   className = "",
   onSelect,
   renderItem,
 }: FocusNavigatorProps) {
-  const { items: stateItems, setActive, select } = useFocusNavigator(data, undefined, direction);
-  const isHorizontal = direction === "horizontal";
+  const { items: stateItems, setActive, select } = useFocusNavigator({
+    items: data,
+    columns,
+    rows,
+    columnsMobile,
+    direction,
+    // onSelect,
+  });
 
-  function handleHover(index: number) {
-    setActive(index);
-  }
-
-  function handleClick(index: number) {
+  const handleHover = (index: number) => setActive(index);
+  const handleClick = (index: number) => {
     select(index);
     onSelect?.(stateItems[index], index);
-  }
+  };
 
-  function renderItemWrapper(item: MenuItemState, index: number) {
-    return renderItem(item, index, {
+  const renderItemWrapper = (item: MenuItemState, index: number) =>
+    renderItem(item, index, {
       onClick: () => handleClick(index),
       onHover: () => handleHover(index),
       onLeave: () => handleHover(-1),
       onSelect: () => handleClick(index),
     });
-  }
 
   return (
-    <nav className={`flex ${isHorizontal ? "flex-row" : "flex-col"} ${className}`}>
+    <nav
+      className={`focus-grid ${className}`}
+      style={{
+        "--cols": columns,
+        "--cols-mobile": columnsMobile,
+      } as React.CSSProperties}
+    >
       {stateItems.map((item, index) => (
         <React.Fragment key={item.text}>
           {renderItemWrapper(item, index)}
@@ -60,5 +72,3 @@ function FocusNavigator({
     </nav>
   );
 }
-
-export default FocusNavigator;

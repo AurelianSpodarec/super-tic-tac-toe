@@ -1,14 +1,12 @@
-import { useReducer, useEffect } from "react";
+import { useReducer, useEffect, useRef } from "react";
 import { AudioManager } from "../AudioManager";
 import { sfxRegistry } from "../settings";
-
-import type { SceneName } from "../SceneManager";
 import useScene from "../SceneManager/useScene";
 
 export interface MenuItem {
   id?: string;
   text: string;
-  scene?: SceneName;
+  scene?: string;
   action?: () => void;
 }
 
@@ -49,12 +47,29 @@ function menuReducer(state: MenuState, action: MenuAction): MenuState {
   }
 }
 
-function useFocusNavigator(
-  items: MenuItem[],
-  onSelect?: (item: MenuItem) => void,
-  direction: "vertical" | "horizontal" = "vertical"
-): MenuController {
+interface UseFocusNavigatorProps {
+  items: MenuItem[];
+  columns?: number;       // grid columns
+  columnsMobile?: number; // mobile columns
+  rows?: number;          // optional fixed rows
+  direction?: "horizontal" | "vertical";
+  onSelect?: (item: MenuItem) => void;
+}
+
+export default function useFocusNavigator({
+  items,
+  columns = 3,
+  columnsMobile = 1,
+  rows,
+  direction = "horizontal",
+  onSelect,
+}: UseFocusNavigatorProps): MenuController {
   const { push } = useScene();
+
+  const lastKey = useRef<string | null>(null);
+  const navLockTime = useRef(0);
+  const holdThreshold = 100;
+  const holdDelay = 150;
 
   const [state, dispatch] = useReducer(menuReducer, {
     activeIndex: 0,
@@ -74,49 +89,65 @@ function useFocusNavigator(
     const idx = index ?? state.activeIndex;
     const item = items[idx];
     AudioManager.playSFX(sfxRegistry.buttonConfirm);
-
     if (item.scene) push(item.scene);
     if (item.action) item.action();
     onSelect?.(item);
   };
 
+  const getColumns = () => (window.innerWidth < 768 ? columnsMobile : columns);
+  const getRows = () => rows ?? Math.ceil(items.length / getColumns());
+
   const handleArrowNavigation = (key: string) => {
-    let nextIndex = state.activeIndex;
+    const now = performance.now();
 
-    if (direction === "vertical") {
-      if (key === "ArrowDown") nextIndex = (state.activeIndex + 1) % items.length;
-      if (key === "ArrowUp") nextIndex = (state.activeIndex - 1 + items.length) % items.length;
+    // reset lock if new key or fast tap
+    if (lastKey.current !== key || now - navLockTime.current > holdThreshold) {
+      lastKey.current = key;
+      navLockTime.current = 0;
+    }
+
+    // if still locked for hold, skip move
+    if (navLockTime.current && now - navLockTime.current < holdDelay) return false;
+
+    // move logic
+    const cols = getColumns();
+    const rowsToUse = getRows();
+    let row = Math.floor(state.activeIndex / cols);
+    let col = state.activeIndex % cols;
+
+    if (cols === 1 || direction === "vertical") {
+      if (key === "ArrowUp") row = row - 1 >= 0 ? row - 1 : rowsToUse - 1;
+      if (key === "ArrowDown") row = row + 1 < rowsToUse ? row + 1 : 0;
+      col = 0;
     } else {
-      if (key === "ArrowRight") nextIndex = (state.activeIndex + 1) % items.length;
-      if (key === "ArrowLeft") nextIndex = (state.activeIndex - 1 + items.length) % items.length;
+      if (key === "ArrowLeft") col = col - 1 >= 0 ? col - 1 : cols - 1;
+      if (key === "ArrowRight") col = col + 1 < cols ? col + 1 : 0;
+      if (key === "ArrowUp") row = row - 1 >= 0 ? row - 1 : rowsToUse - 1;
+      if (key === "ArrowDown") row = row + 1 < rowsToUse ? row + 1 : 0;
     }
 
-    if (nextIndex !== state.activeIndex) {
-      setActive(nextIndex);
-      return true;
-    }
-    return false;
+    const newIndex = Math.min(row * cols + col, items.length - 1);
+    if (newIndex !== state.activeIndex) setActive(newIndex);
+
+    // start lock for repeated moves
+    navLockTime.current = now;
+
+    return true;
   };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       let handled = handleArrowNavigation(e.key);
-
       if (e.key === "Enter") {
         select();
         handled = true;
       }
-
-      if (e.key === "Backspace") {
-        handled = true; // Optional: handle back navigation
-      }
-
       if (handled) e.preventDefault();
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [state.activeIndex, direction, items.length]); // no callbacks, use direct values
+  }, [state.activeIndex, columns, columnsMobile, rows, direction, items.length]);
 
   const menuItems: MenuItemState[] = items.map((item, index) => ({
     ...item,
@@ -126,5 +157,3 @@ function useFocusNavigator(
 
   return { items: menuItems, activeIndex: state.activeIndex, setActive, toggleItem, select };
 }
-
-export default useFocusNavigator

@@ -1,14 +1,3 @@
-'use client'
-
-import SceneSettings from "@/core/Scenes/Settings";
-import SceneStart from "@/core/Scenes/Start";
-import { useEffect, useRef } from "react";
-import ActionBar from "./_components/ActionBar";
-import { GameProvider } from "@/core/SceneManager/GameProvider";
-import { SceneRenderer } from "@/core/SceneManager/SceneRenderer";
-import Overlay from "./_components/Overlay";
-import SceneGameModes from "@/core/Scenes/GameModes";
-import SceneModeTicTacToe from "@/core/Scenes/ModeTicTacToe";
 
 // import { useEffect, useRef, useState, useCallback } from "react";
 
@@ -131,22 +120,22 @@ import SceneModeTicTacToe from "@/core/Scenes/ModeTicTacToe";
 // }
 
 
-function MenuScene({ children }) {
-  return (
-    <div className="h-full w-full theme-4 overflow-auto">
-      {children}
-      <Overlay />
-    </div>
-  )
-}
+// function MenuScene({ children }) {
+//   return (
+//     <div className="h-full w-full theme-4 overflow-auto">
+//       {children}
+//       <Overlay />
+//     </div>
+//   )
+// }
 
-function GameScene() {
-  return (
-    <div>
+// function GameScene() {
+//   return (
+//     <div>
 
-    </div>
-  )
-}
+//     </div>
+//   )
+// }
 
 
 
@@ -158,68 +147,68 @@ function GameScene() {
 //   { key: "modeTicTacToe", component: <SceneModeTicTacToe /> }
 // ];
 
-const scenes: Scene[] = [
-  {
-    key: "start",
-    component: <SceneStart />,
-    audioKey: "menu",
-    backgroundKey: "menu",
-    transitionDuration: 1000,
-    onEnter: () => console.log("Entered Start"),
-    onExit: () => console.log("Exiting Start"),
-  },
-  {
-    key: "gameModes",
-    component: <SceneGameModes />,
-    audioKey: "gameMenu",
-    backgroundKey: "gameMenu",
-    transitionDuration: 800,
-  },
-  {
-    key: "modeTicTacToe",
-    component: <SceneModeTicTacToe />,
-    audioKey: "tictactoe",
-    backgroundKey: "tictactoe",
-    transitionDuration: 1200,
-  },
-];
+// const scenes: Scene[] = [
+//   {
+//     key: "start",
+//     component: <SceneStart />,
+//     audioKey: "menu",
+//     backgroundKey: "menu",
+//     transitionDuration: 1000,
+//     onEnter: () => console.log("Entered Start"),
+//     onExit: () => console.log("Exiting Start"),
+//   },
+//   {
+//     key: "gameModes",
+//     component: <SceneGameModes />,
+//     audioKey: "gameMenu",
+//     backgroundKey: "gameMenu",
+//     transitionDuration: 800,
+//   },
+//   {
+//     key: "modeTicTacToe",
+//     component: <SceneModeTicTacToe />,
+//     audioKey: "tictactoe",
+//     backgroundKey: "tictactoe",
+//     transitionDuration: 1200,
+//   },
+// ];
 
 
-export default function Page() {
-  const audioRef = useRef(null);
+// export default function Page() {
+//   const audioRef = useRef(null);
 
-  // Handler to start audio on first click
-  useEffect(() => {
-    const handleUserInteraction = () => {
-      if (audioRef.current) {
-        audioRef.current.play().catch(err => console.log("Play blocked:", err));
-      }
-      // Remove the listener after first interaction
-      window.removeEventListener("click", handleUserInteraction);
-      window.removeEventListener("touchstart", handleUserInteraction);
-    };
+//   // Handler to start audio on first click
+//   useEffect(() => {
+//     const handleUserInteraction = () => {
+//       if (audioRef.current) {
+//         audioRef.current.play().catch(err => console.log("Play blocked:", err));
+//       }
+//       // Remove the listener after first interaction
+//       window.removeEventListener("click", handleUserInteraction);
+//       window.removeEventListener("touchstart", handleUserInteraction);
+//     };
 
-    window.addEventListener("click", handleUserInteraction);
-    window.addEventListener("touchstart", handleUserInteraction);
+//     window.addEventListener("click", handleUserInteraction);
+//     window.addEventListener("touchstart", handleUserInteraction);
 
-    return () => {
-      window.removeEventListener("click", handleUserInteraction);
-      window.removeEventListener("touchstart", handleUserInteraction);
-    };
-  }, []);
+//     return () => {
+//       window.removeEventListener("click", handleUserInteraction);
+//       window.removeEventListener("touchstart", handleUserInteraction);
+//     };
+//   }, []);
 
-  return (
-    <GameProvider initialScene="start" scenes={scenes}>
-      <MenuScene>
+//   return (
+//     <GameProvider initialScene="start" scenes={scenes}>
+//       <MenuScene>
 
-        <div className="h-full w-full z-10 relative">
-          <ActionBar />
-          <div className="flex flex-col items-center pt-30 h-full w-full">
-            <SceneRenderer />
-          </div>
-        </div>
+//         <div className="h-full w-full z-10 relative">
+//           <ActionBar />
+//           <div className="flex flex-col items-center pt-30 h-full w-full">
+//             <SceneRenderer />
+//           </div>
+//         </div>
 
-      </MenuScene>
-    </GameProvider>
-  )
-}
+//       </MenuScene>
+//     </GameProvider>
+//   )
+// }

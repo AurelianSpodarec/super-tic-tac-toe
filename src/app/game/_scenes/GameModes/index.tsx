@@ -2,11 +2,15 @@
 
 import FocusNavigator from "../../_engine/FocusNavigator";
 import { MenuItem } from "../../_engine/FocusNavigator/useFocusNavigator";
-
 const dataMenu: MenuItem[] = [
-  { text: "TicTacToe", scene: "Game" },
-  { text: "SuperTicTacToe", scene: "Home" },
+  { text: "TicTacToe", scene: "Game" }, // classic 3x3 game
+  { text: "SuperTicTacToe", scene: "Game" }, // larger grid variant (4x4, 5x5, etc.)
+  { text: "TicTacKu", scene: "Game" }, // puzzle/strategy variant
+  { text: "Ultimate TicTacToe", scene: "Game" }, // 3x3 of 3x3 boards
+  { text: "Speed Challenge", scene: "Game" }, // press X as fast as possible in Ultimate TicTacToe
+  { text: "Cognitive Challenge", scene: "Game" }, // memory/attention variant
 ];
+
 
 function SceneGameModes() {
 
@@ -15,9 +19,12 @@ function SceneGameModes() {
       <h1 className="neon relative font-bold text-yellow-400 neon-logo text-[clamp(1rem,3.5vw,3rem)] text-center">
         Choose your game Mode
       </h1>
-      
+
       <FocusNavigator
         data={dataMenu}
+        columns={3}
+        rows={2}
+        columnsMobile={1}
         direction="horizontal"
         className="mt-5"
         onSelect={(item) => console.log("Selected:", item.text)}

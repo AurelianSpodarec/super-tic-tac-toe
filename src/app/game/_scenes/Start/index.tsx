@@ -33,6 +33,8 @@ function SceneStart() {
 
         <FocusNavigator
           data={dataMenu}
+          columns={1}
+          columnsMobile={1}
           direction="vertical"
           className="mt-5"
           renderItem={(item, index, state) => (
