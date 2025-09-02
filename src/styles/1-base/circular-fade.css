@@ -1,0 +1,20 @@
+
+
+/* Can be also used for Animations to go from Menu to GAME */
+
+.circular-fade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.75) 60%);
+}
+
+.circular-fade::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: black;
+  animation: fadeOut 0.2s ease forwards;
+}

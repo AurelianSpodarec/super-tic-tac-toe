@@ -58,7 +58,6 @@ export const neontubes = localFont({
   display: "swap"
 })
 
-
 function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">

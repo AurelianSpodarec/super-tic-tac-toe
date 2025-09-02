@@ -169,7 +169,7 @@ const NeonSign = () => {
           {word.map((letter, j) => (
             <span
               key={j}
-              className="letter off"
+              className="letter opacity-0"
               ref={el => lettersRef.current[i][j] = el}
             >
               {letter}

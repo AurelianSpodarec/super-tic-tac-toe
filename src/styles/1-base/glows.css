@@ -1,0 +1,42 @@
+
+.white-glow {
+  text-shadow: rgba(255, 255, 255, 0.6) 0px 0px 30px, rgba(255, 255, 255, 0.45) 0px 0px 60px, rgba(255, 255, 255, 0.25) 0px 0px 110px, rgba(255, 255, 255, 0.1) 0px 0px 100px;
+}
+
+.neon-logo {
+  color: #FFC107;
+  text-shadow: 0 0 5px #FFC107, 0 0 0px #FFC107, 0 0 0px #FFC107, 0 0 40px #FFC107, 0 0 80px #FFC107;
+  mix-blend-mode: screen;
+}
+
+.neon-logo-2 {
+  text-shadow: 0 0 5px #ffa500, 0 0 15px #ffa500, 0 0 20px #ffa500, 0 0 40px #ffa500, 0 0 60px #ff0000, 0 0 10px #ff8d00, 0 0 98px #ff0000;
+  color: #fff6a9;
+  mix-blend-mode: screen;
+}
+
+.neon-glow {
+  color: #ffd700;
+  text-shadow:
+    0 0 5px #ffd700,
+    0 0 10px #ffd700,
+    0 0 20px #ffd700,
+    0 0 40px #ffea00,
+    0 0 80px #ffea00;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 2px currentColor) drop-shadow(0 0 4px currentColor);
+}
+
+.pure-glow {
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.6),
+    0 0 60px rgba(255, 255, 255, 0.45), 0 0 110px rgba(255, 255, 255, 0.25),
+    0 0 100px rgba(255, 255, 255, 0.1);
+}
+
+.neon {
+  animation: flicker 2s linear infinite;
+}
+
+.neon2 {
+  animation: flickerAlt 2s linear infinite;
+}

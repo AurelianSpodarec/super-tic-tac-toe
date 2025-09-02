@@ -1,0 +1,33 @@
+.theme-bg-curtain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.85) 60%);
+}
+
+.theme-bg-curtain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: black;
+  animation: fadeOut 2s ease forwards;
+}
+
+.theme-bg-menu-curtain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) -40%, rgba(0, 0, 0, .85) 50%);
+}
+
+.theme-bg-menu-curtain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: black;
+  animation: fadeOut 3.2s ease forwards;
+}

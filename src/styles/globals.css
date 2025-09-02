@@ -11,4 +11,15 @@
 /* ============================================================================
  * Cheat
  * ============================================================================ */
-@import "./cheat.css"
+@import "./cheat.css";
+
+@import "./1-base/curtains.css";
+@import "./1-base/circular-fade.css";
+@import "./1-base/themes.css";
+@import "./1-base/glows.css";
+
+
+@import "./animations/fadeOut.css";
+@import "./animations/flicker.css";
+@import "./animations/flickerAlt.css";
+@import "./animations/text-flicker-in-glow.css"; 

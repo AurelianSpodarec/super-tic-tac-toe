@@ -1,0 +1,10 @@
+
+.cog-svg path {
+  fill: transparent;
+  stroke: #ff005d;
+  stroke-width: 3px;
+  filter: url(#glow);
+  stroke-dasharray: 1200;
+  /* approximate path length, will animate */
+  stroke-dashoffset: 1200;
+}
