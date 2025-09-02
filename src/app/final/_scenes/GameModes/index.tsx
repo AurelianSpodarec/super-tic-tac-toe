@@ -1,7 +1,7 @@
 'use client'
 
+import MenuList from "../../_components/Menu";
 import { useMenuController } from "../../_engine/useMenuController";
-import { MenuList } from "../Start/_components/Menu";
 
 const dataMenuGameModes = [
   { text: "TicTacToe", scene: "Game" },
@@ -9,7 +9,7 @@ const dataMenuGameModes = [
 ];
 
 function SceneGameModes() {
-  const { items, setActive, select } = useMenuController(dataMenuGameModes);
+  const { items, select } = useMenuController(dataMenuGameModes, undefined, "horizontal");
 
   return (
     <div className="h-full w-full flex flex-col items-center justify-center">

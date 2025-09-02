@@ -1,12 +1,12 @@
 'use client'
 
 import React from "react";
-
-import NeonLogo from "./_components/NeonLogo";
-import Tagline from "./_components/Tagline";
-import { MenuButton, MenuList } from "./_components/Menu";
-
 import { useMenuController, MenuItem } from "../../_engine/useMenuController";
+import MenuList from "../../_components/Menu";
+
+import NeonText from "./_components/NeonText";
+import Tagline from "./_components/Tagline";
+import MenuButton from "./_components/MenuButton";
 
 const dataMenu: MenuItem[] = [
   { text: "Singleplayer", scene: "GameModes" },
@@ -17,18 +17,20 @@ const dataMenu: MenuItem[] = [
 ];
 
 function SceneStart() {
-  const { items, setActive, select } = useMenuController(dataMenu, "vertical");
+  const { items, setActive, select } = useMenuController(dataMenu, undefined, "vertical");
 
   return (
     <div className="relative h-full w-full flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto">
       <div className="relative text-center opacity-90">
 
-        <span className={`relative font-bold font-sacramento text-[clamp(0.5rem,2vw,4rem)] transition-opacity duration-700 ${true ? "neon" : "text-[#4a4a4a]"}`}>
-          <NeonLogo text="By Aurelian Spodarec" />
-        </span>
-        <h1 className={`relative font-bold text-[clamp(2rem,5vw,5rem)] transition duration-700 font-neontubes ${true ? "opacity-100 scale-100 neon" : "text-[#4a4a4a] opacity-50"}`}>
-          <NeonLogo text="JazzTacToe" />
-        </h1>
+        <div className="transition-opacity duration-700 font-bold">
+          <span className={`font-sacramento text-[clamp(0.5rem,2vw,4rem)] ${true ? "neon" : "text-[#4a4a4a]"}`}>
+            <NeonText text="By Aurelian Spodarec" />
+          </span>
+          <h1 className={`text-[clamp(2rem,5vw,5rem)] font-neontubes ${true ? "opacity-100 scale-100 neon" : "text-[#4a4a4a] opacity-50"}`}>
+            <NeonText text="JazzTacToe" />
+          </h1>
+        </div>
 
         <MenuList
           items={items}

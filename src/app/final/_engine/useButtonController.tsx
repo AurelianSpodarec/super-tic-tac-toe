@@ -1,13 +1,14 @@
 import { useEffect } from "react";
 import { AudioManager } from "./AudioManager";
+import { MenuItem } from "./useMenuController";
 
-export function useButtonController(buttons: ButtonItem[]) {
+export function useButtonController(buttons: MenuItem[]) {
   function playClickSound() {
     AudioManager.playSFX("/audio/spacebar-click-keyboard.mp3");
   }
 
   function handleClick(id: string) {
-    const button = buttons.find(b => b.id === id);
+    const button = buttons.find(buttonItem => buttonItem.id === id);
     if (!button) return;
 
     playClickSound();

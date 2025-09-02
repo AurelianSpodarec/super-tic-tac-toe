@@ -1,12 +1,18 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from "react";
 
-function NeonLogo({ text, className, stagger = 100 }: any) {
-  const [turnedOnLetters, setTurnedOnLetters] = useState([]);
+interface NeonTextProps {
+  text: string;
+  className?: string;
+  stagger?: number;
+}
+
+function NeonText({ text, className = "", stagger = 100 }: NeonTextProps) {
+  const [turnedOnLetters, setTurnedOnLetters] = useState<number[]>([]);
 
   useEffect(() => {
-    const timers = [];
+    const timers: NodeJS.Timeout[] = [];
     for (let i = 0; i < text.length; i++) {
       timers.push(
         setTimeout(() => {
@@ -19,21 +25,22 @@ function NeonLogo({ text, className, stagger = 100 }: any) {
 
   return (
     <div className={`relative ${className}`} style={{ display: "inline-block" }}>
-      {/* Outline / grayed text layer */}
+
       <div className="absolute inset-0 text-gray-600 select-none">
         {text.split("").map((ch, i) => (
-          <span key={i} className="inline-block ">{ch}</span>
+          <span key={i} className="inline-block">
+            {ch}
+          </span>
         ))}
       </div>
 
-      {/* Neon letters layer */}
       <div className="relative">
         {text.split("").map((ch, i) => (
           <span
             key={i}
             className={`neon-logo-2 inline-block transition-opacity duration-500 ${turnedOnLetters.includes(i) ? "opacity-100" : "opacity-0"}`}
           >
-            <span >{ch}</span>
+            <span>{ch}</span>
           </span>
         ))}
       </div>
@@ -41,4 +48,4 @@ function NeonLogo({ text, className, stagger = 100 }: any) {
   );
 }
 
-export default NeonLogo
+export default NeonText;
