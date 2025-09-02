@@ -5,9 +5,25 @@ import SceneGameTicTacToe from "../_scenes/TicTacToe";
 export const audioRegistry = {
   home: "audio/relaxing-jazz-saxophone.mp3",
   game: "audio/ambient-mixkit-jazz-1.mp3"
-};
+} as const;
 
-export const sceneRegistry = {
+export const sfxRegistry = {
+  buttonNavigate: "/audio/rimshot-sweet.mp3",
+  buttonConfirm: "/audio/spacebar-click-keyboard.mp3"
+} as const;
+
+type BackgroundLayer =
+  | { type: "image"; src: string }
+  | { type: "menuOverlay" }
+  | { type: "overlay" };
+
+interface Scene {
+  component: React.ComponentType<any>;
+  background: BackgroundLayer[];
+  audio: typeof audioRegistry[keyof typeof audioRegistry];
+}
+
+export const sceneRegistry: Record<string, Scene> = {
   Home: {
     component: SceneStart,
     background: [

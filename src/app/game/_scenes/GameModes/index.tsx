@@ -1,9 +1,9 @@
 'use client'
 
 import MenuList from "../../_components/Menu";
-import { useMenuController } from "../../_engine/useMenuController";
+import { MenuItem, useMenuController } from "../../_engine/useMenuController";
 
-const dataMenuGameModes = [
+const dataMenuGameModes: MenuItem[] = [
   { text: "TicTacToe", scene: "Game" },
   { text: "SuperTicTacToe", scene: "Home" },
 ];

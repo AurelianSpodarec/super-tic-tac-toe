@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { AudioManager } from "./AudioManager";
 import { MenuItem } from "./useMenuController";
+import { sfxRegistry } from "./settings";
 
 export function useButtonController(buttons: MenuItem[]) {
+
   function playClickSound() {
-    AudioManager.playSFX("/audio/spacebar-click-keyboard.mp3");
+    AudioManager.playSFX(sfxRegistry.buttonConfirm);
   }
 
   function handleClick(id: string) {
