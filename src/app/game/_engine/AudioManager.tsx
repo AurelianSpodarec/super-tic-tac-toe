@@ -1,5 +1,7 @@
-
-type AudioSettings = { ambientVolume: number; sfxVolume: number };
+type AudioSettings = {
+  ambientVolume: number;
+  sfxVolume: number
+};
 
 class AudioManagerClass {
   public audioElements: Record<string, HTMLAudioElement> = {};
@@ -10,9 +12,7 @@ class AudioManagerClass {
   private fadeDuration = 1000;
   public settings: AudioSettings = { ambientVolume: 1, sfxVolume: 1 };
 
-  constructor() {
-    // empty constructor, DOM interactions moved to initUnlockListener
-  }
+  constructor() { }
 
   initUnlockListener() {
     if (typeof document === "undefined") return;

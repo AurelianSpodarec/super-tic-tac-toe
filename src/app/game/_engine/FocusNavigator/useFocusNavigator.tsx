@@ -1,9 +1,9 @@
 import { useReducer, useEffect } from "react";
-import { AudioManager } from "./AudioManager";
-import { useScene } from "./SceneManager";
-import { sfxRegistry } from "./settings";
+import { AudioManager } from "../AudioManager";
+import { sfxRegistry } from "../settings";
 
-import type { SceneName } from "./SceneManager";
+import type { SceneName } from "../SceneManager";
+import useScene from "../SceneManager/useScene";
 
 export interface MenuItem {
   id?: string;
@@ -49,7 +49,7 @@ function menuReducer(state: MenuState, action: MenuAction): MenuState {
   }
 }
 
-export function useMenuController(
+function useFocusNavigator(
   items: MenuItem[],
   onSelect?: (item: MenuItem) => void,
   direction: "vertical" | "horizontal" = "vertical"
@@ -126,3 +126,5 @@ export function useMenuController(
 
   return { items: menuItems, activeIndex: state.activeIndex, setActive, toggleItem, select };
 }
+
+export default useFocusNavigator

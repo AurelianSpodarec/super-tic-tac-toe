@@ -1,7 +1,7 @@
 'use client'
 
-import MenuList from "../../_components/Menu";
-import { MenuItem, useMenuController } from "../../_engine/useMenuController";
+import MenuList from "../../_engine/FocusNavigator";
+import { MenuItem, useMenuController } from "../../_engine/FocusNavigator/useFocusNavigator";
 
 const dataMenu: MenuItem[] = [
   { text: "TicTacToe", scene: "Game" },

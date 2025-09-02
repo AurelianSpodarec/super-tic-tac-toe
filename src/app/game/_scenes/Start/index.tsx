@@ -1,8 +1,8 @@
 'use client'
 
 import React from "react";
-import { MenuItem } from "../../_engine/useMenuController";
-import MenuList from "../../_components/Menu";
+import { MenuItem } from "../../_engine/FocusNavigator/useFocusNavigator";
+import MenuList from "../../_engine/FocusNavigator";
 
 import NeonText from "./_components/NeonText";
 import Tagline from "./_components/Tagline";

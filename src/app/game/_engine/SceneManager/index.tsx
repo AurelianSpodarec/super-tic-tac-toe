@@ -1,9 +1,11 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import ActionBar from "../_components/ActionBar";
-import BackgroundManager from "./BackgroundManager";
-import { AudioManager } from "./AudioManager";
-import { sceneRegistry } from "./settings";
-import { InputManager } from "./InputManager";
+
+import ActionBar from "../../_components/ActionBar";
+
+import BackgroundManager from "../BackgroundManager";
+import { AudioManager } from "../AudioManager";
+import { sceneRegistry } from "../settings";
+import { InputManager } from "../InputManager";
 
 export type SceneName = keyof typeof sceneRegistry;
 export type BackgroundEntry =
@@ -20,7 +22,7 @@ export type SceneEntry = {
   background?: BackgroundEntry[];
 };
 
-type NavigationContextType = {
+export type NavigationContextType = {
   push: (name: SceneName, params?: Record<string, any>) => void;
   pop: () => void;
   replace: (name: SceneName, params?: Record<string, any>) => void;
@@ -28,9 +30,8 @@ type NavigationContextType = {
   stack: SceneEntry[];
 };
 
-const NavigationContext = createContext<NavigationContextType | null>(null);
+export const NavigationContext = createContext<NavigationContextType | null>(null);
 
-/* =================== SceneManager =================== */
 export function SceneManager() {
   const [stack, setStack] = useState<SceneEntry[]>([{ name: "Home" }]);
   const current = stack[stack.length - 1];
@@ -44,7 +45,6 @@ export function SceneManager() {
     AudioManager.initUnlockListener();
     InputManager.start();
 
-    // ✅ Global back handler
     const handleBack = () => {
       setStack(prev => {
         if (prev.length > 1) {
@@ -55,7 +55,7 @@ export function SceneManager() {
           }
           return newStack;
         }
-        return prev; // at root, do nothing
+        return prev;
       });
     };
 
@@ -67,15 +67,21 @@ export function SceneManager() {
     };
   }, []);
 
+  function playAmbientOnSceneChange(prevScene: SceneEntry | null, currentScene: SceneEntry) {
+    const newAudio = sceneRegistry[currentScene.name]?.audio;
+    const prevAudio = prevScene ? sceneRegistry[prevScene.name]?.audio : null;
 
-  // Play ambient audio on scene change
+    if (newAudio && prevAudio !== newAudio) {
+      AudioManager.playAmbient(newAudio);
+    }
+  }
+
   useEffect(() => {
     if (!current) return;
     const prev = previousRef.current;
     previousRef.current = current;
-    const newAudio = sceneRegistry[current.name].audio;
-    const prevAudio = prev ? sceneRegistry[prev.name].audio : null;
-    if (prevAudio !== newAudio) AudioManager.playAmbient(newAudio);
+
+    playAmbientOnSceneChange(prev, current);
   }, [current.name]);
 
   function push(name: SceneName, params?: Record<string, any>) { setStack(prev => [...prev, { name, params }]); }
@@ -115,10 +121,4 @@ export function SceneManager() {
       </div>
     </NavigationContext.Provider>
   );
-}
-
-export function useScene() {
-  const ctx = useContext(NavigationContext);
-  if (!ctx) throw new Error("useScene must be used inside <SceneManager>");
-  return ctx;
 }

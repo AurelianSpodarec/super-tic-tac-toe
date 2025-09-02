@@ -1,18 +1,19 @@
-import { useScene } from "../_engine/SceneManager";
-import { useButtonController } from "../_engine/useButtonController";
-import { MenuItem } from "../_engine/useMenuController";
+
+import useScene from "../_engine/SceneManager/useScene";
+import { MenuItem } from "../_engine/FocusNavigator/useFocusNavigator";
+import useButtonController from "../_engine/useButtonController";
 
 function ActionBar() {
 
   const { pop } = useScene();
-  
+
   const buttons: MenuItem[] = [
     { id: "back", text: "Back", action: pop },
     { id: "settings", text: "Settings", action: () => console.log("Open settings") }
   ];
-  
+
   const { handleClick } = useButtonController(buttons);
-  
+
   return (
     <header className="text-white fill-white z-10 fixed top-0 w-full flex justify-between px-3 py-2">
       <button onClick={() => handleClick("back")} aria-label="Go back">

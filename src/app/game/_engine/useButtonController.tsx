@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { AudioManager } from "./AudioManager";
-import { MenuItem } from "./useMenuController";
+import { MenuItem } from "./FocusNavigator/useFocusNavigator";
 import { sfxRegistry } from "./settings";
 
-export function useButtonController(buttons: MenuItem[]) {
+function useButtonController(buttons: MenuItem[]) {
 
   function playClickSound() {
     AudioManager.playSFX(sfxRegistry.buttonConfirm);
@@ -33,3 +33,5 @@ export function useButtonController(buttons: MenuItem[]) {
 
   return { handleClick };
 }
+
+export default useButtonController
