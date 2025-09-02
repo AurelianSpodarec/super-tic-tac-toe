@@ -1,3 +1,14 @@
+/* .glow-white {
+
+}
+
+.glow-neon {
+
+}
+
+.glow-neon-logo {
+  
+} */
 
 .white-glow {
   text-shadow: rgba(255, 255, 255, 0.6) 0px 0px 30px, rgba(255, 255, 255, 0.45) 0px 0px 60px, rgba(255, 255, 255, 0.25) 0px 0px 110px, rgba(255, 255, 255, 0.1) 0px 0px 100px;

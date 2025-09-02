@@ -1,13 +1,13 @@
-interface OverlayCurtainProps {
-  variant?: 'primary' | 'secondary';
+interface CurtainProps {
+  variant?: 'primary' | 'secondary' | 'gamee';
   className?: string;
 }
 
-function OverlayCurtain({ variant = 'primary', className = '' }: OverlayCurtainProps) {
-  const variants = {
-    primary: "theme-bg-menu-curtain",
-    secondary: "theme-bg-curtain",
-    gamee: ""
+const Curtain = ({ variant = 'primary', className = '' }: CurtainProps) => {
+  const variants: Record<string, string> = {
+    primary: 'curtain-primary',
+    secondary: 'curtain-secondary',
+    gamee: '',
   };
 
   return (
@@ -15,6 +15,6 @@ function OverlayCurtain({ variant = 'primary', className = '' }: OverlayCurtainP
       className={`fixed inset-0 pointer-events-none select-none ${variants[variant]} ${className}`}
     />
   );
-}
+};
 
-export default OverlayCurtain;
+export default Curtain;

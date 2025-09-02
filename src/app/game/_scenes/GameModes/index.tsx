@@ -1,7 +1,7 @@
 'use client'
 
-import MenuList from "../../_engine/FocusNavigator";
-import { MenuItem, useMenuController } from "../../_engine/FocusNavigator/useFocusNavigator";
+import FocusNavigator from "../../_engine/FocusNavigator";
+import { MenuItem } from "../../_engine/FocusNavigator/useFocusNavigator";
 
 const dataMenu: MenuItem[] = [
   { text: "TicTacToe", scene: "Game" },
@@ -15,7 +15,8 @@ function SceneGameModes() {
       <h1 className="neon relative font-bold text-yellow-400 neon-logo text-[clamp(1rem,3.5vw,3rem)] text-center">
         Choose your game Mode
       </h1>
-      <MenuList
+      
+      <FocusNavigator
         data={dataMenu}
         direction="horizontal"
         className="mt-5"

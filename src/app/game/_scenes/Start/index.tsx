@@ -2,7 +2,7 @@
 
 import React from "react";
 import { MenuItem } from "../../_engine/FocusNavigator/useFocusNavigator";
-import MenuList from "../../_engine/FocusNavigator";
+import FocusNavigator from "../../_engine/FocusNavigator";
 
 import NeonText from "./_components/NeonText";
 import Tagline from "./_components/Tagline";
@@ -31,11 +31,10 @@ function SceneStart() {
           </h1>
         </div>
 
-        <MenuList
+        <FocusNavigator
           data={dataMenu}
           direction="vertical"
           className="mt-5"
-          onSelect={(item) => console.log("Selected:", item.text)}
           renderItem={(item, index, state) => (
             <MenuButton
               item={item}

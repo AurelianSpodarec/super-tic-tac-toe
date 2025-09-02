@@ -1,7 +1,7 @@
 'use client'
 
 import React from "react";
-import { SceneManager } from "./_engine/SceneManager";
+import SceneManager from "./_engine/SceneManager";
 
 function Page() {
   return (

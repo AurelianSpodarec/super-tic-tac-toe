@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 
 import ActionBar from "../../_components/ActionBar";
 
@@ -9,11 +9,7 @@ import { InputManager } from "../InputManager";
 
 export type SceneName = keyof typeof sceneRegistry;
 export type BackgroundEntry =
-  | {
-    type: "image";
-    src: string;
-    backgroundSize?: string
-  }
+  | { type: "image"; src: string; backgroundSize?: string }
   | { type: "overlay" };
 
 export type SceneEntry = {
@@ -32,31 +28,66 @@ export type NavigationContextType = {
 
 export const NavigationContext = createContext<NavigationContextType | null>(null);
 
-export function SceneManager() {
+function SceneManager() {
   const [stack, setStack] = useState<SceneEntry[]>([{ name: "Home" }]);
   const current = stack[stack.length - 1];
   const previousRef = useRef<SceneEntry | null>(null);
 
-  // Preload audio and init unlock
-  // SceneManager.tsx
+  // FUNCTIONS
+  // ----------------------------------------------------------------
+  function push(name: SceneName, params?: Record<string, any>) {
+    setStack(prev => [...prev, { name, params }]);
+  }
 
+  function pop() {
+    setStack(prev => popStack(prev));
+  }
+
+  function replace(name: SceneName, params?: Record<string, any>) {
+    setStack(prev => {
+      const newStack = [...prev.slice(0, -1), { name, params }];
+      playAudioIfChanged(prev[prev.length - 1], newStack[newStack.length - 1]);
+      return newStack;
+    });
+  }
+
+  function reset(name: SceneName, params?: Record<string, any>) {
+    setStack([{ name, params }]);
+    AudioManager.playAmbient(sceneRegistry[name].audio);
+  }
+
+  function playAmbientOnSceneChange(prevScene: SceneEntry | null, currentScene: SceneEntry) {
+    const newAudio = sceneRegistry[currentScene.name]?.audio;
+    const prevAudio = prevScene ? sceneRegistry[prevScene.name]?.audio : null;
+    if (newAudio && prevAudio !== newAudio) AudioManager.playAmbient(newAudio);
+  }
+
+  function popStack(stack: SceneEntry[]) {
+    if (stack.length <= 1) return stack;
+    const newStack = stack.slice(0, -1);
+    const prevScene = stack[stack.length - 1];
+    const currentScene = newStack[newStack.length - 1];
+    playAudioIfChanged(prevScene, currentScene);
+    return newStack;
+  }
+
+  function playAudioIfChanged(prevScene: SceneEntry, currentScene: SceneEntry) {
+    const prevAudio = sceneRegistry[prevScene.name]?.audio;
+    const currentAudio = sceneRegistry[currentScene.name]?.audio;
+    if (prevAudio !== currentAudio) {
+      AudioManager.playAmbient(currentAudio);
+    }
+  }
+
+  // USE EFFECT
+  // ----------------------------------------------------------------
   useEffect(() => {
     Object.values(sceneRegistry).forEach(scene => AudioManager.preload(scene.audio));
     AudioManager.initUnlockListener();
     InputManager.start();
 
     const handleBack = () => {
-      setStack(prev => {
-        if (prev.length > 1) {
-          const newStack = prev.slice(0, -1);
-          const newScene = newStack[newStack.length - 1];
-          if (sceneRegistry[newScene.name].audio !== sceneRegistry[prev[prev.length - 1].name].audio) {
-            AudioManager.playAmbient(sceneRegistry[newScene.name].audio);
-          }
-          return newStack;
-        }
-        return prev;
-      });
+      setStack(prev => popStack(prev));
     };
 
     InputManager.on("back", handleBack);
@@ -67,48 +98,12 @@ export function SceneManager() {
     };
   }, []);
 
-  function playAmbientOnSceneChange(prevScene: SceneEntry | null, currentScene: SceneEntry) {
-    const newAudio = sceneRegistry[currentScene.name]?.audio;
-    const prevAudio = prevScene ? sceneRegistry[prevScene.name]?.audio : null;
-
-    if (newAudio && prevAudio !== newAudio) {
-      AudioManager.playAmbient(newAudio);
-    }
-  }
-
   useEffect(() => {
     if (!current) return;
     const prev = previousRef.current;
     previousRef.current = current;
-
     playAmbientOnSceneChange(prev, current);
   }, [current.name]);
-
-  function push(name: SceneName, params?: Record<string, any>) { setStack(prev => [...prev, { name, params }]); }
-  function pop() {
-    setStack(prev => {
-      if (prev.length <= 1) return prev;
-      const newStack = prev.slice(0, -1);
-      const newScene = newStack[newStack.length - 1];
-      if (sceneRegistry[newScene.name].audio !== sceneRegistry[prev[prev.length - 1].name].audio) {
-        AudioManager.playAmbient(sceneRegistry[newScene.name].audio);
-      }
-      return newStack;
-    });
-  }
-  function replace(name: SceneName, params?: Record<string, any>) {
-    setStack(prev => {
-      const newStack = [...prev.slice(0, -1), { name, params }];
-      const newAudio = sceneRegistry[name].audio;
-      const prevAudio = prev[prev.length - 1].name ? sceneRegistry[prev[prev.length - 1].name].audio : null;
-      if (newAudio !== prevAudio) AudioManager.playAmbient(newAudio);
-      return newStack;
-    });
-  }
-  function reset(name: SceneName, params?: Record<string, any>) {
-    setStack([{ name, params }]);
-    AudioManager.playAmbient(sceneRegistry[name].audio);
-  }
 
   const SceneComp = sceneRegistry[current.name].component;
 
@@ -122,3 +117,5 @@ export function SceneManager() {
     </NavigationContext.Provider>
   );
 }
+
+export default SceneManager;

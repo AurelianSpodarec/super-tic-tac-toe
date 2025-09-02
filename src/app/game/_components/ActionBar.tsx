@@ -7,6 +7,7 @@ function ActionBar() {
 
   const { pop } = useScene();
 
+  // TODO: This should be optional, should also be able to do this without padding an array
   const buttons: MenuItem[] = [
     { id: "back", text: "Back", action: pop },
     { id: "settings", text: "Settings", action: () => console.log("Open settings") }
