@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigation } from "../_engine/SceneManager";
+import { useScene } from "../_engine/SceneManager";
 
 type MenuButtonProps = {
   text: string;
@@ -9,25 +9,10 @@ type MenuButtonProps = {
   targetScene?: "Home" | "Game" | "GameModes"; // limit to registered scenes
 };
 
-function MenuButton({ text, turnedOn, isActive, onMouseEnter, targetScene }: MenuButtonProps) {
-  const { push } = useNavigation();
+function MenuButton({ text, turnedOn, isActive, onMouseEnter, targetScene, handleSelect }: MenuButtonProps) {
+  const { push } = useScene();
 
-  useEffect(() => {
-    if (isActive) {
-      const hoverSound = new Audio("/audio/rimshot-sweet.mp3");
-      hoverSound.play();
-    }
-  }, [isActive]);
-
-  function handleSelect() {
-    const selectSound = new Audio("/audio/jazzysnap.mp3");
-    selectSound.play();
-
-    if (targetScene) {
-      push(targetScene);
-    }
-  }
-
+  
   return (
     <button
       type="button"
@@ -41,10 +26,26 @@ function MenuButton({ text, turnedOn, isActive, onMouseEnter, targetScene }: Men
       onClick={handleSelect}
       aria-current={isActive ? "true" : undefined}
       aria-label={`${text}${isActive ? " (active)" : ""}`}
-    >
+      >
       {text}
     </button>
   );
 }
 
 export default MenuButton
+
+// useEffect(() => {
+//   if (isActive) {
+//     const hoverSound = new Audio("/audio/rimshot-sweet.mp3");
+//     hoverSound.play();
+//   }
+// }, [isActive]);
+
+// function handleSelect() {
+//   const selectSound = new Audio("/audio/jazzysnap.mp3");
+//   selectSound.play();
+
+//   if (targetScene) {
+//     push(targetScene);
+//   }
+// }

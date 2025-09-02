@@ -1,6 +1,6 @@
-import SceneStart from "./../_scenes/Start";
-import SceneGameModes from "./../_scenes/GameModes";
-import SceneGameTicTacToe from "./../_scenes/TicTacToe";
+import SceneStart from "../_scenes/Start";
+import SceneGameModes from "../_scenes/GameModes";
+import SceneGameTicTacToe from "../_scenes/TicTacToe";
 
 export const audioRegistry = {
   home: "audio/relaxing-jazz-saxophone.mp3",

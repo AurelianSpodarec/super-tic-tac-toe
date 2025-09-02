@@ -37,12 +37,36 @@ export function SceneManager() {
   const previousRef = useRef<SceneEntry | null>(null);
 
   // Preload audio and init unlock
+  // SceneManager.tsx
+
   useEffect(() => {
     Object.values(sceneRegistry).forEach(scene => AudioManager.preload(scene.audio));
     AudioManager.initUnlockListener();
     InputManager.start();
-    return () => InputManager.stop();
+
+    // ✅ Global back handler
+    const handleBack = () => {
+      setStack(prev => {
+        if (prev.length > 1) {
+          const newStack = prev.slice(0, -1);
+          const newScene = newStack[newStack.length - 1];
+          if (sceneRegistry[newScene.name].audio !== sceneRegistry[prev[prev.length - 1].name].audio) {
+            AudioManager.playAmbient(sceneRegistry[newScene.name].audio);
+          }
+          return newStack;
+        }
+        return prev; // at root, do nothing
+      });
+    };
+
+    InputManager.on("back", handleBack);
+
+    return () => {
+      InputManager.off("back", handleBack);
+      InputManager.stop();
+    };
   }, []);
+
 
   // Play ambient audio on scene change
   useEffect(() => {
@@ -93,8 +117,8 @@ export function SceneManager() {
   );
 }
 
-export function useNavigation() {
+export function useScene() {
   const ctx = useContext(NavigationContext);
-  if (!ctx) throw new Error("useNavigation must be used inside <SceneManager>");
+  if (!ctx) throw new Error("useScene must be used inside <SceneManager>");
   return ctx;
 }

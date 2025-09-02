@@ -1,19 +1,26 @@
-import { useNavigation } from "../_engine/SceneManager";
-
+import { useScene } from "../_engine/SceneManager";
+import { useButtonController } from "../_engine/useButtonController";
 
 function ActionBar() {
-  const { pop } = useNavigation();
+  
+  const { pop } = useScene();
+  
+  const buttons: ButtonItem[] = [
+    { id: "back", label: "Back", action: pop },
+    { id: "settings", label: "Settings", action: () => console.log("Open settings") }
+  ];
+  const { handleClick } = useButtonController(buttons);
 
   return (
     <header className="text-white fill-white z-10 fixed top-0 w-full flex justify-between px-3 py-2">
-      <button onClick={pop} aria-label="Go back">
+      <button onClick={() => handleClick("back")} aria-label="Go back">
         <svg className="size-8 fill-gray-300" xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
           <path
             d='M20 13.5a4.505 4.505 0 0 1-4.5 4.5H12a1 1 0 0 1 0-2h3.5a2.5 2.5 0 0 0 0-5H7.414l1.293 1.293a1 1 0 1 1-1.414 1.414l-3-3a1 1 0 0 1 0-1.416l3-3a1 1 0 0 1 1.414 1.416L7.414 9H15.5a4.505 4.505 0 0 1 4.5 4.5'
           ></path>
         </svg>
       </button>
-      <button>
+      <button onClick={() => handleClick("settings")}>
         <svg className="size-8 fill-gray-300" xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>
           <g data-name='setting android app aplication phone'>
             <path d='M30.56 8.47a8 8 0 0 0-7-7 64.3 64.3 0 0 0-15.06 0 8 8 0 0 0-7 7 64.3 64.3 0 0 0 0 15.06 8 8 0 0 0 7 7 64.3 64.3 0 0 0 15.06 0 8 8 0 0 0 7-7 64.3 64.3 0 0 0 0-15.06m-2 14.83a6 6 0 0 1-5.28 5.28 63.7 63.7 0 0 1-14.6 0 6 6 0 0 1-5.26-5.28 63.7 63.7 0 0 1 0-14.6A6 6 0 0 1 8.7 3.42a63.7 63.7 0 0 1 14.6 0 6 6 0 0 1 5.28 5.28 63.7 63.7 0 0 1 0 14.6z'></path>

@@ -1,5 +1,5 @@
-import NeonGrid from "../_components/NeonGrid"
-import UserItem from "../_components/UserItem"
+import NeonGrid from "./_components/NeonGrid"
+import UserItem from "./_components/UserItem"
 
 function SceneGameTicTacToe() {
   return (
