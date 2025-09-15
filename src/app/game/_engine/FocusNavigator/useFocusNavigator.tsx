@@ -7,6 +7,8 @@ export interface MenuItem {
   id?: string;
   text: string;
   scene?: string;
+  description?: string;
+  thumbnail?: string;
   action?: () => void;
 }
 

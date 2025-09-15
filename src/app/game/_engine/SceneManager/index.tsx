@@ -14,15 +14,15 @@ export type BackgroundEntry =
 
 export type SceneEntry = {
   name: SceneName;
-  params?: Record<string, any>;
+  params?: Record<string, unknown>;
   background?: BackgroundEntry[];
 };
 
 export type NavigationContextType = {
-  push: (name: SceneName, params?: Record<string, any>) => void;
+  push: (name: SceneName, params?: Record<string, unknown>) => void;
   pop: () => void;
-  replace: (name: SceneName, params?: Record<string, any>) => void;
-  reset: (name: SceneName, params?: Record<string, any>) => void;
+  replace: (name: SceneName, params?: Record<string, unknown>) => void;
+  reset: (name: SceneName, params?: Record<string, unknown>) => void;
   stack: SceneEntry[];
 };
 
@@ -35,7 +35,7 @@ function SceneManager() {
 
   // FUNCTIONS
   // ----------------------------------------------------------------
-  function push(name: SceneName, params?: Record<string, any>) {
+  function push(name: SceneName, params?: Record<string, unknown>) {
     setStack(prev => [...prev, { name, params }]);
   }
 
@@ -43,7 +43,7 @@ function SceneManager() {
     setStack(prev => popStack(prev));
   }
 
-  function replace(name: SceneName, params?: Record<string, any>) {
+  function replace(name: SceneName, params?: Record<string, unknown>) {
     setStack(prev => {
       const newStack = [...prev.slice(0, -1), { name, params }];
       playAudioIfChanged(prev[prev.length - 1], newStack[newStack.length - 1]);
@@ -51,7 +51,7 @@ function SceneManager() {
     });
   }
 
-  function reset(name: SceneName, params?: Record<string, any>) {
+  function reset(name: SceneName, params?: Record<string, unknown>) {
     setStack([{ name, params }]);
     AudioManager.playAmbient(sceneRegistry[name].audio);
   }

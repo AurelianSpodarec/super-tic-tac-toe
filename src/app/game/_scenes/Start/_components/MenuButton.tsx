@@ -1,17 +1,23 @@
 'use client'
 
+import { MenuItemState } from "@/app/game/_engine/FocusNavigator/useFocusNavigator";
+
+interface MenuButtonState {
+  active: boolean;
+  [key: string]: unknown;
+}
+
 interface MenuButtonProps {
   item: MenuItemState;
   onClick: () => void;
   onHover?: () => void;
-  isTurnedOn: boolean
-  state: any;
+  isTurnedOn: boolean;
+  state: MenuButtonState;
 }
 
 function MenuButton({ item, state, onClick, onHover, isTurnedOn }: MenuButtonProps) {
-  const isActive = state.active
-  // const isTurnedOn = true
-  const text = item.text
+  const isActive = state.active;
+  const text = item.text;
 
   return (
     <button
@@ -33,4 +39,4 @@ function MenuButton({ item, state, onClick, onHover, isTurnedOn }: MenuButtonPro
   );
 }
 
-export default MenuButton
+export default MenuButton;
