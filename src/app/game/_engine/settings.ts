@@ -18,7 +18,7 @@ type BackgroundLayer =
   | { type: "overlay" };
 
 interface Scene {
-  component: React.ComponentType<any>;
+  component: React.ComponentType;
   background: BackgroundLayer[];
   audio: typeof audioRegistry[keyof typeof audioRegistry];
 }
