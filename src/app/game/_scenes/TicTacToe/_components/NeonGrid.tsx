@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
@@ -58,7 +56,7 @@ function useTicTacToe(players: Player[]) {
   }, [timerRunning])
 
   const checkWinner = useCallback((b: string[]) => {
-    for (let combo of WIN_COMBOS) {
+    for (const combo of WIN_COMBOS) {
       const [a, b1, c] = combo
       if (b[a] && b[a] === b[b1] && b[a] === b[c]) return combo
     }
