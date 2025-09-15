@@ -115,9 +115,7 @@ function SceneStart() {
             return (
               <MenuButton
                 item={item}
-                state={item}
-                index={index}
-                // duration={getDurationFromClass(menuConfig?.class)}
+                state={{ active: item.active ?? false }} // now matches MenuButtonState
                 onClick={state.onClick}
                 onHover={state.onHover}
                 isTurnedOn={
@@ -126,6 +124,7 @@ function SceneStart() {
                     : false
                 }
               />
+
             );
           }}
         />
