@@ -1,6 +1,6 @@
 'use client'
 
-interface IUserItem {
+export interface IUserItem {
   avatar: string
   name: string
   labelPosition?: "left" | "right"

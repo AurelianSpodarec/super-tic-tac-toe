@@ -1,6 +1,11 @@
 'use client'
 
-function GameModeItem({ item }: any) {
+interface A {
+  image: string
+  name: string
+}
+
+function GameModeItem({ item }: {item: A}) {
   return (
     <div className="rounded-lg h-[250px] w-[250px] hover:scale-105 transition duration-75 ease-in-out">
       <div className="absolute h-[250px] w-[250px] bg-white rounded-lg">
