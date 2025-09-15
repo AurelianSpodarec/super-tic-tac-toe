@@ -4,7 +4,7 @@ export type Background =
   | { type: "image"; src: string; backgroundSize?: string }
   | { type: "overlay" }
   | { type: "menuOverlay" }
-  | { type: string;[key: string]: any };
+  | { type: string;[key: string]: unknown };
 
 export type BackgroundRenderer<T extends Background = Background> = (
   bg: T,
