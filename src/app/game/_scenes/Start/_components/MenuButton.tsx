@@ -4,12 +4,13 @@ interface MenuButtonProps {
   item: MenuItemState;
   onClick: () => void;
   onHover?: () => void;
+  isTurnedOn: boolean
   state: any;
 }
 
-function MenuButton({ item, state, onClick, onHover }: MenuButtonProps) {
+function MenuButton({ item, state, onClick, onHover, isTurnedOn }: MenuButtonProps) {
   const isActive = state.active
-  const isTurnedOn = true
+  // const isTurnedOn = true
   const text = item.text
 
   return (

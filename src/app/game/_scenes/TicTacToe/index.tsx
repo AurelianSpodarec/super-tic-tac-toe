@@ -5,7 +5,7 @@ function SceneGameTicTacToe() {
   return (
     <div className="h-full w-full flex items-center justify-center">
 
-      <div className="w-[700px] text-center z-10">
+      {/* <div className="w-[700px] text-center z-10">
         <div className="mb-2">
           <span className="text-gray-50 text-lg">1:34</span>
         </div>
@@ -17,11 +17,11 @@ function SceneGameTicTacToe() {
           <UserItem name="Novice AI" avatar="https://i.imgur.com/Osx2CgE.png" labelPosition="right" />
         </header>
 
-        <section>
-          <NeonGrid size={3} />
-          <button className="text-white mt-14 text-3xl">Start</button>
+        <section> */}
+          <NeonGrid />
+          {/* <button className="text-white mt-14 text-3xl">Start</button>
         </section>
-      </div>
+      </div> */}
 
     </div>
   )

@@ -2,23 +2,68 @@
 
 import FocusNavigator from "../../_engine/FocusNavigator";
 import { MenuItem } from "../../_engine/FocusNavigator/useFocusNavigator";
-const dataMenu: MenuItem[] = [
-  { text: "TicTacToe", scene: "Game" }, // classic 3x3 game
-  { text: "SuperTicTacToe", scene: "Game" }, // larger grid variant (4x4, 5x5, etc.)
-  { text: "TicTacKu", scene: "Game" }, // puzzle/strategy variant
-  { text: "Ultimate TicTacToe", scene: "Game" }, // 3x3 of 3x3 boards
-  { text: "Speed Challenge", scene: "Game" }, // press X as fast as possible in Ultimate TicTacToe
-  { text: "Cognitive Challenge", scene: "Game" }, // memory/attention variant
-];
 
+const dataMenu: MenuItem[] = [
+  {
+    text: "Classic 3x3",
+    scene: "Game",
+    thumbnail: "https://tictactoefree.com/img/classic.png",
+    description: "The classic 3x3 game for 2 players. Aim to align three Xs or Os horizontally, vertically, or diagonally."
+  },
+  // {
+  //   text: "Gomoku",
+  //   scene: "Game",
+  //   thumbnail: "https://tictactoefree.com/img/gomoku.png",
+  //   description: "A 15x15 or 19x19 board game. Players aim to align five chips in a row, requiring long-term planning and defense."
+  // },
+  {
+    text: "Ultimate",
+    scene: "Game",
+    thumbnail: "https://tictactoefree.com/img/ultimate-full.png",
+    description: "Nine small 3x3 boards form a big 3x3 field. Moves dictate the next sector, combining strategy on multiple boards."
+  },
+  {
+    text: "3D",
+    scene: "Game",
+    thumbnail: "https://tictactoefree.com/img/3d-tictactoe.png",
+    description: "A 3x3x3 cube where rows can span multiple levels. Requires spatial thinking and multidimensional strategies."
+  },
+  // {
+  //   text: "Larger Board",
+  //   scene: "Game",
+  //   thumbnail: "https://tictactoefree.com/img/larger.png",
+  //   description: "4x4 or 5x5 boards. Objectives vary (4 or 5 in a row), with complex strategies and multiple winning threats."
+  // },
+  {
+    text: "Misere",
+    scene: "Game",
+    thumbnail: "https://tictactoefree.com/img/prevent.png",
+    description: "Also called Concession mode. Players aim to **avoid** winning; the one forced to align three symbols loses."
+  },
+  {
+    text: "Wild",
+    scene: "Game",
+    thumbnail: "https://tictactoefree.com/img/wild.png",
+    description: "Players can place either X or O each turn. Winning requires careful symbol choice and blocking the opponent."
+  },
+  {
+    text: "Pyramid",
+    scene: "Game",
+    thumbnail: "https://tictactoefree.com/img/pyramid.png",
+    description: "3D pyramid-shaped board. Align symbols across multiple levels while blocking your opponent."
+  },
+  // {
+  //   text: "Dara",
+  //   scene: "Game",
+  //   thumbnail: "https://tictactoefree.com/img/dara.png",
+  //   description: "Traditional African strategy game. Place and move pieces to create rows and block opponents."
+  // }
+];
 
 function SceneGameModes() {
 
   return (
-    <div className="h-full w-full flex flex-col items-center justify-center">
-      <h1 className="neon relative font-bold text-yellow-400 neon-logo text-[clamp(1rem,3.5vw,3rem)] text-center">
-        Choose your game Mode
-      </h1>
+    <div className="h-full py-20 flex flex-col text-center items-center align-middle justify-center mx-auto max-w-[700px]">
 
       <FocusNavigator
         data={dataMenu}
@@ -26,7 +71,7 @@ function SceneGameModes() {
         rows={2}
         columnsMobile={1}
         direction="horizontal"
-        className="mt-5"
+        className="flex"
         onSelect={(item) => console.log("Selected:", item.text)}
         renderItem={(item, index, state) => {
           const isActive = item.active;
@@ -37,23 +82,98 @@ function SceneGameModes() {
             <button
               type="button"
               className={`
-                font-neontubes
-                text-[clamp(1.5rem,2.5vw,2rem)]
-                outline-none transition-all duration-200
-                ${isTurnedOn ? "text-[#ef476f]" : "text-[#4a4a4a] opacity-40"}
-                ${isActive && isTurnedOn ? "active-item neon2 scale-105" : ""}
+                w-full
+                aspect-square
+                flex flex-col items-center justify-center
+                bg-[#1b1b1b] rounded-xl shadow-md
+                transition-transform duration-300
+                border-2
+                ${isActive && isTurnedOn ? "scale-105 shadow-xl border-2 border-[#ef476f]" : "border-transparent hover:scale-105 hover:shadow-lg"}
+                outline-none
               `}
               onClick={state.onClick}
               onMouseEnter={state.onHover}
               aria-current={isActive ? "true" : undefined}
               aria-label={`${text}${isActive ? " (active)" : ""}`}
             >
-              {text}
+              <div className="w-4/5 h-4/5 rounded-lg overflow-hidden mb-2">
+                <img
+                  src={item.thumbnail}
+                  alt={text}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <span className={`text-center font-neontubes text-[clamp(0.8rem,2vw,1.2rem)] ${isTurnedOn ? "text-[#ef476f]" : "text-gray-500"}`}>
+                {text}
+              </span>
             </button>
+
           );
         }}
-
       />
+
+      <div className="flex flex-row mt-20 space-x-8">
+
+        <button className="flex items-center space-x-1.5">
+
+          {/* <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            className='w-6 h-6'
+            viewBox='0 0 48 48'
+          >
+            <path
+              fill='currentColor'
+              stroke='currentColor'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth='2'
+              d='M23 23V5h20v38H5V23z'
+            ></path>
+            <path
+              stroke='#000'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth='2'
+              d='M33 13v20H13'
+            ></path>
+            <path
+              stroke='#000'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth='2'
+              d='m17 29-4 4 4 4'
+            ></path>
+          </svg> */}
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            className='w-4 h-4'
+            viewBox='0 0 16 18'
+          >
+            <path
+              stroke='currentColor'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth='2'
+              d='M8 1.059v10.425m0 0 4-3.791m-4 3.79-4-3.79m11 3.79v2.844c0 .502-.21.985-.586 1.34a2.06 2.06 0 0 1-1.414.555H3c-.53 0-1.04-.2-1.414-.555A1.85 1.85 0 0 1 1 14.327v-2.843'
+            ></path>
+          </svg>
+          <span>Enter</span>
+        </button>
+        <button className="flex items-center space-x-1">
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='currentColor'
+            className='w-4 h-4'
+            viewBox='0 0 16 16'
+          >
+            <path d='m16 8-3-3v2H9V3h2L8 0 5 3h2v4H3V5L0 8l3 3V9h4v4H5l3 3 3-3H9V9h4v2z'></path>
+          </svg>
+          <span>Navigate</span>
+        </button>
+        <button>⭠ Back</button>
+      </div>
 
     </div>
   );
