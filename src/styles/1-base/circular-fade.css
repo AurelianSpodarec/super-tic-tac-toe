@@ -8,7 +8,7 @@
   pointer-events: none;
   z-index: 0;
 
-  background: radial-gradient(circle, rgba(0, 0, 0, 0.3) 10%, rgba(0, 0, 0, 0.75) 60%);
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.4) 10%, rgba(0, 0, 0, 0.95) 60%);
 }
 
 .circular-fade::before {
