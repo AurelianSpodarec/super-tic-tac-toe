@@ -61,7 +61,7 @@ export const neontubes = localFont({
 function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`antialiased ${orbitron.variable} ${comfortaa.variable} ${monoton.variable} ${neontubes.variable} ${quicksand.variable} ${sacramento.variable}`}>
+      <body className={`bg-black antialiased ${orbitron.variable} ${comfortaa.variable} ${monoton.variable} ${neontubes.variable} ${quicksand.variable} ${sacramento.variable}`}>
         {children}
       </body>
     </html>

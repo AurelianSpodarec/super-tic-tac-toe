@@ -16,5 +16,5 @@
   position: absolute;
   inset: 0;
   background: black;
-  animation: fadeOut 0.2s ease forwards;
+  animation: fadeOut 4.5s ease forwards;
 }
