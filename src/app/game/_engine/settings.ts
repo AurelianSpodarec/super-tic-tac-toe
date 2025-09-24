@@ -28,6 +28,7 @@ export const sceneRegistry: Record<string, Scene> = {
     component: SceneStart,
     background: [
       { type: "image", src: "/images/brick-wall.webp" },
+      //  { type: "image", src: "/images/textured-bricks.jpg" },
       { type: "menuOverlay" }
     ],
     audio: audioRegistry.home

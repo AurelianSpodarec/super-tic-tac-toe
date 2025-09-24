@@ -12,7 +12,7 @@ const Curtain = ({ variant = 'primary', className = '' }: CurtainProps) => {
 
   return (
     <div
-      className={`fixed inset-0 pointer-events-none select-none curtain curtain-primary circular-fade ${variants[variant]} ${className}`}
+      className={`fixed inset-0 pointer-events-none select-none curtain circular-fade ${variants[variant]} ${className}`}
     />
   );
 };

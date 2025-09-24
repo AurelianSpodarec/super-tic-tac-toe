@@ -84,7 +84,6 @@ function useAnimationSequence(sequence: typeof animationSequence) {
   return state;
 }
 
-// --- SceneStart component ---
 function SceneStart() {
   const animationState = useAnimationSequence(animationSequence);
 
