@@ -5,6 +5,7 @@ import { motion, Variants } from "motion/react"
 
 import ChatPanel from "@/app/game/_components/ChatPanel"
 import { useMultiplayerStore } from "@/app/game/_engine/Multiplayer"
+import { getAvatarUrl, getPlayerProfile } from "@/app/game/_engine/playerProfile"
 import UserItem from "./UserItem"
 import { addLeaderboardResult, createId } from "@/app/game/_engine/leaderboard"
 
@@ -175,9 +176,11 @@ export default function NeonGrid({
 
 function LocalNeonGrid({ mode, vs }: { mode: GameMode; vs: Exclude<VsMode, "online"> }) {
   const players = useMemo<Player[]>(() => {
+    const profile = getPlayerProfile();
+
     const p1: Player = {
-      name: "Player 1",
-      avatar: "https://i.imgur.com/cTzL0ai.png",
+      name: profile.displayName,
+      avatar: getAvatarUrl(profile.avatarId),
       symbol: "X",
     }
 

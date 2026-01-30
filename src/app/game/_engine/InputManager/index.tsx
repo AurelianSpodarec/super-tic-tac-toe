@@ -58,6 +58,13 @@ class InputManagerClass {
   }
 
   private handleKey = (e: KeyboardEvent) => {
+    const target = e.target as HTMLElement | null;
+    const isEditableTarget =
+      !!target &&
+      (target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        (target as HTMLElement).isContentEditable);
+
     switch (e.key) {
       case "ArrowUp":
         if (this.trigger("up", e)) e.preventDefault();
@@ -85,6 +92,10 @@ class InputManagerClass {
         if (this.trigger("settings", e)) e.preventDefault();
         break;
       case "Backspace":
+        // Don't treat Backspace as a global "back" shortcut while typing.
+        if (isEditableTarget) return;
+        if (this.trigger("back", e)) e.preventDefault();
+        break;
       case "Escape":
         if (this.trigger("back", e)) e.preventDefault();
         break;

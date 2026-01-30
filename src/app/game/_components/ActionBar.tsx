@@ -65,6 +65,8 @@ function ActionBar() {
     !isModalOpen &&
     currentMeta.actionBar?.showSettings !== false;
 
+  const showPause = !isModalOpen && current.name === "Game";
+
   const showFullscreen =
     !isModalOpen &&
     currentMeta.actionBar?.showFullscreen !== false;
@@ -85,6 +87,7 @@ function ActionBar() {
 
   const buttons: MenuItem[] = [
     ...(leftButton ? [leftButton] : []),
+    ...(showPause ? [{ id: "pause", text: "Pause", action: () => push("Pause") }] : []),
     ...(showSettings ? [{ id: "settings", text: "Settings", action: () => push("Settings") }] : []),
     ...(showFullscreen ? [{ id: "fullscreen", text: "Fullscreen", action: toggleFullScreen }] : []),
   ];
@@ -92,8 +95,8 @@ function ActionBar() {
   const { handleClick } = useButtonController(buttons);
 
   return (
-    <header className="fixed top-0 w-full flex justify-between items-center px-4 py-2 text-white z-50">
-      <div className="flex gap-2">
+    <header className="fixed top-0 w-full flex justify-between items-center px-4 py-2 text-white z-[80]">
+      <div className="flex gap-3">
         {leftButton ? (
           <button
             onClick={() => handleClick("back")}
@@ -110,6 +113,15 @@ function ActionBar() {
                 <path d="M20 13.5a4.505 4.505 0 0 1-4.5 4.5H12a1 1 0 0 1 0-2h3.5a2.5 2.5 0 0 0 0-5H7.414l1.293 1.293a1 1 0 1 1-1.414 1.414l-3-3a1 1 0 0 1 0-1.416l3-3a1 1 0 0 1 1.414 1.416L7.414 9H15.5a4.505 4.505 0 0 1 4.5 4.5" />
               </svg>
             )}
+          </button>
+        ) : null}
+
+        {showPause ? (
+          <button onClick={() => handleClick("pause")} aria-label="Pause">
+            <span className="sr-only">Pause</span>
+            <svg className="w-6 h-6 fill-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M6 5a1 1 0 0 1 1 1v12a1 1 0 1 1-2 0V6a1 1 0 0 1 1-1Zm12 0a1 1 0 0 1 1 1v12a1 1 0 1 1-2 0V6a1 1 0 0 1 1-1Z" />
+            </svg>
           </button>
         ) : null}
       </div>

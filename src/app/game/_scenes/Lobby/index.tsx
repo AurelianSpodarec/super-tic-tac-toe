@@ -3,16 +3,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import useScene from "../../_engine/SceneManager/useScene";
+import { getAvatarUrl, getPlayerProfile, type AvatarId } from "../../_engine/playerProfile";
 import { useMultiplayerStore } from "../../_engine/Multiplayer";
 
 import LobbyRoom from "./_components/LobbyRoom";
 
 type Flow = "create" | "join";
 
-const avatars = {
-  host: "https://i.imgur.com/cTzL0ai.png",
-  guest: "https://i.imgur.com/Osx2CgE.png",
-};
+const defaultProfile = getPlayerProfile();
 
 function getJoinCodeFromURL(): string | null {
   if (typeof window === "undefined") return null;
@@ -39,7 +37,8 @@ export default function SceneLobby({ flow }: { flow?: Flow }) {
   const consumePendingGameStart = useMultiplayerStore((s) => s.consumePendingGameStart);
   const leave = useMultiplayerStore((s) => s.leave);
 
-  const [name, setName] = useState("Player");
+  const [name, setName] = useState(defaultProfile.displayName);
+  const [avatarId, setAvatarId] = useState<AvatarId>(defaultProfile.avatarId);
   const [inviteCode, setInviteCode] = useState("");
   const [urlJoinCode, setUrlJoinCode] = useState<string | null>(null);
 
@@ -122,6 +121,21 @@ export default function SceneLobby({ flow }: { flow?: Flow }) {
           />
         </label>
 
+        <label className="block text-left">
+          <div className="text-xs text-gray-400 mb-2">Avatar</div>
+          <div className="flex items-center gap-2">
+            <select
+              value={avatarId}
+              onChange={(e) => setAvatarId(e.target.value as AvatarId)}
+              className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2"
+            >
+              <option value="aurel">Aurel</option>
+              <option value="guest">Guest</option>
+            </select>
+            <img src={getAvatarUrl(avatarId)} alt="Selected avatar" className="h-10 w-10 rounded-full border border-white/10" />
+          </div>
+        </label>
+
         {!isCreate ? (
           <label className="block text-left">
             <div className="text-xs text-gray-400 mb-2">Invite code</div>
@@ -137,9 +151,16 @@ export default function SceneLobby({ flow }: { flow?: Flow }) {
           type="button"
           onClick={async () => {
             if (isCreate) {
-              await createLobby({ name: name.trim() || "Host", avatar: avatars.host });
+              await createLobby({
+                name: name.trim() || "Host",
+                avatar: getAvatarUrl(avatarId),
+              });
             } else {
-              await joinLobby({ inviteCode: inviteCode.trim(), name: name.trim() || "Guest", avatar: avatars.guest });
+              await joinLobby({
+                inviteCode: inviteCode.trim(),
+                name: name.trim() || "Guest",
+                avatar: getAvatarUrl(avatarId),
+              });
             }
           }}
           className="w-full px-4 py-3 rounded-xl border border-[#ef476f]/60 bg-[#ef476f]/20 hover:bg-[#ef476f]/25"

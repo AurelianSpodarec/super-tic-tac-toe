@@ -30,11 +30,15 @@ export default function NavigationProvider({ initialStack, children }: Props) {
       dispatch({ type: "REPLACE", name, params });
     }
 
+    function replaceBelowTop(name: SceneName, params?: Record<string, unknown>) {
+      dispatch({ type: "REPLACE_BELOW_TOP", name, params });
+    }
+
     function reset(name: SceneName, params?: Record<string, unknown>) {
       dispatch({ type: "RESET", name, params });
     }
 
-    return { push, pop, replace, reset, stack };
+    return { push, pop, replace, replaceBelowTop, reset, stack };
   }, [stack]);
 
   return <NavigationContext.Provider value={api}>{children}</NavigationContext.Provider>;

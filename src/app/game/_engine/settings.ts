@@ -9,6 +9,8 @@ import SceneGameTicTacToe from "../_scenes/TicTacToe";
 import SceneCredits from "../_scenes/Credits";
 import SceneLeaderboard from "../_scenes/Leaderboard";
 import SceneSettings from "../_scenes/Settings";
+import ScenePause from "../_scenes/Pause";
+import SceneConfirmQuit from "../_scenes/ConfirmQuit";
 
 export const audioRegistry = {
   home: "audio/relaxing-jazz-saxophone.mp3",
@@ -30,14 +32,20 @@ type ActionBarConfig = {
   showFullscreen?: boolean;
 };
 
+type ModalConfig = {
+  title: string;
+  closeOnBackdrop?: boolean;
+};
+
 const defaultActionBar: ActionBarConfig = {};
 
-interface Scene {
+export interface SceneMeta {
   component: ComponentType;
   background: BackgroundLayer[];
   audio: typeof audioRegistry[keyof typeof audioRegistry];
   presentation?: ScenePresentation;
   actionBar?: ActionBarConfig;
+  modal?: ModalConfig;
 }
 
 export const sceneRegistry = {
@@ -89,7 +97,7 @@ export const sceneRegistry = {
     ],
     audio: audioRegistry.game,
     presentation: "screen",
-    actionBar: defaultActionBar,
+    actionBar: { showBack: false } as ActionBarConfig,
   },
   Leaderboard: {
     component: SceneLeaderboard,
@@ -119,10 +127,41 @@ export const sceneRegistry = {
     ],
     audio: audioRegistry.home,
     presentation: "modal",
+    modal: { title: "Settings" },
     actionBar: {
       showBack: false,
       showSettings: false,
       showFullscreen: false,
     },
   },
-} satisfies Record<string, Scene>;
+  Pause: {
+    component: ScenePause,
+    background: [
+      { type: "image", src: "/images/black-vintage-background.jpg" },
+      { type: "overlay" },
+    ],
+    audio: audioRegistry.game,
+    presentation: "modal",
+    modal: { title: "Paused", closeOnBackdrop: true },
+    actionBar: {
+      showBack: false,
+      showSettings: false,
+      showFullscreen: false,
+    },
+  },
+  ConfirmQuit: {
+    component: SceneConfirmQuit,
+    background: [
+      { type: "image", src: "/images/black-vintage-background.jpg" },
+      { type: "overlay" },
+    ],
+    audio: audioRegistry.game,
+    presentation: "modal",
+    modal: { title: "Quit game?", closeOnBackdrop: false },
+    actionBar: {
+      showBack: false,
+      showSettings: false,
+      showFullscreen: false,
+    },
+  },
+} satisfies Record<string, SceneMeta>;
