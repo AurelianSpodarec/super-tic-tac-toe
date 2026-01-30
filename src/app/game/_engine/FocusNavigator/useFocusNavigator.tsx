@@ -7,6 +7,7 @@ export interface MenuItem {
   id?: string;
   text: string;
   scene?: string;
+  params?: Record<string, unknown>;
   description?: string;
   thumbnail?: string;
   action?: () => void;
@@ -91,7 +92,8 @@ export default function useFocusNavigator({
     const idx = index ?? state.activeIndex;
     const item = items[idx];
     AudioManager.playSFX(sfxRegistry.buttonConfirm);
-    if (item.scene) push(item.scene);
+
+    if (item.scene) push(item.scene, item.params);
     if (item.action) item.action();
     onSelect?.(item);
   };

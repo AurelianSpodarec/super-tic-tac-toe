@@ -44,22 +44,12 @@
 
 // export default ActionBar
 
-import { useEffect, useState } from "react";
 import useScene from "../_engine/SceneManager/useScene";
 import { MenuItem } from "../_engine/FocusNavigator/useFocusNavigator";
 import useButtonController from "../_engine/useButtonController";
 
 function ActionBar() {
-  const { pop } = useScene();
-
-  // Clock state
-  const [time, setTime] = useState(new Date());
-
-  // Update every second
-  useEffect(() => {
-    const interval = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const { pop, push } = useScene();
 
   // Fullscreen toggle
   const toggleFullScreen = () => {
@@ -73,14 +63,10 @@ function ActionBar() {
   // FocusNavigator buttons
   const buttons: MenuItem[] = [
     { id: "back", text: "Back", action: pop },
-    { id: "settings", text: "Settings", action: () => console.log("Open settings") },
+    { id: "settings", text: "Settings", action: () => push("Settings") },
     { id: "fullscreen", text: "Fullscreen", action: toggleFullScreen },
   ];
   const { handleClick } = useButtonController(buttons);
-
-  // Format clocks
-  const militaryTime = time.toLocaleTimeString([], { hour12: false, hour: "2-digit", minute: "2-digit" });
-  const ukTime = time.toLocaleTimeString("en-GB", { hour12: true, hour: "2-digit", minute: "2-digit" });
 
   return (
     <header className="fixed top-0 w-full flex justify-between items-center px-4 py-2 text-white z-50">

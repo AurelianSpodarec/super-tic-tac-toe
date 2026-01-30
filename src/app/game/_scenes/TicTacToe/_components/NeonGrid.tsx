@@ -1,13 +1,14 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { motion, Variants } from "motion/react"
 import UserItem from "./UserItem"
+import { addLeaderboardResult, createId } from "@/app/game/_engine/leaderboard"
 
 // ----------------- Constants -----------------
 const draw: Variants = {
   hidden: { pathLength: 0, opacity: 0 },
-  visible: (i: number) => ({
+  visible: (_i: number) => ({
     pathLength: 1,
     opacity: 1,
     transition: {
@@ -19,7 +20,6 @@ const draw: Variants = {
 
 const CELL_SIZE = 100
 const OFFSET = 50
-const ANIMATION_DURATION = 1200
 const BOARD_SIZE = 9
 const WIN_COMBOS = [
   [0, 1, 2],
@@ -32,18 +32,56 @@ const WIN_COMBOS = [
   [2, 4, 6],
 ]
 
-const coords = Array.from({ length: BOARD_SIZE }, (_, i) => [
-  OFFSET + (i % 3) * CELL_SIZE,
-  OFFSET + Math.floor(i / 3) * CELL_SIZE,
+const coords = Array.from({ length: BOARD_SIZE }, (_, idx) => [
+  OFFSET + (idx % 3) * CELL_SIZE,
+  OFFSET + Math.floor(idx / 3) * CELL_SIZE,
 ])
 
-type Player = { name: string; avatar: string; symbol: string }
+type VsMode = "ai" | "local"
+type GameMode = "classic" | "misere"
+type Player = { name: string; avatar: string; symbol: "X" | "O"; isAI?: boolean }
+
+function getOpponentSymbol(symbol: Player["symbol"]): Player["symbol"] {
+  return symbol === "X" ? "O" : "X"
+}
+
+function getAiMoveIndex(board: string[], aiSymbol: Player["symbol"], humanSymbol: Player["symbol"]) {
+  const empty = board
+    .map((v, i) => (v ? null : i))
+    .filter((v): v is number => v !== null)
+
+  const isWinIfPlace = (idx: number, symbol: Player["symbol"]) => {
+    const b = [...board]
+    b[idx] = symbol
+    return WIN_COMBOS.some(([a, b1, c]) => b[a] && b[a] === b[b1] && b[a] === b[c])
+  }
+
+  // 1) Win now
+  for (const idx of empty) {
+    if (isWinIfPlace(idx, aiSymbol)) return idx
+  }
+
+  // 2) Block opponent
+  for (const idx of empty) {
+    if (isWinIfPlace(idx, humanSymbol)) return idx
+  }
+
+  // 3) Center
+  if (!board[4]) return 4
+
+  // 4) Corners
+  const corners = [0, 2, 6, 8].filter(i => !board[i])
+  if (corners.length) return corners[Math.floor(Math.random() * corners.length)]
+
+  // 5) Any
+  return empty[Math.floor(Math.random() * empty.length)]
+}
 
 // ----------------- Custom Hook: useTicTacToe -----------------
-function useTicTacToe(players: Player[]) {
-  const [board, setBoard] = useState(Array(BOARD_SIZE).fill(""))
+function useTicTacToe({ players, mode }: { players: Player[]; mode: GameMode }) {
+  const [board, setBoard] = useState<string[]>(Array(BOARD_SIZE).fill(""))
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0)
-  const [winner, setWinner] = useState<string | "draw" | null>(null)
+  const [winner, setWinner] = useState<Player["symbol"] | "draw" | null>(null)
   const [winningLine, setWinningLine] = useState<number[] | null>(null)
   const [score, setScore] = useState([0, 0])
   const [timer, setTimer] = useState(0)
@@ -51,7 +89,7 @@ function useTicTacToe(players: Player[]) {
 
   useEffect(() => {
     if (!timerRunning) return
-    const interval = setInterval(() => setTimer((t) => t + 1), 1000)
+    const interval = setInterval(() => setTimer(t => t + 1), 1000)
     return () => clearInterval(interval)
   }, [timerRunning])
 
@@ -63,43 +101,50 @@ function useTicTacToe(players: Player[]) {
     return null
   }, [])
 
- const handleMove = (index: number) => {
-  if (board[index] || winner) return // ignore clicks if cell is filled or winner exists
+  const handleMove = useCallback(
+    (index: number) => {
+      if (board[index] || winner) return
 
-  if (!timerRunning) setTimerRunning(true) // start timer on first move
+      if (!timerRunning) setTimerRunning(true)
 
-  const currentSymbol = players[currentPlayerIndex].symbol
-  const newBoard = [...board]
-  newBoard[index] = currentSymbol
-  setBoard(newBoard)
+      const currentSymbol = players[currentPlayerIndex].symbol
+      const newBoard = [...board]
+      newBoard[index] = currentSymbol
+      setBoard(newBoard)
 
-  // Check winner immediately to block further clicks
-  const winCombo = checkWinner(newBoard)
-  if (winCombo) {
-    setWinner(currentSymbol)
-    setWinningLine(winCombo)
-    setScore((prev) =>
-      currentSymbol === players[0].symbol ? [prev[0] + 1, prev[1]] : [prev[0], prev[1] + 1]
-    )
-    setTimerRunning(false)
-  } else if (newBoard.every(Boolean)) {
-    setWinner("draw")
-    setTimerRunning(false)
-  } else {
-    // Swap player only if the game is still ongoing
-    setCurrentPlayerIndex((prev) => 1 - prev)
-  }
-}
+      const winCombo = checkWinner(newBoard)
+      if (winCombo) {
+        const computedWinner =
+          mode === "misere" ? getOpponentSymbol(currentSymbol) : currentSymbol
 
+        setWinner(computedWinner)
+        setWinningLine(winCombo)
+        setScore(prev =>
+          computedWinner === players[0].symbol ? [prev[0] + 1, prev[1]] : [prev[0], prev[1] + 1]
+        )
+        setTimerRunning(false)
+        return
+      }
 
-  const resetGame = () => {
+      if (newBoard.every(Boolean)) {
+        setWinner("draw")
+        setTimerRunning(false)
+        return
+      }
+
+      setCurrentPlayerIndex(prev => 1 - prev)
+    },
+    [board, checkWinner, currentPlayerIndex, mode, players, timerRunning, winner]
+  )
+
+  const resetGame = useCallback(() => {
     setBoard(Array(BOARD_SIZE).fill(""))
     setCurrentPlayerIndex(0)
     setWinner(null)
     setWinningLine(null)
     setTimer(0)
     setTimerRunning(false)
-  }
+  }, [])
 
   return {
     board,
@@ -114,11 +159,36 @@ function useTicTacToe(players: Player[]) {
 }
 
 // ----------------- Main Component -----------------
-export default function TicTacToe() {
-  const players: Player[] = [
-    { name: "Aurelian Spodarec", avatar: "https://i.imgur.com/cTzL0ai.png", symbol: "X" },
-    { name: "Novice AI", avatar: "https://i.imgur.com/Osx2CgE.png", symbol: "O" },
-  ]
+export default function NeonGrid({
+  mode = "classic",
+  vs = "local",
+}: {
+  mode?: GameMode
+  vs?: VsMode
+}) {
+  const players = useMemo<Player[]>(() => {
+    const p1: Player = {
+      name: "Player 1",
+      avatar: "https://i.imgur.com/cTzL0ai.png",
+      symbol: "X",
+    }
+
+    const p2: Player =
+      vs === "ai"
+        ? {
+            name: "Novice AI",
+            avatar: "https://i.imgur.com/Osx2CgE.png",
+            symbol: "O",
+            isAI: true,
+          }
+        : {
+            name: "Player 2",
+            avatar: "https://i.imgur.com/Osx2CgE.png",
+            symbol: "O",
+          }
+
+    return [p1, p2]
+  }, [vs])
 
   const {
     board,
@@ -129,7 +199,49 @@ export default function TicTacToe() {
     timer,
     handleMove,
     resetGame,
-  } = useTicTacToe(players)
+  } = useTicTacToe({ players, mode })
+
+  const winnerLoggedRef = useRef(false)
+
+  // AI move
+  useEffect(() => {
+    const current = players[currentPlayerIndex]
+    if (!current?.isAI) return
+    if (winner) return
+
+    const idx = getAiMoveIndex(board, current.symbol, players[0].symbol)
+    const t = window.setTimeout(() => handleMove(idx), 350)
+    return () => window.clearTimeout(t)
+  }, [board, currentPlayerIndex, handleMove, players, winner])
+
+  // Write to leaderboard when a round ends.
+  useEffect(() => {
+    if (!winner) return
+    if (winnerLoggedRef.current) return
+
+    const winnerName =
+      winner === "draw"
+        ? "draw"
+        : players.find(p => p.symbol === winner)?.name ?? winner
+
+    addLeaderboardResult({
+      id: createId(),
+      createdAt: new Date().toISOString(),
+      mode,
+      vs,
+      winner: winnerName,
+      durationSeconds: timer,
+    })
+
+    winnerLoggedRef.current = true
+  }, [mode, players, timer, vs, winner])
+
+  const resetAll = () => {
+    winnerLoggedRef.current = false
+    resetGame()
+  }
+
+  const inputLocked = Boolean(winner) || (vs === "ai" && currentPlayerIndex === 1)
 
   return (
     <div className="w-[700px] text-center z-10">
@@ -139,9 +251,19 @@ export default function TicTacToe() {
         currentPlayerIndex={currentPlayerIndex}
         winner={winner}
         score={score}
+        mode={mode}
       />
-      <Board board={board} winningLine={winningLine} onCellClick={handleMove} winner={winner} />
-      <button onClick={resetGame} className={`mt-10 px-4 py-2 border rounded-lg text-white ${winner ? "opacity-100" : "opacity-0 select-none pointer-events-none"}`}>
+      <Board
+        board={board}
+        winningLine={winningLine}
+        onCellClick={handleMove}
+        winner={winner}
+        disabled={inputLocked}
+      />
+      <button
+        onClick={resetAll}
+        className={`mt-10 px-4 py-2 border rounded-lg text-white ${winner ? "opacity-100" : "opacity-0 select-none pointer-events-none"}`}
+      >
         Play Again
       </button>
     </div>
@@ -162,22 +284,26 @@ function TimerDisplay({ timer }: TimerProps) {
 type PlayerHeaderProps = {
   players: Player[]
   currentPlayerIndex: number
-  winner: string | "draw" | null
+  winner: Player["symbol"] | "draw" | null
   score: number[]
+  mode: GameMode
 }
 
-function PlayerHeader({ players, currentPlayerIndex, winner, score }: PlayerHeaderProps) {
+function PlayerHeader({ players, currentPlayerIndex, winner, score, mode }: PlayerHeaderProps) {
   const statusText = winner
     ? winner === "draw"
       ? "It's a draw!"
-      : `${players.find((p) => p.symbol === winner)?.name} wins!`
+      : `${players.find(p => p.symbol === winner)?.name} wins!`
     : `${players[currentPlayerIndex].name}'s turn`
+
+  const subtitle = mode === "misere" ? "Misere: make 3-in-a-row and you lose" : null
 
   return (
     <>
       <div className="mb-5 text-center text-[#ef476f] bg-[#ef476f]/30 backdrop-blur inline-block mx-auto py-1.5 px-3 font-bold rounded-lg">
         {statusText}
       </div>
+      {subtitle ? <div className="text-xs text-gray-300 mb-3">{subtitle}</div> : null}
       <header className="flex justify-between relative mb-5">
         <UserItem name={`${players[0].name} (${score[0]})`} avatar={players[0].avatar} />
         <UserItem
@@ -195,10 +321,11 @@ type BoardProps = {
   board: string[]
   winningLine: number[] | null
   onCellClick: (i: number) => void
-  winner: string | "draw" | null
+  winner: Player["symbol"] | "draw" | null
+  disabled: boolean
 }
 
-function Board({ board, winningLine, onCellClick, winner }: BoardProps) {
+function Board({ board, winningLine, onCellClick, winner, disabled }: BoardProps) {
   return (
     <section className="flex flex-col items-center justify-center">
       <svg
@@ -206,13 +333,14 @@ function Board({ board, winningLine, onCellClick, winner }: BoardProps) {
         height={CELL_SIZE * 3}
         viewBox={`0 0 ${CELL_SIZE * 3} ${CELL_SIZE * 3}`}
         onClick={(e) => {
-          if (winner) return
+          if (winner || disabled) return
           const rect = e.currentTarget.getBoundingClientRect()
           const x = e.clientX - rect.left
           const y = e.clientY - rect.top
           const idx = Math.floor(y / CELL_SIZE) * 3 + Math.floor(x / CELL_SIZE)
           onCellClick(idx)
         }}
+        style={{ cursor: disabled ? "not-allowed" : "pointer" }}
       >
         {/* Grid */}
         <g stroke="#78d6c6" strokeWidth={6}>

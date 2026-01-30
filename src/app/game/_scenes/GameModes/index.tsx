@@ -3,12 +3,19 @@
 import FocusNavigator from "../../_engine/FocusNavigator";
 import { MenuItem } from "../../_engine/FocusNavigator/useFocusNavigator";
 
-const dataMenu: MenuItem[] = [
+type VsMode = "ai" | "local";
+
+const comingSoon = (name: string) => () => {
+  window.alert(`${name} is coming soon.`);
+};
+
+const dataMenuBase: MenuItem[] = [
   {
     text: "Classic 3x3",
     scene: "Game",
     thumbnail: "https://tictactoefree.com/img/classic.png",
-    description: "The classic 3x3 game for 2 players. Aim to align three Xs or Os horizontally, vertically, or diagonally."
+    description: "The classic 3x3 game for 2 players. Aim to align three Xs or Os horizontally, vertically, or diagonally.",
+    params: { mode: "classic" },
   },
   // {
   //   text: "Gomoku",
@@ -18,15 +25,15 @@ const dataMenu: MenuItem[] = [
   // },
   {
     text: "Ultimate",
-    scene: "Game",
     thumbnail: "https://tictactoefree.com/img/ultimate-full.png",
-    description: "Nine small 3x3 boards form a big 3x3 field. Moves dictate the next sector, combining strategy on multiple boards."
+    description: "Nine small 3x3 boards form a big 3x3 field. Moves dictate the next sector, combining strategy on multiple boards.",
+    action: comingSoon("Ultimate"),
   },
   {
     text: "3D",
-    scene: "Game",
     thumbnail: "https://tictactoefree.com/img/3d-tictactoe.png",
-    description: "A 3x3x3 cube where rows can span multiple levels. Requires spatial thinking and multidimensional strategies."
+    description: "A 3x3x3 cube where rows can span multiple levels. Requires spatial thinking and multidimensional strategies.",
+    action: comingSoon("3D"),
   },
   // {
   //   text: "Larger Board",
@@ -38,19 +45,20 @@ const dataMenu: MenuItem[] = [
     text: "Misere",
     scene: "Game",
     thumbnail: "https://tictactoefree.com/img/prevent.png",
-    description: "Also called Concession mode. Players aim to **avoid** winning; the one forced to align three symbols loses."
+    description: "Also called Concession mode. Players aim to avoid winning; the one forced to align three symbols loses.",
+    params: { mode: "misere" },
   },
   {
     text: "Wild",
-    scene: "Game",
     thumbnail: "https://tictactoefree.com/img/wild.png",
-    description: "Players can place either X or O each turn. Winning requires careful symbol choice and blocking the opponent."
+    description: "Players can place either X or O each turn. Winning requires careful symbol choice and blocking the opponent.",
+    action: comingSoon("Wild"),
   },
   {
     text: "Pyramid",
-    scene: "Game",
     thumbnail: "https://tictactoefree.com/img/pyramid.png",
-    description: "3D pyramid-shaped board. Align symbols across multiple levels while blocking your opponent."
+    description: "3D pyramid-shaped board. Align symbols across multiple levels while blocking your opponent.",
+    action: comingSoon("Pyramid"),
   },
   // {
   //   text: "Dara",
@@ -60,7 +68,14 @@ const dataMenu: MenuItem[] = [
   // }
 ];
 
-function SceneGameModes() {
+function SceneGameModes({ vs = "local" }: { vs?: VsMode }) {
+  const dataMenu: MenuItem[] = dataMenuBase.map(item => ({
+    ...item,
+    params: {
+      ...(item.params ?? {}),
+      vs,
+    },
+  }));
 
   return (
     <div className="h-full py-20 flex flex-col text-center items-center align-middle justify-center mx-auto max-w-[700px]">

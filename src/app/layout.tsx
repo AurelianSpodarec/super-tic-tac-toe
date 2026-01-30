@@ -5,8 +5,8 @@ import { Orbitron, Monoton, Sacramento, Quicksand, Comfortaa } from "next/font/g
 import "./../styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "Next.js Dashboard with TailwindCSS",
-  description: "Created with best practices in mind",
+  title: "JazzTacToe",
+  description: "Neon jazz-themed tic-tac-toe with multiple modes",
 };
 
 export const orbitron = Orbitron({

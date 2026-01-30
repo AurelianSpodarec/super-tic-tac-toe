@@ -10,11 +10,11 @@ import MenuButton from "./_components/MenuButton";
 
 // --- Menu data ---
 const dataMenu: MenuItem[] = [
-  { text: "Singleplayer", scene: "GameModes" },
-  { text: "Multiplayer", scene: "GameModes" },
-  { text: "Leaderboard", scene: "Home" },
-  { text: "Language", scene: "GameModes" },
-  { text: "Credits", scene: "Home" },
+  { text: "Singleplayer", scene: "GameModes", params: { vs: "ai" } },
+  { text: "Multiplayer", scene: "GameModes", params: { vs: "local" } },
+  { text: "Leaderboard", scene: "Leaderboard" },
+  { text: "Settings", scene: "Settings" },
+  { text: "Credits", scene: "Credits" },
 ];
 
 // --- Animation sequence JSON ---

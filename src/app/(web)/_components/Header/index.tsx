@@ -1,6 +1,3 @@
-import { DashboardRoutes, WebsiteRoutes } from "@/routes";
-import Link from "next/link";
-
 // active-item neon2 - active
 
 // function MenuItem({ children, isActive }: { text: string, isActive: boolean }) {
