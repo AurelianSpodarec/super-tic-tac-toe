@@ -1,3 +1,5 @@
+import { readJson, removeKey, writeJson } from "./storage";
+
 export type LeaderboardResult = {
   id: string;
   createdAt: string; // ISO
@@ -10,21 +12,13 @@ export type LeaderboardResult = {
 const STORAGE_KEY = "jazztactoe.leaderboard.v1";
 
 export function getLeaderboard(): LeaderboardResult[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed)) return [];
-    return parsed as LeaderboardResult[];
-  } catch {
-    return [];
-  }
+  const parsed = readJson<unknown>(STORAGE_KEY);
+  if (!Array.isArray(parsed)) return [];
+  return parsed as LeaderboardResult[];
 }
 
 export function saveLeaderboard(results: LeaderboardResult[]) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(results));
+  writeJson(STORAGE_KEY, results);
 }
 
 export function addLeaderboardResult(result: LeaderboardResult) {
@@ -33,8 +27,7 @@ export function addLeaderboardResult(result: LeaderboardResult) {
 }
 
 export function clearLeaderboard() {
-  if (typeof window === "undefined") return;
-  window.localStorage.removeItem(STORAGE_KEY);
+  removeKey(STORAGE_KEY);
 }
 
 export function createId() {

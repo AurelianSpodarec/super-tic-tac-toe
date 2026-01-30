@@ -1,12 +1,12 @@
 'use client'
 
-import React, { useEffect, useState } from "react";
 import { MenuItem } from "../../_engine/FocusNavigator/useFocusNavigator";
 import FocusNavigator from "../../_engine/FocusNavigator";
 
+import MenuButton from "./_components/MenuButton";
 import NeonText from "./_components/NeonText";
 import Tagline from "./_components/Tagline";
-import MenuButton from "./_components/MenuButton";
+import { useTimelineAnimationState } from "./_components/useTimelineAnimationState";
 
 // --- Menu data ---
 const dataMenu: MenuItem[] = [
@@ -26,65 +26,9 @@ const animationSequence = [
   { key: "madeBy", after: "tagline", delay: 500, class: "duration-700" },
 ];
 
-// --- extract numeric duration from Tailwind class ---
-function getDurationFromClass(className?: string) {
-  if (!className) return 0;
-  const match = className.match(/duration-(\d+)/);
-  return match ? parseInt(match[1], 10) : 0;
-}
-
-// --- Hook to handle animation sequence ---
-function useAnimationSequence(sequence: typeof animationSequence) {
-  const [state, setState] = useState<Record<string, boolean | number>>({});
-
-  useEffect(() => {
-    const timers: NodeJS.Timeout[] = [];
-    const stepEndTimes: Record<string, number> = {};
-
-    function getStepEndTime(step: typeof animationSequence[number]): number {
-      const duration = getDurationFromClass(step.class);
-      if (step.stagger && step.count) {
-        return (step.count - 1) * (step.stagger ?? 0) + duration;
-      }
-      return duration;
-    }
-
-    sequence.forEach((step) => {
-      let startDelay = step.delay ?? 0;
-
-      if (step.after) {
-        const prevEnd = stepEndTimes[step.after] ?? 0;
-        startDelay += prevEnd;
-      }
-
-      // compute absolute end time
-      stepEndTimes[step.key] = startDelay + getStepEndTime(step);
-
-      if (step.stagger && step.count) {
-        for (let i = 0; i < step.count; i++) {
-          timers.push(
-            setTimeout(() => {
-              setState(prev => ({ ...prev, [step.key]: i }));
-            }, startDelay + i * (step.stagger ?? 0))
-          );
-        }
-      } else {
-        timers.push(
-          setTimeout(() => {
-            setState(prev => ({ ...prev, [step.key]: true }));
-          }, startDelay)
-        );
-      }
-    });
-
-    return () => timers.forEach(t => clearTimeout(t));
-  }, [sequence]);
-
-  return state;
-}
 
 function SceneStart() {
-  const animationState = useAnimationSequence(animationSequence);
+  const animationState = useTimelineAnimationState(animationSequence);
 
   return (
     <div className="relative h-full w-full flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto pt-32">

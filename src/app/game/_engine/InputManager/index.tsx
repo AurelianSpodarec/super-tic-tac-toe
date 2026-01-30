@@ -4,31 +4,42 @@ export type Action =
   | "up" | "down" | "left" | "right"
   | "enter" | "tab" | "space"
   | "back"
+  | "settings"
   | `cheat:${string}`;
 
+type ActionHandler = (e: KeyboardEvent) => boolean | void;
 
 class InputManagerClass {
-  private actionListeners: Map<Action, Set<() => void>> = new Map();
+  private actionListeners: Map<Action, Set<ActionHandler>> = new Map();
   private typedBuffer: string[] = [];
   private cheatCodes: Map<string, () => void> = new Map();
 
-  private trigger(action: Action) {
-    this.actionListeners.get(action)?.forEach((cb) => cb());
+  private trigger(action: Action, e: KeyboardEvent): boolean {
+    let handled = false;
+    this.actionListeners.get(action)?.forEach((cb) => {
+      try {
+        if (cb(e) === true) handled = true;
+      } catch {
+        // ignore listener failures
+      }
+    });
+    return handled;
   }
 
-  on(action: Action, cb: () => void) {
+  on(action: Action, cb: ActionHandler) {
     if (!this.actionListeners.has(action)) this.actionListeners.set(action, new Set());
     this.actionListeners.get(action)!.add(cb);
   }
 
-  off(action: Action, cb: () => void) {
+  off(action: Action, cb: ActionHandler) {
     this.actionListeners.get(action)?.delete(cb);
   }
 
   registerCheat(code: string, cb: () => void) {
     this.cheatCodes.set(code.toLowerCase(), () => {
       cb();
-      this.trigger(`cheat:${code.toLowerCase()}` as Action);
+      // Cheat events are just another InputManager action.
+      this.trigger(`cheat:${code.toLowerCase()}` as Action, new KeyboardEvent("keydown"));
     });
   }
 
@@ -48,16 +59,35 @@ class InputManagerClass {
 
   private handleKey = (e: KeyboardEvent) => {
     switch (e.key) {
-      case "ArrowUp": this.trigger("up"); break;
-      case "ArrowDown": this.trigger("down"); break;
-      case "ArrowLeft": this.trigger("left"); break;
-      case "ArrowRight": this.trigger("right"); break;
-      case "Enter": this.trigger("enter"); break;
-      case "Tab": e.preventDefault(); this.trigger("tab"); break;
-      case " ": this.trigger("space"); break;
+      case "ArrowUp":
+        if (this.trigger("up", e)) e.preventDefault();
+        break;
+      case "ArrowDown":
+        if (this.trigger("down", e)) e.preventDefault();
+        break;
+      case "ArrowLeft":
+        if (this.trigger("left", e)) e.preventDefault();
+        break;
+      case "ArrowRight":
+        if (this.trigger("right", e)) e.preventDefault();
+        break;
+      case "Enter":
+        if (this.trigger("enter", e)) e.preventDefault();
+        break;
+      case "Tab":
+        e.preventDefault();
+        this.trigger("tab", e);
+        break;
+      case " ":
+        if (this.trigger("space", e)) e.preventDefault();
+        break;
+      case "F1":
+        if (this.trigger("settings", e)) e.preventDefault();
+        break;
       case "Backspace":
       case "Escape":
-        this.trigger("back"); break; // ✅ global back
+        if (this.trigger("back", e)) e.preventDefault();
+        break;
       default:
         if (/^[a-z0-9]$/i.test(e.key)) {
           this.typedBuffer.push(e.key.toLowerCase());
@@ -67,7 +97,10 @@ class InputManagerClass {
     }
   };
 
-  start() { window.addEventListener("keydown", this.handleKey); }
+  start() {
+    window.addEventListener("keydown", this.handleKey);
+  }
+
   stop() {
     window.removeEventListener("keydown", this.handleKey);
     this.actionListeners.clear();

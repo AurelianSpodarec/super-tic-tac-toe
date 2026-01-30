@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useState } from "react";
+
 import { AudioManager } from "../../_engine/AudioManager";
+import { readJson, writeJson } from "../../_engine/storage";
 
 type AudioPrefs = {
   ambientVolume: number;
@@ -14,26 +16,12 @@ function clamp01(n: number) {
   return Math.min(1, Math.max(0, n));
 }
 
-function readPrefs(): AudioPrefs | null {
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as AudioPrefs;
-  } catch {
-    return null;
-  }
-}
-
-function writePrefs(prefs: AudioPrefs) {
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
-}
-
 function SceneSettings() {
   const [ambientVolume, setAmbientVolume] = useState(AudioManager.settings.ambientVolume);
   const [sfxVolume, setSfxVolume] = useState(AudioManager.settings.sfxVolume);
 
   useEffect(() => {
-    const prefs = readPrefs();
+    const prefs = readJson<AudioPrefs>(STORAGE_KEY);
     if (!prefs) return;
 
     const amb = clamp01(prefs.ambientVolume);
@@ -47,13 +35,9 @@ function SceneSettings() {
 
   useEffect(() => {
     AudioManager.setAmbientVolume(ambientVolume);
-    writePrefs({ ambientVolume, sfxVolume });
-  }, [ambientVolume]);
-
-  useEffect(() => {
     AudioManager.setSFXVolume(sfxVolume);
-    writePrefs({ ambientVolume, sfxVolume });
-  }, [sfxVolume]);
+    writeJson(STORAGE_KEY, { ambientVolume, sfxVolume });
+  }, [ambientVolume, sfxVolume]);
 
   return (
     <section className="h-full w-full flex flex-col items-center py-20 px-6">
@@ -100,4 +84,4 @@ function SceneSettings() {
   );
 }
 
-export default SceneSettings
+export default SceneSettings;

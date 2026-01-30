@@ -1,3 +1,6 @@
+import type { ComponentType } from "react";
+import type { Background } from "./BackgroundManager/core";
+
 import SceneStart from "../_scenes/Start";
 import SceneGameModes from "../_scenes/GameModes";
 import SceneOnline from "../_scenes/Online";
@@ -17,18 +20,15 @@ export const sfxRegistry = {
   buttonConfirm: "/audio/spacebar-click-keyboard.mp3",
 } as const;
 
-type BackgroundLayer =
-  | { type: "image"; src: string }
-  | { type: "menuOverlay" }
-  | { type: "overlay" };
+type BackgroundLayer = Extract<Background, { type: "image" | "menuOverlay" | "overlay" }>;
 
 interface Scene {
-  component: React.ComponentType;
+  component: ComponentType;
   background: BackgroundLayer[];
   audio: typeof audioRegistry[keyof typeof audioRegistry];
 }
 
-export const sceneRegistry: Record<string, Scene> = {
+export const sceneRegistry = {
   Home: {
     component: SceneStart,
     background: [
@@ -93,4 +93,4 @@ export const sceneRegistry: Record<string, Scene> = {
     ],
     audio: audioRegistry.home,
   },
-};
+} satisfies Record<string, Scene>;

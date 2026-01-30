@@ -5,9 +5,13 @@ import { Action, InputManager } from ".";
 
 export function useInput(action: Action): boolean {
   const [active, setActive] = useState(false);
+
   useEffect(() => {
-    InputManager.start();
-    const handler = () => { setActive(true); requestAnimationFrame(() => setActive(false)); };
+    const handler = () => {
+      setActive(true);
+      requestAnimationFrame(() => setActive(false));
+      return false;
+    };
 
     InputManager.on(action, handler);
     return () => InputManager.off(action, handler);

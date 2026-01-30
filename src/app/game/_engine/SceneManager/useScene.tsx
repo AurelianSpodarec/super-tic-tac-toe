@@ -1,5 +1,6 @@
 import { useContext } from "react";
-import { NavigationContext } from ".";
+
+import { NavigationContext } from "../navigation/NavigationProvider";
 
 function useScene() {
   const ctx = useContext(NavigationContext);
@@ -7,4 +8,4 @@ function useScene() {
   return ctx;
 }
 
-export default useScene
+export default useScene;

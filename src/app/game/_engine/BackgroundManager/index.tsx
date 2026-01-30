@@ -1,8 +1,7 @@
-import "./registry"
-
-import type { SceneEntry } from "../SceneManager";
+import type { SceneEntry } from "../navigation/types";
 import { sceneRegistry } from "../settings";
-import { Background, getBackgroundRenderer } from "./core";
+import type { Background } from "./core";
+import { backgroundRenderers } from "./registry";
 
 function BackgroundManager({ scene }: { scene: SceneEntry }) {
   const backgrounds: Background[] = sceneRegistry[scene.name]?.background || [];
@@ -11,7 +10,7 @@ function BackgroundManager({ scene }: { scene: SceneEntry }) {
     <>
       {backgrounds.map((bg, index) => {
         const key = `${bg.type}-${scene.name}-${index}`;
-        const renderer = getBackgroundRenderer(bg.type);
+        const renderer = backgroundRenderers[bg.type];
         if (!renderer) return null;
         return renderer(bg, key);
       })}

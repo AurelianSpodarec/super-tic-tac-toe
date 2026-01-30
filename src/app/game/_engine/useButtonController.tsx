@@ -1,5 +1,7 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
+
 import { AudioManager } from "./AudioManager";
+import { InputManager } from "./InputManager";
 import { MenuItem } from "./FocusNavigator/useFocusNavigator";
 import { sfxRegistry } from "./settings";
 
@@ -9,27 +11,34 @@ function useButtonController(buttons: MenuItem[]) {
     AudioManager.playSFX(sfxRegistry.buttonConfirm);
   }
 
-  function handleClick(id: string) {
-    const button = buttons.find(buttonItem => buttonItem.id === id);
+  const handleClick = useCallback((id: string) => {
+    const button = buttons.find((buttonItem) => buttonItem.id === id);
     if (!button) return;
 
     playClickSound();
     button.action?.();
-  }
-
-  // Optional: handle keyboard mappings for global buttons
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        handleClick("back");
-      }
-      if (e.key === "F1") {
-        handleClick("settings");
-      }
-    }
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [buttons]);
+
+  // Optional: handle keyboard mappings for global buttons (via InputManager)
+  useEffect(() => {
+    const onBack = () => {
+      handleClick("back");
+      return true;
+    };
+
+    const onSettings = () => {
+      handleClick("settings");
+      return true;
+    };
+
+    InputManager.on("back", onBack);
+    InputManager.on("settings", onSettings);
+
+    return () => {
+      InputManager.off("back", onBack);
+      InputManager.off("settings", onSettings);
+    };
+  }, [handleClick]);
 
   return { handleClick };
 }

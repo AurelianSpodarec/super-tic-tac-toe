@@ -1,12 +1,17 @@
-import { useReducer, useEffect, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef } from "react";
+
 import { AudioManager } from "../AudioManager";
+import { InputManager } from "../InputManager";
 import { sfxRegistry } from "../settings";
+import type { SceneName } from "../sceneRegistry";
 import useScene from "../SceneManager/useScene";
+
+import { getNextIndex } from "./navigation";
 
 export interface MenuItem {
   id?: string;
   text: string;
-  scene?: string;
+  scene?: SceneName;
   params?: Record<string, unknown>;
   description?: string;
   thumbnail?: string;
@@ -25,6 +30,8 @@ export interface MenuController {
   toggleItem: (index: number) => void;
   select: (index?: number) => void;
 }
+
+type ArrowKey = "ArrowUp" | "ArrowDown" | "ArrowLeft" | "ArrowRight";
 
 interface MenuState {
   activeIndex: number;
@@ -79,16 +86,16 @@ export default function useFocusNavigator({
     turnedOn: new Set(items.map((_, i) => i)),
   });
 
-  const setActive = (index: number) => {
+  const setActive = useCallback((index: number) => {
     dispatch({ type: "SET_ACTIVE", index });
     AudioManager.playSFX(sfxRegistry.buttonNavigate);
-  };
+  }, []);
 
-  const toggleItem = (index: number) => {
+  const toggleItem = useCallback((index: number) => {
     dispatch({ type: "TOGGLE_ITEM", index });
-  };
+  }, []);
 
-  const select = (index?: number) => {
+  const select = useCallback((index?: number) => {
     const idx = index ?? state.activeIndex;
     const item = items[idx];
     AudioManager.playSFX(sfxRegistry.buttonConfirm);
@@ -96,12 +103,17 @@ export default function useFocusNavigator({
     if (item.scene) push(item.scene, item.params);
     if (item.action) item.action();
     onSelect?.(item);
-  };
+  }, [items, onSelect, push, state.activeIndex]);
 
-  const getColumns = () => (window.innerWidth < 768 ? columnsMobile : columns);
-  const getRows = () => rows ?? Math.ceil(items.length / getColumns());
+  const getColumns = useCallback(() => {
+    return window.innerWidth < 768 ? columnsMobile : columns;
+  }, [columns, columnsMobile]);
 
-  const handleArrowNavigation = (key: string) => {
+  const getRows = useCallback(() => {
+    return rows ?? Math.ceil(items.length / getColumns());
+  }, [getColumns, items.length, rows]);
+
+  const handleArrowNavigation = useCallback((key: ArrowKey) => {
     const now = performance.now();
 
     // reset lock if new key or fast tap
@@ -113,45 +125,62 @@ export default function useFocusNavigator({
     // if still locked for hold, skip move
     if (navLockTime.current && now - navLockTime.current < holdDelay) return false;
 
-    // move logic
     const cols = getColumns();
     const rowsToUse = getRows();
-    let row = Math.floor(state.activeIndex / cols);
-    let col = state.activeIndex % cols;
 
-    if (cols === 1 || direction === "vertical") {
-      if (key === "ArrowUp") row = row - 1 >= 0 ? row - 1 : rowsToUse - 1;
-      if (key === "ArrowDown") row = row + 1 < rowsToUse ? row + 1 : 0;
-      col = 0;
-    } else {
-      if (key === "ArrowLeft") col = col - 1 >= 0 ? col - 1 : cols - 1;
-      if (key === "ArrowRight") col = col + 1 < cols ? col + 1 : 0;
-      if (key === "ArrowUp") row = row - 1 >= 0 ? row - 1 : rowsToUse - 1;
-      if (key === "ArrowDown") row = row + 1 < rowsToUse ? row + 1 : 0;
-    }
+    const newIndex = getNextIndex({
+      key,
+      activeIndex: state.activeIndex,
+      itemCount: items.length,
+      columns: cols,
+      rows: rowsToUse,
+      direction,
+    });
 
-    const newIndex = Math.min(row * cols + col, items.length - 1);
     if (newIndex !== state.activeIndex) setActive(newIndex);
 
     // start lock for repeated moves
     navLockTime.current = now;
 
     return true;
-  };
+  }, [direction, getColumns, getRows, items.length, setActive, state.activeIndex]);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      let handled = handleArrowNavigation(e.key);
-      if (e.key === "Enter") {
-        select();
-        handled = true;
-      }
-      if (handled) e.preventDefault();
+    const onUp = () => {
+      handleArrowNavigation("ArrowUp");
+      return true;
+    };
+    const onDown = () => {
+      handleArrowNavigation("ArrowDown");
+      return true;
+    };
+    const onLeft = () => {
+      handleArrowNavigation("ArrowLeft");
+      return true;
+    };
+    const onRight = () => {
+      handleArrowNavigation("ArrowRight");
+      return true;
+    };
+    const onEnter = () => {
+      select();
+      return true;
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [state.activeIndex, columns, columnsMobile, rows, direction, items.length]);
+    InputManager.on("up", onUp);
+    InputManager.on("down", onDown);
+    InputManager.on("left", onLeft);
+    InputManager.on("right", onRight);
+    InputManager.on("enter", onEnter);
+
+    return () => {
+      InputManager.off("up", onUp);
+      InputManager.off("down", onDown);
+      InputManager.off("left", onLeft);
+      InputManager.off("right", onRight);
+      InputManager.off("enter", onEnter);
+    };
+  }, [handleArrowNavigation, select]);
 
   const menuItems: MenuItemState[] = items.map((item, index) => ({
     ...item,
