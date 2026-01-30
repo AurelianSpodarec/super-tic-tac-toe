@@ -11,7 +11,8 @@ import MenuButton from "./_components/MenuButton";
 // --- Menu data ---
 const dataMenu: MenuItem[] = [
   { text: "Singleplayer", scene: "GameModes", params: { vs: "ai" } },
-  { text: "Multiplayer", scene: "GameModes", params: { vs: "local" } },
+  { text: "Local Multiplayer", scene: "GameModes", params: { vs: "local" } },
+  { text: "Online", scene: "Online" },
   { text: "Leaderboard", scene: "Leaderboard" },
   { text: "Settings", scene: "Settings" },
   { text: "Credits", scene: "Credits" },
@@ -58,8 +59,6 @@ function useAnimationSequence(sequence: typeof animationSequence) {
 
       // compute absolute end time
       stepEndTimes[step.key] = startDelay + getStepEndTime(step);
-
-      const duration = getDurationFromClass(step.class);
 
       if (step.stagger && step.count) {
         for (let i = 0; i < step.count; i++) {

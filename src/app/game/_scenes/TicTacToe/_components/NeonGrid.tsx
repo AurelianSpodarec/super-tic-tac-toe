@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { motion, Variants } from "motion/react"
+
+import ChatPanel from "@/app/game/_components/ChatPanel"
+import { useMultiplayerStore } from "@/app/game/_engine/Multiplayer"
 import UserItem from "./UserItem"
 import { addLeaderboardResult, createId } from "@/app/game/_engine/leaderboard"
 
@@ -37,7 +40,7 @@ const coords = Array.from({ length: BOARD_SIZE }, (_, idx) => [
   OFFSET + Math.floor(idx / 3) * CELL_SIZE,
 ])
 
-type VsMode = "ai" | "local"
+type VsMode = "ai" | "local" | "online"
 type GameMode = "classic" | "misere"
 type Player = { name: string; avatar: string; symbol: "X" | "O"; isAI?: boolean }
 
@@ -166,6 +169,11 @@ export default function NeonGrid({
   mode?: GameMode
   vs?: VsMode
 }) {
+  if (vs === "online") return <OnlineNeonGrid mode={mode} />
+  return <LocalNeonGrid mode={mode} vs={vs} />
+}
+
+function LocalNeonGrid({ mode, vs }: { mode: GameMode; vs: Exclude<VsMode, "online"> }) {
   const players = useMemo<Player[]>(() => {
     const p1: Player = {
       name: "Player 1",
@@ -266,6 +274,86 @@ export default function NeonGrid({
       >
         Play Again
       </button>
+    </div>
+  )
+}
+
+function OnlineNeonGrid({ mode }: { mode: GameMode }) {
+  const role = useMultiplayerStore(s => s.role)
+  const status = useMultiplayerStore(s => s.status)
+  const lobby = useMultiplayerStore(s => s.lobby)
+  const game = useMultiplayerStore(s => s.game)
+  const chat = useMultiplayerStore(s => s.chat)
+
+  const sendMove = useMultiplayerStore(s => s.sendMove)
+  const sendChat = useMultiplayerStore(s => s.sendChat)
+  const resetRound = useMultiplayerStore(s => s.resetRound)
+
+  const players = useMemo<Player[]>(() => {
+    const host = lobby.players.find(p => p.role === "host")
+    const guest = lobby.players.find(p => p.role === "guest")
+
+    const p1: Player = {
+      name: host?.name ?? "Host",
+      avatar: host?.avatar ?? "https://i.imgur.com/cTzL0ai.png",
+      symbol: "X",
+    }
+
+    const p2: Player = {
+      name: guest?.name ?? "Guest",
+      avatar: guest?.avatar ?? "https://i.imgur.com/Osx2CgE.png",
+      symbol: "O",
+    }
+
+    return [p1, p2]
+  }, [lobby.players])
+
+  if (!role) {
+    return (
+      <div className="text-center text-gray-300">
+        No online lobby connected. Go back and create/join a lobby first.
+      </div>
+    )
+  }
+
+  const mySymbol: Player["symbol"] = role === "host" ? "X" : "O"
+  const expectedSymbol: Player["symbol"] = game.currentPlayerIndex === 0 ? "X" : "O"
+  const isMyTurn = mySymbol === expectedSymbol
+
+  const inputLocked = Boolean(game.winner) || !lobby.started || !isMyTurn
+
+  return (
+    <div className="w-full max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 items-start">
+        <div className="text-center">
+          <div className="mb-2 text-xs text-gray-400">Online · {mode} · {status}</div>
+          <PlayerHeader
+            players={players}
+            currentPlayerIndex={game.currentPlayerIndex}
+            winner={game.winner}
+            score={game.score}
+            mode={mode}
+          />
+          <Board
+            board={game.board}
+            winningLine={game.winningLine}
+            onCellClick={sendMove}
+            winner={game.winner}
+            disabled={inputLocked}
+          />
+
+          {role === "host" ? (
+            <button
+              onClick={resetRound}
+              className={`mt-10 px-4 py-2 border rounded-lg text-white ${game.winner ? "opacity-100" : "opacity-0 select-none pointer-events-none"}`}
+            >
+              Play Again
+            </button>
+          ) : null}
+        </div>
+
+        <ChatPanel title="Match chat" messages={chat} onSend={sendChat} heightClassName="h-[520px]" />
+      </div>
     </div>
   )
 }

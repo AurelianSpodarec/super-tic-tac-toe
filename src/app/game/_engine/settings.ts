@@ -1,5 +1,7 @@
 import SceneStart from "../_scenes/Start";
 import SceneGameModes from "../_scenes/GameModes";
+import SceneOnline from "../_scenes/Online";
+import SceneLobby from "../_scenes/Lobby";
 import SceneGameTicTacToe from "../_scenes/TicTacToe";
 import SceneCredits from "../_scenes/Credits";
 import SceneLeaderboard from "../_scenes/Leaderboard";
@@ -37,6 +39,22 @@ export const sceneRegistry: Record<string, Scene> = {
   },
   GameModes: {
     component: SceneGameModes,
+    background: [
+      { type: "image", src: "/images/music-bg.jpg" },
+      { type: "overlay" },
+    ],
+    audio: audioRegistry.home,
+  },
+  Online: {
+    component: SceneOnline,
+    background: [
+      { type: "image", src: "/images/music-bg.jpg" },
+      { type: "overlay" },
+    ],
+    audio: audioRegistry.home,
+  },
+  Lobby: {
+    component: SceneLobby,
     background: [
       { type: "image", src: "/images/music-bg.jpg" },
       { type: "overlay" },

@@ -28,8 +28,19 @@ export type NavigationContextType = {
 
 export const NavigationContext = createContext<NavigationContextType | null>(null);
 
+function getInitialStack(): SceneEntry[] {
+  if (typeof window !== "undefined") {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("join")) {
+      // Deep-link to lobby join flow
+      return [{ name: "Lobby", params: { flow: "join" } }];
+    }
+  }
+  return [{ name: "Home" }];
+}
+
 function SceneManager() {
-  const [stack, setStack] = useState<SceneEntry[]>([{ name: "Home" }]);
+  const [stack, setStack] = useState<SceneEntry[]>(getInitialStack);
   const current = stack[stack.length - 1];
   const previousRef = useRef<SceneEntry | null>(null);
 

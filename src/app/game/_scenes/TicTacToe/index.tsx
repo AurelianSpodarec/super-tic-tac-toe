@@ -1,6 +1,6 @@
 import NeonGrid from "./_components/NeonGrid"
 
-type VsMode = "ai" | "local";
+type VsMode = "ai" | "local" | "online";
 type GameMode = "classic" | "misere";
 
 function SceneGameTicTacToe({
