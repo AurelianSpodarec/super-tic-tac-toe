@@ -55,6 +55,7 @@ function ActionBar() {
   const current = stack[stack.length - 1];
   const currentMeta = sceneRegistry[current.name];
   const isModalOpen = currentMeta.presentation === "modal";
+  const isSystemConfirmModal = isModalOpen && currentMeta.modal?.kind === "systemConfirm";
 
   const canGoBack =
     stack.length > 1 &&
@@ -85,14 +86,18 @@ function ActionBar() {
       ? { id: "back", text: "Back", action: pop }
       : null;
 
-  const buttons: MenuItem[] = [
-    ...(leftButton ? [leftButton] : []),
-    ...(showPause ? [{ id: "pause", text: "Pause", action: () => push("Pause") }] : []),
-    ...(showSettings ? [{ id: "settings", text: "Settings", action: () => push("Settings") }] : []),
-    ...(showFullscreen ? [{ id: "fullscreen", text: "Fullscreen", action: toggleFullScreen }] : []),
-  ];
+  const buttons: MenuItem[] = isSystemConfirmModal
+    ? []
+    : [
+        ...(leftButton ? [leftButton] : []),
+        ...(showPause ? [{ id: "pause", text: "Pause", action: () => push("Pause") }] : []),
+        ...(showSettings ? [{ id: "settings", text: "Settings", action: () => push("Settings") }] : []),
+        ...(showFullscreen ? [{ id: "fullscreen", text: "Fullscreen", action: toggleFullScreen }] : []),
+      ];
 
   const { handleClick } = useButtonController(buttons);
+
+  if (isSystemConfirmModal) return null;
 
   return (
     <header className="fixed top-0 w-full flex justify-between items-center px-4 py-2 text-white z-[80]">

@@ -1,10 +1,22 @@
 'use client';
 
+import FocusNavigator from "../../_engine/FocusNavigator";
+import type { MenuItem } from "../../_engine/FocusNavigator/useFocusNavigator";
 import useScene from "../../_engine/SceneManager/useScene";
 import { useMultiplayerStore } from "../../_engine/Multiplayer";
+import { sceneRegistry, type SceneMeta } from "../../_engine/settings";
+import InputHints from "../../_components/InputHints";
 
 function getBaseSceneEntry(stack: ReturnType<typeof useScene>["stack"]) {
-  return stack.length > 1 ? stack[stack.length - 2] : stack[stack.length - 1];
+  for (let i = stack.length - 1; i >= 0; i--) {
+    const meta = sceneRegistry[stack[i].name] as SceneMeta;
+    if (meta.presentation !== "modal") return stack[i];
+  }
+  return stack[0];
+}
+
+function KeyIcon({ label }: { label: string }) {
+  return <span className="font-mono leading-none">{label}</span>;
 }
 
 export default function SceneConfirmQuit() {
@@ -15,34 +27,69 @@ export default function SceneConfirmQuit() {
 
   const leave = useMultiplayerStore((s) => s.leave);
 
+  const menu: MenuItem[] = [
+    {
+      text: "Return",
+      action: pop,
+    },
+    {
+      text: "Quit Game",
+      action: () => {
+        if (isOnlineGame) leave();
+        reset("Home");
+      },
+    },
+  ];
+
   return (
-    <section className="w-full px-4 py-6">
-      <div className="rounded-lg border border-white/10 bg-black/30 p-5">
-        <div className="text-sm text-gray-200">
-          This will end the current match and return to Home.
-          {isOnlineGame ? <span className="text-gray-400"> (You will disconnect.)</span> : null}
-        </div>
+    <section className="h-full w-full flex flex-col">
+      <div className="flex-1 flex items-center justify-center px-6">
+        <div className="w-full max-w-xl text-center">
+          <h2 className="font-neontubes text-4xl text-gray-100">Quit game?</h2>
+          <p className="mt-3 text-sm text-gray-300">
+            Return to Home.
+            {isOnlineGame ? <span className="text-gray-400"> You will disconnect.</span> : null}
+          </p>
 
-        <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:justify-end">
-          <button
-            type="button"
-            onClick={() => pop()}
-            className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 hover:bg-white/10"
-          >
-            Cancel
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              if (isOnlineGame) leave();
-              reset("Home");
-            }}
-            className="rounded-xl border border-[#ef476f]/60 bg-[#ef476f]/20 px-4 py-3 font-semibold text-[#ef476f] hover:bg-[#ef476f]/25"
-          >
-            Quit to Home
-          </button>
+          <div className="mt-10">
+            <FocusNavigator
+              data={menu}
+              columns={1}
+              columnsMobile={1}
+              direction="vertical"
+              className="w-full max-w-[420px] mx-auto flex flex-col gap-3"
+              renderItem={(item, _index, state) => (
+                <button
+                  type="button"
+                  onClick={state.onClick}
+                  onMouseEnter={state.onHover}
+                  className={`w-full rounded-xl border px-6 py-4 text-left transition ${
+                    item.active ? "border-white/40 bg-white/10" : "border-white/10 bg-white/5 hover:bg-white/10"
+                  }`}
+                >
+                  <div className={`font-semibold text-lg ${item.text === "Quit Game" ? "text-[#ef476f]" : "text-gray-100"}`}>
+                    {item.text}
+                  </div>
+                  {item.text === "Quit Game" ? (
+                    <div className="text-xs text-gray-300">End the current match.</div>
+                  ) : (
+                    <div className="text-xs text-gray-400">Go back to the pause menu.</div>
+                  )}
+                </button>
+              )}
+            />
+          </div>
         </div>
+      </div>
+
+      <div className="pb-6">
+        <InputHints
+          hints={[
+            { icon: <KeyIcon label="Enter" />, label: "Select" },
+            { icon: <KeyIcon label="Esc" />, label: "Return" },
+          ]}
+          className="opacity-80"
+        />
       </div>
     </section>
   );

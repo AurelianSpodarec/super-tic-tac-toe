@@ -2,9 +2,14 @@
 
 import useScene from "../../_engine/SceneManager/useScene";
 import { useMultiplayerStore } from "../../_engine/Multiplayer";
+import { sceneRegistry, type SceneMeta } from "../../_engine/settings";
 
 function getBaseSceneEntry(stack: ReturnType<typeof useScene>["stack"]) {
-  return stack.length > 1 ? stack[stack.length - 2] : stack[stack.length - 1];
+  for (let i = stack.length - 1; i >= 0; i--) {
+    const meta = sceneRegistry[stack[i].name] as SceneMeta;
+    if (meta.presentation !== "modal") return stack[i];
+  }
+  return stack[0];
 }
 
 export default function ScenePause() {

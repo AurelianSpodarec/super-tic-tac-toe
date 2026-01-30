@@ -32,9 +32,22 @@ type ActionBarConfig = {
   showFullscreen?: boolean;
 };
 
+type ModalKind = "panel" | "systemConfirm";
+
 type ModalConfig = {
   title: string;
   closeOnBackdrop?: boolean;
+  /**
+   * Controls the outer modal container.
+   * - panel: current card-style modal
+   * - systemConfirm: full-screen console-style confirmation overlay
+   */
+  kind?: ModalKind;
+  /**
+   * Whether SceneManager should render the default title/close chrome.
+   * systemConfirm overlays are expected to provide their own UI.
+   */
+  showChrome?: boolean;
 };
 
 const defaultActionBar: ActionBarConfig = {};
@@ -127,7 +140,7 @@ export const sceneRegistry = {
     ],
     audio: audioRegistry.home,
     presentation: "modal",
-    modal: { title: "Settings" },
+    modal: { title: "Settings", kind: "panel", showChrome: true },
     actionBar: {
       showBack: false,
       showSettings: false,
@@ -142,7 +155,7 @@ export const sceneRegistry = {
     ],
     audio: audioRegistry.game,
     presentation: "modal",
-    modal: { title: "Paused", closeOnBackdrop: true },
+    modal: { title: "Paused", closeOnBackdrop: true, kind: "panel", showChrome: true },
     actionBar: {
       showBack: false,
       showSettings: false,
@@ -157,7 +170,12 @@ export const sceneRegistry = {
     ],
     audio: audioRegistry.game,
     presentation: "modal",
-    modal: { title: "Quit game?", closeOnBackdrop: false },
+    modal: {
+      title: "Quit game?",
+      closeOnBackdrop: false,
+      kind: "systemConfirm",
+      showChrome: false,
+    },
     actionBar: {
       showBack: false,
       showSettings: false,

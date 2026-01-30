@@ -31,12 +31,21 @@ function getRenderKey(entry: SceneEntry) {
 function SceneManagerInner() {
   const { stack, pop, push } = useNavigation();
 
-  const current = stack[stack.length - 1];
-  const currentMeta = sceneRegistry[current.name] as SceneMeta;
-  const isModal = currentMeta.presentation === "modal";
+  const baseIndex = (() => {
+    for (let i = stack.length - 1; i >= 0; i--) {
+      const meta = sceneRegistry[stack[i].name] as SceneMeta;
+      if (meta.presentation !== "modal") return i;
+    }
+    return 0;
+  })();
 
-  const baseScene = isModal && stack.length > 1 ? stack[stack.length - 2] : current;
+  const baseScene = stack[baseIndex];
   const baseMeta = sceneRegistry[baseScene.name] as SceneMeta;
+
+  const modalStack = stack.slice(baseIndex + 1);
+  const isModalOpen = modalStack.length > 0;
+  const topModal = modalStack.length > 0 ? modalStack[modalStack.length - 1] : null;
+  const topModalMeta = topModal ? (sceneRegistry[topModal.name] as SceneMeta) : null;
 
   useInitAudio(sceneRegistry);
   useAmbientAudioOnSceneChange(baseScene.name, sceneRegistry);
@@ -82,13 +91,11 @@ function SceneManagerInner() {
   }, []);
 
   const BaseSceneComp = baseMeta.component;
-  const ModalSceneComp = currentMeta.component;
 
   const baseRenderKey = getRenderKey(baseScene);
-  const modalRenderKey = getRenderKey(current);
 
-  const modalTitle = currentMeta.modal?.title ?? String(current.name);
-  const closeOnBackdrop = currentMeta.modal?.closeOnBackdrop ?? true;
+  const topModalTitle = topModalMeta?.modal?.title ?? (topModal ? String(topModal.name) : "");
+  const closeOnBackdrop = topModalMeta?.modal?.closeOnBackdrop ?? true;
 
   return (
     <>
@@ -98,7 +105,7 @@ function SceneManagerInner() {
         <BaseSceneComp key={baseRenderKey} {...baseScene.params} />
       </div>
 
-      {isModal ? (
+      {isModalOpen ? (
         <div className="fixed inset-0 z-[60]">
           {closeOnBackdrop ? (
             <button
@@ -111,24 +118,71 @@ function SceneManagerInner() {
             <div aria-hidden className="absolute inset-0 bg-black/70" />
           )}
 
-          <div className="relative z-[61] h-full w-full overflow-auto px-6 py-16">
-            <div className="mx-auto w-full max-w-xl rounded-2xl border border-white/10 bg-[#0f0f10] shadow-2xl">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
-                <div className="text-sm text-gray-200">{modalTitle}</div>
-                <button
-                  type="button"
-                  aria-label="Close"
-                  className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm hover:bg-white/10"
-                  onClick={() => pop()}
-                >
-                  Close
-                </button>
-              </div>
+          {modalStack.map((entry, i) => {
+            const meta = sceneRegistry[entry.name] as SceneMeta;
+            const Comp = meta.component;
+            const title = meta.modal?.title ?? String(entry.name);
+            const kind = meta.modal?.kind ?? "panel";
+            const showChrome = meta.modal?.showChrome ?? kind !== "systemConfirm";
+            const renderKey = getRenderKey(entry);
 
-              <div className="p-2">
-                <ModalSceneComp key={modalRenderKey} {...current.params} />
+            const isTop = i === modalStack.length - 1;
+
+            // Stagger panels slightly so stacked modals feel intentional.
+            const stackOffset = i * 10;
+
+            if (kind === "systemConfirm") {
+              return (
+                <div
+                  key={renderKey}
+                  className="absolute inset-0 pointer-events-auto"
+                  style={{ zIndex: 61 + i }}
+                >
+                  <div aria-hidden className="absolute inset-0 bg-black/90" />
+                  <div className="relative z-[1] h-full w-full">
+                    <Comp {...entry.params} />
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div
+                key={renderKey}
+                className="absolute inset-0 flex items-start justify-center overflow-auto px-6 py-16 pointer-events-none"
+                style={{ zIndex: 61 + i }}
+              >
+                <div
+                  className={`mx-auto w-full max-w-xl rounded-2xl border border-white/10 bg-[#0f0f10] shadow-2xl ${
+                    isTop ? "pointer-events-auto" : "pointer-events-none"
+                  }`}
+                  style={{ transform: `translateY(${stackOffset}px)` }}
+                >
+                  {showChrome ? (
+                    <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
+                      <div className="text-sm text-gray-200">{title}</div>
+                      <button
+                        type="button"
+                        aria-label="Close"
+                        className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm hover:bg-white/10"
+                        onClick={() => pop()}
+                      >
+                        Close
+                      </button>
+                    </div>
+                  ) : null}
+
+                  <div className={showChrome ? "p-2" : "p-5"}>
+                    <Comp {...entry.params} />
+                  </div>
+                </div>
               </div>
-            </div>
+            );
+          })}
+
+          {/* Keep top modal title accessible to screen readers (since there may be multiple). */}
+          <div className="sr-only" aria-live="polite">
+            {topModalTitle}
           </div>
         </div>
       ) : null}
