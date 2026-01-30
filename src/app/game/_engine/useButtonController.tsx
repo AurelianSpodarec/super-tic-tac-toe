@@ -21,21 +21,16 @@ function useButtonController(buttons: MenuItem[]) {
 
   // Optional: handle keyboard mappings for global buttons (via InputManager)
   useEffect(() => {
-    const onBack = () => {
-      handleClick("back");
-      return true;
-    };
-
+    // Only bind shortcuts that are not already handled globally.
+    // Back/Escape is handled by SceneManager to avoid duplicate pops.
     const onSettings = () => {
       handleClick("settings");
       return true;
     };
 
-    InputManager.on("back", onBack);
     InputManager.on("settings", onSettings);
 
     return () => {
-      InputManager.off("back", onBack);
       InputManager.off("settings", onSettings);
     };
   }, [handleClick]);

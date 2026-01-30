@@ -22,10 +22,22 @@ export const sfxRegistry = {
 
 type BackgroundLayer = Extract<Background, { type: "image" | "menuOverlay" | "overlay" }>;
 
+type ScenePresentation = "screen" | "modal";
+
+type ActionBarConfig = {
+  showBack?: boolean;
+  showSettings?: boolean;
+  showFullscreen?: boolean;
+};
+
+const defaultActionBar: ActionBarConfig = {};
+
 interface Scene {
   component: ComponentType;
   background: BackgroundLayer[];
   audio: typeof audioRegistry[keyof typeof audioRegistry];
+  presentation?: ScenePresentation;
+  actionBar?: ActionBarConfig;
 }
 
 export const sceneRegistry = {
@@ -36,6 +48,8 @@ export const sceneRegistry = {
       { type: "menuOverlay" },
     ],
     audio: audioRegistry.home,
+    presentation: "screen",
+    actionBar: { showBack: false } as ActionBarConfig,
   },
   GameModes: {
     component: SceneGameModes,
@@ -44,6 +58,8 @@ export const sceneRegistry = {
       { type: "overlay" },
     ],
     audio: audioRegistry.home,
+    presentation: "screen",
+    actionBar: defaultActionBar,
   },
   Online: {
     component: SceneOnline,
@@ -52,6 +68,8 @@ export const sceneRegistry = {
       { type: "overlay" },
     ],
     audio: audioRegistry.home,
+    presentation: "screen",
+    actionBar: defaultActionBar,
   },
   Lobby: {
     component: SceneLobby,
@@ -60,6 +78,8 @@ export const sceneRegistry = {
       { type: "overlay" },
     ],
     audio: audioRegistry.home,
+    presentation: "screen",
+    actionBar: defaultActionBar,
   },
   Game: {
     component: SceneGameTicTacToe,
@@ -68,6 +88,8 @@ export const sceneRegistry = {
       { type: "overlay" },
     ],
     audio: audioRegistry.game,
+    presentation: "screen",
+    actionBar: defaultActionBar,
   },
   Leaderboard: {
     component: SceneLeaderboard,
@@ -76,6 +98,8 @@ export const sceneRegistry = {
       { type: "overlay" },
     ],
     audio: audioRegistry.home,
+    presentation: "screen",
+    actionBar: defaultActionBar,
   },
   Credits: {
     component: SceneCredits,
@@ -84,6 +108,8 @@ export const sceneRegistry = {
       { type: "overlay" },
     ],
     audio: audioRegistry.home,
+    presentation: "screen",
+    actionBar: defaultActionBar,
   },
   Settings: {
     component: SceneSettings,
@@ -92,5 +118,11 @@ export const sceneRegistry = {
       { type: "overlay" },
     ],
     audio: audioRegistry.home,
+    presentation: "modal",
+    actionBar: {
+      showBack: false,
+      showSettings: false,
+      showFullscreen: false,
+    },
   },
 } satisfies Record<string, Scene>;
