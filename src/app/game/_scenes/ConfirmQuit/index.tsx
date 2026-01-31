@@ -6,6 +6,7 @@ import useScene from "../../_engine/SceneManager/useScene";
 import { useMultiplayerStore } from "../../_engine/Multiplayer";
 import { sceneRegistry, type SceneMeta } from "../../_engine/settings";
 import InputHints from "../../_components/InputHints";
+import { CONSOLE_HINTS_SELECT_BACK } from "../../_components/consoleHintPresets";
 
 function getBaseSceneEntry(stack: ReturnType<typeof useScene>["stack"]) {
   for (let i = stack.length - 1; i >= 0; i--) {
@@ -13,10 +14,6 @@ function getBaseSceneEntry(stack: ReturnType<typeof useScene>["stack"]) {
     if (meta.presentation !== "modal") return stack[i];
   }
   return stack[0];
-}
-
-function KeyIcon({ label }: { label: string }) {
-  return <span className="font-mono leading-none">{label}</span>;
 }
 
 export default function SceneConfirmQuit() {
@@ -96,10 +93,8 @@ export default function SceneConfirmQuit() {
 
       <div className="pb-6">
         <InputHints
-          hints={[
-            { icon: <KeyIcon label="Enter" />, label: "Select" },
-            { icon: <KeyIcon label="Esc" />, label: "Back" },
-          ]}
+          variant="system"
+          hints={CONSOLE_HINTS_SELECT_BACK}
           className="opacity-80"
         />
       </div>

@@ -2,6 +2,8 @@
 
 import FocusNavigator from "../../_engine/FocusNavigator";
 import { MenuItem } from "../../_engine/FocusNavigator/useFocusNavigator";
+import InputHints from "../../_components/InputHints";
+import { CONSOLE_HINTS_SELECT_NAVIGATE_BACK } from "../../_components/consoleHintPresets";
 
 type VsMode = "ai" | "local";
 
@@ -127,67 +129,11 @@ function SceneGameModes({ vs = "local" }: { vs?: VsMode }) {
         }}
       />
 
-      <div className="flex flex-row mt-20 space-x-8">
-
-        <button className="flex items-center space-x-1.5">
-
-          {/* <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            className='w-6 h-6'
-            viewBox='0 0 48 48'
-          >
-            <path
-              fill='currentColor'
-              stroke='currentColor'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth='2'
-              d='M23 23V5h20v38H5V23z'
-            ></path>
-            <path
-              stroke='#000'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth='2'
-              d='M33 13v20H13'
-            ></path>
-            <path
-              stroke='#000'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth='2'
-              d='m17 29-4 4 4 4'
-            ></path>
-          </svg> */}
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            className='w-4 h-4'
-            viewBox='0 0 16 18'
-          >
-            <path
-              stroke='currentColor'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth='2'
-              d='M8 1.059v10.425m0 0 4-3.791m-4 3.79-4-3.79m11 3.79v2.844c0 .502-.21.985-.586 1.34a2.06 2.06 0 0 1-1.414.555H3c-.53 0-1.04-.2-1.414-.555A1.85 1.85 0 0 1 1 14.327v-2.843'
-            ></path>
-          </svg>
-          <span>Enter</span>
-        </button>
-        <button className="flex items-center space-x-1">
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='currentColor'
-            className='w-4 h-4'
-            viewBox='0 0 16 16'
-          >
-            <path d='m16 8-3-3v2H9V3h2L8 0 5 3h2v4H3V5L0 8l3 3V9h4v4H5l3 3 3-3H9V9h4v2z'></path>
-          </svg>
-          <span>Navigate</span>
-        </button>
-        <button>⭠ Back</button>
+      <div className="mt-20">
+        <InputHints
+          variant="system"
+          hints={CONSOLE_HINTS_SELECT_NAVIGATE_BACK}
+        />
       </div>
 
     </div>
