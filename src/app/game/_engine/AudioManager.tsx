@@ -79,6 +79,9 @@ class AudioManagerClass {
   }
 
   stopAmbient() {
+    // Ensure no ambient track will resume later due to the initial unlock queue.
+    this.queuedAmbientSrc = undefined;
+
     if (this.currentAmbient) {
       this.currentAmbient.pause();
       this.currentAmbient.currentTime = 0;

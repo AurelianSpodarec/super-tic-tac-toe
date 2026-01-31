@@ -57,26 +57,38 @@ export default function SceneConfirmQuit() {
               columns={1}
               columnsMobile={1}
               direction="vertical"
-              className="w-full max-w-[420px] mx-auto flex flex-col gap-3"
-              renderItem={(item, _index, state) => (
-                <button
-                  type="button"
-                  onClick={state.onClick}
-                  onMouseEnter={state.onHover}
-                  className={`w-full rounded-xl border px-6 py-4 text-left transition ${
-                    item.active ? "border-white/40 bg-white/10" : "border-white/10 bg-white/5 hover:bg-white/10"
-                  }`}
-                >
-                  <div className={`font-semibold text-lg ${item.text === "Quit Game" ? "text-[#ef476f]" : "text-gray-100"}`}>
-                    {item.text}
-                  </div>
-                  {item.text === "Quit Game" ? (
-                    <div className="text-xs text-gray-300">End the current match.</div>
-                  ) : (
-                    <div className="text-xs text-gray-400">Go back to the pause menu.</div>
-                  )}
-                </button>
-              )}
+              className="w-full max-w-[420px] mx-auto flex flex-col gap-2"
+              renderItem={(item, _index, state) => {
+                const isQuit = item.text === "Quit Game";
+                const isActive = item.active;
+
+                return (
+                  <button
+                    type="button"
+                    onClick={state.onClick}
+                    onMouseEnter={state.onHover}
+                    className="w-full px-2 py-2 text-left"
+                    aria-current={isActive ? "true" : undefined}
+                  >
+                    <div className="flex items-center justify-center gap-3">
+                      <span className={`w-4 text-center ${isActive ? "text-gray-100" : "text-transparent"}`}>
+                        ▶
+                      </span>
+                      <span
+                        className={`text-2xl tracking-wide ${
+                          isActive
+                            ? isQuit
+                              ? "text-[#ef476f]"
+                              : "text-gray-100"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        {item.text}
+                      </span>
+                    </div>
+                  </button>
+                );
+              }}
             />
           </div>
         </div>
@@ -86,7 +98,7 @@ export default function SceneConfirmQuit() {
         <InputHints
           hints={[
             { icon: <KeyIcon label="Enter" />, label: "Select" },
-            { icon: <KeyIcon label="Esc" />, label: "Return" },
+            { icon: <KeyIcon label="Esc" />, label: "Back" },
           ]}
           className="opacity-80"
         />

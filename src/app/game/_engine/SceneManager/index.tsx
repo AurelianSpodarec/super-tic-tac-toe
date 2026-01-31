@@ -4,6 +4,7 @@ import ActionBar from "../../_components/ActionBar";
 
 import BackgroundManager from "../BackgroundManager";
 import { InputManager } from "../InputManager";
+import { AudioManager } from "../AudioManager";
 import { useAmbientAudioOnSceneChange } from "../audio/useAmbientAudioOnSceneChange";
 import { useInitAudio } from "../audio/useInitAudio";
 import NavigationProvider from "../navigation/NavigationProvider";
@@ -43,12 +44,37 @@ function SceneManagerInner() {
   const baseMeta = sceneRegistry[baseScene.name] as SceneMeta;
 
   const modalStack = stack.slice(baseIndex + 1);
-  const isModalOpen = modalStack.length > 0;
   const topModal = modalStack.length > 0 ? modalStack[modalStack.length - 1] : null;
   const topModalMeta = topModal ? (sceneRegistry[topModal.name] as SceneMeta) : null;
 
+  const topModalKind = topModalMeta?.modal?.kind ?? "panel";
+  const isTopModalMuteAmbient = topModalMeta?.modal?.muteAmbient === true;
+
+  // When a systemConfirm overlay is active, it should be the only modal the player sees.
+  // (This matches the console-style “final confirmation” takeover.)
+  const renderedModalStack = topModalKind === "systemConfirm" && topModal ? [topModal] : modalStack;
+  const isModalOpen = renderedModalStack.length > 0;
+
   useInitAudio(sceneRegistry);
   useAmbientAudioOnSceneChange(baseScene.name, sceneRegistry);
+
+  const wasAmbientMutedRef = useRef(false);
+  useEffect(() => {
+    if (isTopModalMuteAmbient) {
+      if (!wasAmbientMutedRef.current) {
+        AudioManager.stopAmbient();
+        wasAmbientMutedRef.current = true;
+      }
+      return;
+    }
+
+    if (wasAmbientMutedRef.current) {
+      // Resume whatever the base scene wants.
+      const baseAudio = sceneRegistry[baseScene.name]?.audio;
+      if (baseAudio) AudioManager.playAmbient(baseAudio);
+      wasAmbientMutedRef.current = false;
+    }
+  }, [baseScene.name, isTopModalMuteAmbient]);
 
   const stackRef = useRef(stack);
   const popRef = useRef(pop);
@@ -97,6 +123,8 @@ function SceneManagerInner() {
   const topModalTitle = topModalMeta?.modal?.title ?? (topModal ? String(topModal.name) : "");
   const closeOnBackdrop = topModalMeta?.modal?.closeOnBackdrop ?? true;
 
+  const backdropClassName = topModalKind === "systemConfirm" ? "bg-black" : "bg-black/70";
+
   return (
     <>
       <BackgroundManager scene={baseScene} />
@@ -111,14 +139,14 @@ function SceneManagerInner() {
             <button
               type="button"
               aria-label="Close"
-              className="absolute inset-0 bg-black/70"
+              className={`absolute inset-0 ${backdropClassName}`}
               onClick={() => pop()}
             />
           ) : (
-            <div aria-hidden className="absolute inset-0 bg-black/70" />
+            <div aria-hidden className={`absolute inset-0 ${backdropClassName}`} />
           )}
 
-          {modalStack.map((entry, i) => {
+          {renderedModalStack.map((entry, i) => {
             const meta = sceneRegistry[entry.name] as SceneMeta;
             const Comp = meta.component;
             const title = meta.modal?.title ?? String(entry.name);
@@ -126,7 +154,7 @@ function SceneManagerInner() {
             const showChrome = meta.modal?.showChrome ?? kind !== "systemConfirm";
             const renderKey = getRenderKey(entry);
 
-            const isTop = i === modalStack.length - 1;
+            const isTop = i === renderedModalStack.length - 1;
 
             // Stagger panels slightly so stacked modals feel intentional.
             const stackOffset = i * 10;
@@ -138,8 +166,7 @@ function SceneManagerInner() {
                   className="absolute inset-0 pointer-events-auto"
                   style={{ zIndex: 61 + i }}
                 >
-                  <div aria-hidden className="absolute inset-0 bg-black/90" />
-                  <div className="relative z-[1] h-full w-full">
+                  <div className="relative h-full w-full">
                     <Comp {...entry.params} />
                   </div>
                 </div>

@@ -48,6 +48,10 @@ type ModalConfig = {
    * systemConfirm overlays are expected to provide their own UI.
    */
   showChrome?: boolean;
+  /**
+   * If true, ambient audio should be stopped while this modal is topmost.
+   */
+  muteAmbient?: boolean;
 };
 
 const defaultActionBar: ActionBarConfig = {};
@@ -175,6 +179,7 @@ export const sceneRegistry = {
       closeOnBackdrop: false,
       kind: "systemConfirm",
       showChrome: false,
+      muteAmbient: true,
     },
     actionBar: {
       showBack: false,
