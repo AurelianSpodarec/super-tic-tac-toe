@@ -11,7 +11,7 @@ const menu: MenuItem[] = [
 export default function SceneOnline() {
   return (
     <div className="h-full py-28 flex flex-col items-center justify-center text-center mx-auto max-w-[700px]">
-      <h2 className="font-neontubes text-4xl text-[#ef476f] mb-2">Online</h2>
+      <h2 className="font-neontubes text-4xl text-[#ef476f] mb-2">Online multiplayer</h2>
       <p className="text-gray-300 mb-10">Create a private lobby and invite a friend.</p>
 
       <FocusNavigator

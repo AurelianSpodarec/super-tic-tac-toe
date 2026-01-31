@@ -11,8 +11,8 @@ import { useTimelineAnimationState } from "./_components/useTimelineAnimationSta
 // --- Menu data ---
 const dataMenu: MenuItem[] = [
   { text: "Singleplayer", scene: "GameModes", params: { vs: "ai" } },
-  { text: "Local Multiplayer", scene: "GameModes", params: { vs: "local" } },
-  { text: "Online", scene: "Online" },
+  { text: "shared screen", scene: "GameModes", params: { vs: "local" } },
+  { text: "Online multiplayer", scene: "Online" },
   { text: "Leaderboard", scene: "Leaderboard" },
   { text: "Settings", scene: "Settings" },
   { text: "Credits", scene: "Credits" },
